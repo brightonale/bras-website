@@ -53,6 +53,9 @@ export default function RootLayout({
             </div>
           </div>
         </footer>
+        <div style={{ position: 'fixed', bottom: '8px', left: '8px', fontSize: '0.75rem', color: 'var(--text-light)', zIndex: 9999, pointerEvents: 'none' }}>
+          v1.0.1
+        </div>
       </body>
     </html>
   );
