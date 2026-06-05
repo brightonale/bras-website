@@ -22,7 +22,7 @@ export default function About() {
       <div className="section-card" style={{ maxWidth: '800px' }}>
         <div style={{ color: 'var(--text-muted)', fontSize: '1.05rem', lineHeight: 1.8, display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <p>
-            The Brighton Real Ale Society (BRAS) is a private social group dedicated to exploring the vibrant pub culture of Brighton, UK.
+            The Brighton Real Ale Society (BRAS) is the official University of Brighton student society dedicated to exploring the vibrant pub culture of Brighton, UK.
           </p>
           <p>
             Rather than just going out for drinks, the society adds a layer of structure and camaraderie to their outings. We act as amateur &ldquo;Pint Inspectors&rdquo; to rate the quality of the pubs, the atmosphere, and the beer itself.

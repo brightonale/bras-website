@@ -55,7 +55,7 @@ export default function HomePage() {
             Preserving Cask Heritage, One Pint at a Time.
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '1.15rem', lineHeight: 1.6, marginBottom: '40px', maxWidth: '650px' }}>
-            We act as amateur Pint Inspectors to rate pub atmospheres, cask beer selection, and quality across Brighton & Hove. 
+            We are the official University of Brighton student society acting as amateur Pint Inspectors to rate pub atmospheres, cask beer selection, and quality across Brighton & Hove. 
           </p>
           
           <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
