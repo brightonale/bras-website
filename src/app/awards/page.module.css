@@ -1,0 +1,146 @@
+/* Awards page — warm theme */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: calc(100vh - 100px);
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.view {
+  width: 100%;
+  animation: fadeIn 0.4s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.beerIcon {
+  font-size: 4rem;
+  text-align: center;
+  margin-bottom: 10px;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.optionChip {
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  padding: 8px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.optionChip:hover {
+  background: var(--surface-warm);
+  border-color: var(--border-strong);
+  color: var(--text-color);
+}
+
+.optionChipSelected {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(201, 123, 26, 0.25);
+}
+
+.progressBarContainer {
+  width: 100%;
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  height: 8px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.progressBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), #E0A030);
+  transition: width 0.4s ease;
+  border-radius: 999px;
+}
+
+.customInputContainer {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.customInputContainer input {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 16px;
+  color: var(--text-color);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.customInputContainer input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(201, 123, 26, 0.3);
+  z-index: 1000;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translate(-50%, 20px); opacity: 0; }
+  to { transform: translate(-50%, 0); opacity: 1; }
+}
+
+.leaderboardBarBg {
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  height: 24px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.leaderboardBarFill {
+  background: linear-gradient(90deg, var(--accent), #E0A030);
+  height: 100%;
+  border-radius: 5px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
