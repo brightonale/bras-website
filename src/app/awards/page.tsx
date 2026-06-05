@@ -63,18 +63,6 @@ export default function AwardsPage() {
       localStorage.setItem('brasDeviceId', id);
     }
     setDeviceId(id);
-
-    // Fetch live categories from Google Apps Script
-    setIsLoading(true);
-    fetch(`${SCRIPT_URL}?action=getNominees&t=${Date.now()}`)
-      .then(res => res.json())
-      .then(data => {
-        if (data && data.categories) {
-          setCategories(data.categories);
-        }
-      })
-      .catch(err => console.warn("Could not sync nominees list from sheet", err))
-      .finally(() => setIsLoading(false));
   }, []);
 
   const showToast = (msg: string) => {
