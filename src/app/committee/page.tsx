@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import checklistData from '@/data/checklist.json';
-import { Beer, Gamepad2, Newspaper, Compass, Ban, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Beer, Gamepad2, Newspaper, Compass, Ban, CheckCircle, AlertTriangle, Users } from 'lucide-react';
 
 export default function CommitteePage() {
   const router = useRouter();
@@ -26,6 +26,9 @@ export default function CommitteePage() {
   const [pageSlug, setPageSlug] = useState('');
   const [htmlContent, setHtmlContent] = useState('');
   const [customPages, setCustomPages] = useState<any[]>([]);
+
+  // User Management
+  const [localUsers, setLocalUsers] = useState<Record<string, any>>({});
 
   const [isLoading, setIsLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -51,8 +54,22 @@ export default function CommitteePage() {
       // Fetch Wordle config & custom pages list
       fetchWordleConfig();
       fetchCustomPages();
+
+      // Fetch users from localStorage
+      const users = JSON.parse(localStorage.getItem('bras_users') || '{}');
+      setLocalUsers(users);
     }
   }, []);
+
+  const toggleCommitteeRole = (username: string, currentRole: string) => {
+    const db = JSON.parse(localStorage.getItem('bras_users') || '{}');
+    if (db[username]) {
+      const newRole = currentRole === 'committee' ? 'member' : 'committee';
+      db[username].role = newRole;
+      localStorage.setItem('bras_users', JSON.stringify(db));
+      setLocalUsers(db);
+    }
+  };
 
   const fetchWordleConfig = async () => {
     try {
@@ -369,6 +386,59 @@ export default function CommitteePage() {
                 </p>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Panel 5: User Management */}
+        <div className="section-card" style={{ display: 'flex', flexDirection: 'column', maxHeight: '580px', padding: 0 }}>
+          <h2 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '24px 32px 16px', margin: 0, position: 'sticky', top: 0, background: 'var(--surface)', zIndex: 5, borderRadius: 'var(--card-radius) var(--card-radius) 0 0' }}>
+            <Users size={20} /> User Management
+          </h2>
+          <div style={{ padding: '0 32px 32px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: '0 0 8px 0' }}>
+              Grant or revoke committee privileges for registered accounts.
+            </p>
+
+            {Object.entries(localUsers).map(([username, user]) => {
+              // Ensure we check against lowercase spacing stripped
+              const isSelf = username === memberName.toLowerCase().replace(/\s+/g, '');
+              
+              return (
+                <div key={username} style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '12px 16px', 
+                  background: 'var(--surface-muted)', 
+                  border: '1px solid var(--border)',
+                  borderRadius: '8px'
+                }}>
+                  <div>
+                    <h4 style={{ margin: '0 0 4px 0', fontSize: '1rem', fontFamily: 'var(--font-heading)' }}>
+                      {user.votingName || username} 
+                      <span style={{ fontSize: '0.7rem', color: 'var(--text-light)', marginLeft: '8px', fontWeight: 'normal', fontFamily: 'var(--font-body)' }}>@{username}</span>
+                    </h4>
+                    <div className={`badge ${user.role === 'committee' ? 'badge--primary' : 'badge--muted'}`}>
+                      {user.role}
+                    </div>
+                  </div>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: isSelf ? 'not-allowed' : 'pointer', fontSize: '0.85rem', fontWeight: 600, opacity: isSelf ? 0.5 : 1 }}>
+                    <input 
+                      type="checkbox" 
+                      checked={user.role === 'committee'} 
+                      onChange={() => toggleCommitteeRole(username, user.role)}
+                      disabled={isSelf}
+                      style={{ width: '18px', height: '18px', cursor: isSelf ? 'not-allowed' : 'pointer' }}
+                    />
+                    Committee
+                  </label>
+                </div>
+              );
+            })}
+            
+            {Object.keys(localUsers).length === 0 && (
+               <p style={{ fontSize: '0.85rem', color: 'var(--text-light)' }}>No registered users found.</p>
+            )}
           </div>
         </div>
 
