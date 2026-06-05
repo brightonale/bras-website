@@ -1,0 +1,470 @@
+[
+  {
+    "rank": 1,
+    "pub": "The Venue",
+    "pint": "BRAS best bitter",
+    "brewery": "Pepperpot Brewery x BRAS",
+    "date": "2024/25",
+    "score": "8.60",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 2,
+    "pub": "The Hole in The Wall",
+    "pint": "Pom Pom",
+    "brewery": "ABYSS x Lallemand",
+    "date": "18 Dec 2025",
+    "score": "8.30",
+    "ratingsCount": "5"
+  },
+  {
+    "rank": 3,
+    "pub": "The Independent Taproom",
+    "pint": "High 5 oat pale",
+    "brewery": "Hand Brew Co",
+    "date": "2024/25",
+    "score": "8.00",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 4,
+    "pub": "The Sussex Arms",
+    "pint": "Greene King IPA",
+    "brewery": "Greene King",
+    "date": "2023/24",
+    "score": "8.00",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 5,
+    "pub": "The Signalbox",
+    "pint": "Firefall Red Ale",
+    "brewery": "Lakedown Brewing Co",
+    "date": "2023/24",
+    "score": "7.60",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 6,
+    "pub": "The Dark Mile",
+    "pint": "Stout",
+    "brewery": "Dark Star Brewing",
+    "date": "30 Oct 2025",
+    "score": "7.50",
+    "ratingsCount": "2"
+  },
+  {
+    "rank": 7,
+    "pub": "The Gladstone",
+    "pint": "Session IPA",
+    "brewery": "Vocation Brewery",
+    "date": "2023/24",
+    "score": "7.40",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 8,
+    "pub": "The Barley Mow",
+    "pint": "Rising Giant",
+    "brewery": "Long Man Brewery",
+    "date": "07 May 2026",
+    "score": "7.39",
+    "ratingsCount": "17"
+  },
+  {
+    "rank": 9,
+    "pub": "The Master Mariner",
+    "pint": "Harvey's Sussex Best",
+    "brewery": "Harvey's Brewery",
+    "date": "27 Nov 2025",
+    "score": "7.30",
+    "ratingsCount": "7"
+  },
+  {
+    "rank": 10,
+    "pub": "The Signalbox",
+    "pint": "Downland's Best Bitter",
+    "brewery": "Downlands Brewery",
+    "date": "04 Dec 2025",
+    "score": "7.23",
+    "ratingsCount": "6"
+  },
+  {
+    "rank": 11,
+    "pub": "The Robin Hood",
+    "pint": "Wainwright Golden Ale",
+    "brewery": "Thwaites Brewery",
+    "date": "2024/25",
+    "score": "7.10",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 12,
+    "pub": "Lewes Road Inn",
+    "pint": "Harvey's Sussex Best",
+    "brewery": "Harvey's Brewery",
+    "date": "2023/24",
+    "score": "7.10",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 13,
+    "pub": "The Bath Arms",
+    "pint": "Spitfire",
+    "brewery": "Shepherd Neame",
+    "date": "2023/24",
+    "score": "7.10",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 14,
+    "pub": "The Brighton Tavern",
+    "pint": "Plum Pudding",
+    "brewery": "J.W. Lees",
+    "date": "11 Dec 2025",
+    "score": "7.08",
+    "ratingsCount": "8"
+  },
+  {
+    "rank": 15,
+    "pub": "The Mitre Tavern",
+    "pint": "Good Times Ale",
+    "brewery": "Harvey's Brewery",
+    "date": "26 Mar 2026",
+    "score": "7.02",
+    "ratingsCount": "5"
+  },
+  {
+    "rank": 16,
+    "pub": "The Walrus",
+    "pint": "Walrus House Bitter",
+    "brewery": "Portobello Brewing",
+    "date": "2024/25",
+    "score": "6.90",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 17,
+    "pub": "New Unity",
+    "pint": "Fader",
+    "brewery": "Laine Brew Co",
+    "date": "19 Mar 2026",
+    "score": "6.90",
+    "ratingsCount": "4"
+  },
+  {
+    "rank": 18,
+    "pub": "Fiddler's Elbow",
+    "pint": "Tacoma APA",
+    "brewery": "360\u00b0 Brewery",
+    "date": "2023/24",
+    "score": "6.80",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 19,
+    "pub": "The Prince Albert",
+    "pint": "Best Bitter",
+    "brewery": "Long Man Brewery",
+    "date": "2024/25",
+    "score": "6.75",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 20,
+    "pub": "The Hole in The Wall",
+    "pint": "Memento Best Bitter",
+    "brewery": "Siren Craft Brew",
+    "date": "2023/24",
+    "score": "6.70",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 21,
+    "pub": "The Blind Busker",
+    "pint": "Abbot Ale",
+    "brewery": "Greene King",
+    "date": "2024/25",
+    "score": "6.60",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 22,
+    "pub": "The Great Eastern",
+    "pint": "Acorns Best Bitter",
+    "brewery": "Only With Love",
+    "date": "23 Apr 2026",
+    "score": "6.56",
+    "ratingsCount": "7"
+  },
+  {
+    "rank": 23,
+    "pub": "The Signalman",
+    "pint": "Best Bitter",
+    "brewery": "Long Man Brewery",
+    "date": "05 Mar 2026",
+    "score": "6.52",
+    "ratingsCount": "11"
+  },
+  {
+    "rank": 24,
+    "pub": "UnBarred Brewery & Taproom",
+    "pint": "UnBarred Best Bitter",
+    "brewery": "UnBarred Brewery",
+    "date": "26 Feb 2026",
+    "score": "6.51",
+    "ratingsCount": "16"
+  },
+  {
+    "rank": 25,
+    "pub": "Brighton Bierhaus",
+    "pint": "ShinDigger",
+    "brewery": "ShinDigger Brewing",
+    "date": "23 Oct 2025",
+    "score": "6.50",
+    "ratingsCount": "13"
+  },
+  {
+    "rank": 26,
+    "pub": "The Prince George",
+    "pint": "Chummy Bluster Best Bitter",
+    "brewery": "Gun Brewery",
+    "date": "2024/25",
+    "score": "6.50",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 27,
+    "pub": "The Watchmaker's Arms",
+    "pint": "Second Best Bitter",
+    "brewery": "The Watchmaker's Arms",
+    "date": "12 Mar 2026",
+    "score": "6.31",
+    "ratingsCount": "10"
+  },
+  {
+    "rank": 28,
+    "pub": "The Open House",
+    "pint": "Long Blonde",
+    "brewery": "Long Man Brewery",
+    "date": "2023/24",
+    "score": "6.30",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 29,
+    "pub": "The Hole in The Wall",
+    "pint": "KIPA",
+    "brewery": "Kissingate Brewery",
+    "date": "04 Jun 2026",
+    "score": "6.13",
+    "ratingsCount": "13"
+  },
+  {
+    "rank": 30,
+    "pub": "The Venue",
+    "pint": "Harvest Moon",
+    "brewery": "Pepperpot Brewery",
+    "date": "2024/25",
+    "score": "6.10",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 31,
+    "pub": "The Black Horse",
+    "pint": "Naked Ladies",
+    "brewery": "Twickenham Brewery",
+    "date": "2023/24",
+    "score": "6.10",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 32,
+    "pub": "Brighton Bierhaus",
+    "pint": "Oatmeal Stout",
+    "brewery": "Downlands Brewery",
+    "date": "2024/25",
+    "score": "6.10",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 33,
+    "pub": "Lion & Lobster",
+    "pint": "Lobster House Bitter",
+    "brewery": "Portobello Brewing",
+    "date": "2024/25",
+    "score": "6.10",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 34,
+    "pub": "The Independent Taproom",
+    "pint": "Best Bitter",
+    "brewery": "Hand Brew Co",
+    "date": "21 May 2026",
+    "score": "6.04",
+    "ratingsCount": "5"
+  },
+  {
+    "rank": 35,
+    "pub": "Maris & Otter",
+    "pint": "Kiss",
+    "brewery": "Harvey's Brewery",
+    "date": "2024/25",
+    "score": "6.00",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 36,
+    "pub": "Caxton Arms",
+    "pint": "Whitstable Bay",
+    "brewery": "Shepherd Neame",
+    "date": "2023/24",
+    "score": "6.00",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 37,
+    "pub": "The Foundry",
+    "pint": "Landlord",
+    "brewery": "Timothy Taylor's",
+    "date": "13 Nov 2025",
+    "score": "5.97",
+    "ratingsCount": "15"
+  },
+  {
+    "rank": 38,
+    "pub": "The Sussex Arms",
+    "pint": "Abbots",
+    "brewery": "Greene King",
+    "date": "15 Jan 2026",
+    "score": "5.81",
+    "ratingsCount": "12"
+  },
+  {
+    "rank": 39,
+    "pub": "Earth & Stars",
+    "pint": "Bluebell Best Bitter",
+    "brewery": "360\u00b0 Brewery",
+    "date": "2023/24",
+    "score": "5.80",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 40,
+    "pub": "The Lord Nelson Inn",
+    "pint": "Old Ale",
+    "brewery": "Harvey's Brewery",
+    "date": "2023/24",
+    "score": "5.60",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 41,
+    "pub": "The Brighton Tavern",
+    "pint": "Hophead",
+    "brewery": "Dark Star Brewing",
+    "date": "2024/25",
+    "score": "5.60",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 42,
+    "pub": "Shakespeare's Head",
+    "pint": "Landlord",
+    "brewery": "Timothy Taylor's",
+    "date": "2023/24",
+    "score": "5.50",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 43,
+    "pub": "The Pond",
+    "pint": "Buster",
+    "brewery": "Only With Love",
+    "date": "2024/25",
+    "score": "5.50",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 44,
+    "pub": "The Royal Sovereign",
+    "pint": "Blood Orange Pale Ale",
+    "brewery": "Three Acre Brewery",
+    "date": "2023/24",
+    "score": "5.40",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 45,
+    "pub": "The Mucky Duck",
+    "pint": "Bird Best Bitter",
+    "brewery": "Hand Brew Co",
+    "date": "2023/24",
+    "score": "5.40",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 46,
+    "pub": "The Lord Nelson Inn",
+    "pint": "Armada Ale",
+    "brewery": "Harvey's Brewery",
+    "date": "30 Apr 2026",
+    "score": "5.31",
+    "ratingsCount": "12"
+  },
+  {
+    "rank": 47,
+    "pub": "Battle of Trafalgar",
+    "pint": "Trooper Premium Beer",
+    "brewery": "Robinsons Brewery",
+    "date": "2023/24",
+    "score": "5.20",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 48,
+    "pub": "The Signalman",
+    "pint": "Doubloon Golden Ale",
+    "brewery": "Laine Brew Co",
+    "date": "2023/24",
+    "score": "4.80",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 49,
+    "pub": "The Geese",
+    "pint": "Hophead",
+    "brewery": "Dark Star Brewing",
+    "date": "2023/24",
+    "score": "4.20",
+    "ratingsCount": "Consensus"
+  },
+  {
+    "rank": 50,
+    "pub": "The Railway Inn",
+    "pint": "Kora",
+    "brewery": "Hand Brew Co",
+    "date": "06 Nov 2025",
+    "score": "4.20",
+    "ratingsCount": "1"
+  },
+  {
+    "rank": 51,
+    "pub": "The Victory Inn",
+    "pint": "London Pride",
+    "brewery": "Fuller's",
+    "date": "19 Feb 2026",
+    "score": "3.50",
+    "ratingsCount": "1"
+  },
+  {
+    "rank": 52,
+    "pub": "The Victory Inn",
+    "pint": "Fader Juicy IPA",
+    "brewery": "Laine Brew Co",
+    "date": "19 Feb 2026",
+    "score": "3.50",
+    "ratingsCount": "1"
+  }
+]

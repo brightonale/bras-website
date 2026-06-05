@@ -56,6 +56,18 @@ function parseCaptions(): CaptionPost[] {
 export default async function HistoryPage() {
   const posts = parseCaptions();
 
+  // Group posts by Month and Year
+  const groupedPosts = posts.reduce((acc, post) => {
+    let monthYear = "Unknown Date";
+    try {
+      const d = new Date(post.date.split(' ')[0]);
+      monthYear = d.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+    } catch (e) {}
+    if (!acc[monthYear]) acc[monthYear] = [];
+    acc[monthYear].push(post);
+    return acc;
+  }, {} as Record<string, typeof posts>);
+
   // Helper to format date cleanly
   const formatDate = (dateStr: string) => {
     try {
@@ -106,7 +118,7 @@ export default async function HistoryPage() {
               <div style={{ display: 'flex', justifyContent: 'center', color: 'var(--primary)', marginBottom: '8px' }}>
                 <HeartHandshake size={24} />
               </div>
-              <div className="stat-value">£400+</div>
+              <div className="stat-value">£435</div>
               <div className="stat-label">Raised for Charity</div>
             </div>
           </div>
@@ -245,26 +257,7 @@ export default async function HistoryPage() {
             </div>
           </div>
 
-          {/* Member 6: Jackson & Kelvin */}
-          <div className="section-card" style={{ display: 'flex', flexDirection: 'column', padding: 0, overflow: 'hidden' }}>
-            <div style={{ display: 'flex', height: '240px', width: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--surface-muted)', color: 'var(--text-light)', position: 'relative' }}>
-              <Users size={48} strokeWidth={1.5} className="accent-text" />
-            </div>
-            <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-              <h3 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '4px' }}>Jackson &amp; Kelvin</h3>
-              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>
-                Core Course Mates &amp; Support Network
-              </div>
-              <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: '1.5', marginBottom: '16px' }}>
-                As dedicated engineering course mates and close peers, Jackson and Kelvin form a crucial backbone of long-term community support within the wider group. Their steady presence at flagship socials and major milestones has provided continuous support since the society's foundational years.
-              </p>
-              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: 'auto' }}>
-                <span className="badge badge--primary">Core Circle</span>
-                <span className="badge badge--muted">Engineering Peers</span>
-                <span className="badge badge--muted">Event Support</span>
-              </div>
-            </div>
-          </div>
+
 
         </div>
       </section>
@@ -339,57 +332,73 @@ export default async function HistoryPage() {
         </div>
       </section>
 
-      {/* Instagram Archives Timeline Section */}
-      <section style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <h2 style={{ fontSize: '1.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Camera size={22} className="accent-text" /> Instagram Archive Feed
-        </h2>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '-8px', marginBottom: '8px' }}>
-          Historical announcements and social updates transcribed from the society&apos;s official Instagram handle.
-        </p>
+      {/* Timeline Section */}
+      <section style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '16px' }}>
+        <div>
+          <h2 style={{ fontSize: '1.8rem', display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+            <Camera size={28} className="accent-text" /> Timeline Overview
+          </h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '1rem' }}>
+            The society's journey chronologically documented through our historical social updates.
+          </p>
+        </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', position: 'relative', paddingLeft: '20px', borderLeft: '2px solid var(--border)' }}>
-          {posts.map((post, index) => (
-            <div key={post.date + index} className="section-card" style={{ position: 'relative', padding: '20px' }}>
+        <div style={{ position: 'relative', paddingLeft: '24px', borderLeft: '2px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '48px' }}>
+          {Object.entries(groupedPosts).map(([monthYear, monthPosts]) => (
+            <div key={monthYear} style={{ position: 'relative' }}>
               
-              {/* Timeline dot */}
+              {/* Group Marker */}
               <div style={{
                 position: 'absolute',
-                left: '-27px',
-                top: '24px',
-                width: '12px',
-                height: '12px',
+                left: '-32px',
+                top: '0',
+                width: '14px',
+                height: '14px',
                 borderRadius: '50%',
-                backgroundColor: 'var(--accent)',
+                backgroundColor: 'var(--primary)',
                 border: '3px solid var(--bg-color)',
                 zIndex: 2
               }} />
+              <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--text-color)', marginBottom: '20px', marginTop: '-4px' }}>
+                {monthYear}
+              </h3>
 
-              {/* Card header */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '12px', paddingBottom: '8px', borderBottom: '1px solid var(--surface-muted)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--primary)', fontWeight: 'bold', fontSize: '0.9rem' }}>
-                  <Calendar size={16} /> {formatDate(post.date)}
-                </div>
-                <Link 
-                  href={post.url} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.8rem', color: 'var(--accent)', fontWeight: 600, border: '1px solid var(--accent)', padding: '2px 8px', borderRadius: '4px', background: 'transparent' }}
-                  className="btn--hover-primary"
-                >
-                  <ExternalLink size={12} /> Instagram Post
-                </Link>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+                {monthPosts.map((post, idx) => (
+                  <div key={post.date + idx} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        {formatDate(post.date)}
+                      </span>
+                      <Link 
+                        href={post.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: 'var(--text-muted)', borderBottom: '1px solid transparent', transition: 'color 0.2s' }}
+                      >
+                        <ExternalLink size={12} /> View Original
+                      </Link>
+                    </div>
+                    <div style={{ 
+                      fontSize: '0.95rem', 
+                      color: 'var(--text-color)', 
+                      lineHeight: '1.6', 
+                      whiteSpace: 'pre-line',
+                      padding: '16px 20px',
+                      backgroundColor: 'var(--surface-warm)',
+                      borderRadius: '8px',
+                      borderLeft: '3px solid var(--border-strong)'
+                    }}>
+                      {post.content}
+                    </div>
+                  </div>
+                ))}
               </div>
-
-              {/* Card content */}
-              <p style={{ fontSize: '0.95rem', color: 'var(--text-color)', lineHeight: '1.6', whiteSpace: 'pre-line' }}>
-                {post.content}
-              </p>
             </div>
           ))}
 
           {posts.length === 0 && (
-            <p style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>No Instagram posts logged in the archive.</p>
+            <p style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>No timeline events logged.</p>
           )}
         </div>
       </section>
