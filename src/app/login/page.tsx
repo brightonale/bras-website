@@ -37,20 +37,40 @@ export default function LoginPage() {
       router.push('/');
     }
     
-    // Initialize fake local DB if missing
-    let usersDb = localStorage.getItem('bras_users');
-    if (!usersDb) {
-      const initialDb: Record<string, LocalUser> = {};
-      DEFAULT_COMMITTEE.forEach(name => {
-        const usernameKey = name.toLowerCase().replace(/\s+/g, ''); // e.g. "harry", "jamesg"
-        initialDb[usernameKey] = { 
+    // Initialize or migrate local DB
+    const SCHEMA_VERSION = '2';
+    const currentVersion = localStorage.getItem('bras_db_version');
+    let db: Record<string, LocalUser> = {};
+    
+    try {
+      db = JSON.parse(localStorage.getItem('bras_users') || '{}');
+    } catch { db = {}; }
+    
+    // Always ensure committee defaults exist and have committee role
+    DEFAULT_COMMITTEE.forEach(name => {
+      const usernameKey = name.toLowerCase().replace(/\s+/g, '');
+      if (!db[usernameKey]) {
+        // New committee member — seed them
+        db[usernameKey] = { 
           password: 'BRAS2026!', 
           role: 'committee', 
           mustChange: true,
           votingName: name 
         };
-      });
-      localStorage.setItem('bras_users', JSON.stringify(initialDb));
+      } else if (db[usernameKey].role !== 'committee') {
+        // Existing user who should be committee — fix their role
+        db[usernameKey].role = 'committee';
+      }
+      // Ensure votingName is set
+      if (!db[usernameKey].votingName) {
+        db[usernameKey].votingName = name;
+      }
+    });
+    
+    localStorage.setItem('bras_users', JSON.stringify(db));
+    
+    if (currentVersion !== SCHEMA_VERSION) {
+      localStorage.setItem('bras_db_version', SCHEMA_VERSION);
     }
   }, [step, router]);
 

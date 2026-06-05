@@ -6,7 +6,7 @@
 :root {
   /* Core palette */
   --bg-color: #FAF6F0;
-  --bg-gradient: linear-gradient(170deg, #FAF6F0 0%, #F3EBE0 50%, #EDE4D8 100%);
+  --bg-gradient: none;
   --text-color: #1E293B;
   --text-muted: #64748B;
   --text-light: #94A3B8;
@@ -40,8 +40,8 @@
   --page-max: 1140px;
   --page-px: 24px;
   --section-gap: 40px;
-  --card-padding: 32px;
-  --card-radius: 14px;
+  --card-padding: 24px;
+  --card-radius: 6px;
 
   /* Feedback colors */
   --success-bg: #ECFDF5;
@@ -71,8 +71,6 @@ html {
 
 body {
   background-color: var(--bg-color);
-  background-image: var(--bg-gradient);
-  background-attachment: fixed;
   color: var(--text-color);
   font-family: var(--font-body);
   line-height: 1.6;
@@ -140,12 +138,11 @@ p {
   border-radius: var(--card-radius);
   padding: var(--card-padding);
   box-shadow: var(--shadow-sm);
-  transition: box-shadow 0.25s ease, transform 0.25s ease;
+  transition: box-shadow 0.2s ease;
 }
 
 .section-card--hoverable:hover {
-  box-shadow: var(--shadow-hover);
-  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .section-card__title {
@@ -246,8 +243,8 @@ p {
   font-family: var(--font-body);
   font-weight: 600;
   font-size: 0.9rem;
-  padding: 11px 22px;
-  border-radius: 10px;
+  padding: 10px 20px;
+  border-radius: 6px;
   border: 1px solid transparent;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -267,8 +264,7 @@ p {
 
 .btn--primary:hover {
   background: var(--primary-hover);
-  box-shadow: 0 4px 10px rgba(139, 26, 26, 0.22);
-  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(139, 26, 26, 0.18);
 }
 
 .btn--accent {
@@ -280,8 +276,7 @@ p {
 
 .btn--accent:hover {
   background: var(--accent-hover);
-  box-shadow: 0 4px 10px rgba(201, 123, 26, 0.22);
-  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(201, 123, 26, 0.18);
 }
 
 .btn--outline {
@@ -296,13 +291,13 @@ p {
 }
 
 .btn--sm {
-  padding: 7px 14px;
+  padding: 6px 12px;
   font-size: 0.82rem;
-  border-radius: 8px;
+  border-radius: 5px;
 }
 
 .btn--lg {
-  padding: 14px 28px;
+  padding: 12px 24px;
   font-size: 1rem;
 }
 
@@ -581,8 +576,8 @@ input[type="number"],
 select,
 textarea {
   width: 100%;
-  padding: 11px 14px;
-  border-radius: 10px;
+  padding: 10px 12px;
+  border-radius: 6px;
   border: 1px solid var(--border);
   background: var(--surface);
   color: var(--text-color);
@@ -615,8 +610,8 @@ textarea {
 /* ==================== ALERTS / NOTICES ==================== */
 
 .notice {
-  padding: 16px 20px;
-  border-radius: 10px;
+  padding: 14px 18px;
+  border-radius: 6px;
   font-size: 0.9rem;
   line-height: 1.5;
   border: 1px solid;
