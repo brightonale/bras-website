@@ -16,7 +16,7 @@ const ALL_LINKS = [
   { href: '/contact', label: 'Contact', key: 'contact' },
 ];
 
-const NAV_LINKS = ALL_LINKS.filter(link => (settingsData.features as any)[link.key] !== false);
+// NAV_LINKS is calculated dynamically inside the component body based on role
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -24,6 +24,13 @@ export default function Navbar() {
   const [userName, setUserName] = useState<string | null>(null);
   const [isCommittee, setIsCommittee] = useState<boolean>(false);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const navLinks = ALL_LINKS.filter(link => {
+    if (link.key === 'wordle' || link.key === 'awards') {
+      return isCommittee;
+    }
+    return (settingsData.features as any)[link.key] !== false;
+  });
 
   useEffect(() => {
     const name = localStorage.getItem('bras_user_name');
@@ -73,7 +80,7 @@ export default function Navbar() {
 
         {/* Desktop links */}
         <div className="site-nav__links">
-          {NAV_LINKS.map(link => (
+          {navLinks.map(link => (
             <Link
               key={link.href}
               href={link.href}
@@ -93,7 +100,7 @@ export default function Navbar() {
         </div>
 
         {/* Desktop auth */}
-        <div className="site-nav__auth">
+        <div className="site-nav__auth" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           {userName ? (
             <>
               <span className="site-nav__user">
@@ -104,9 +111,16 @@ export default function Navbar() {
               </button>
             </>
           ) : (
-            <Link href="/login">
-              <button className="btn btn--primary btn--sm">Login</button>
-            </Link>
+            <>
+              <Link href="/login?committee=true">
+                <button className="btn btn--outline btn--sm" style={{ borderColor: 'var(--accent)', color: 'var(--accent)' }}>
+                  Committee Sign In
+                </button>
+              </Link>
+              <Link href="/login">
+                <button className="btn btn--primary btn--sm">Login</button>
+              </Link>
+            </>
           )}
         </div>
 
@@ -122,7 +136,7 @@ export default function Navbar() {
 
       {/* Mobile drawer */}
       <div className={`site-nav__mobile ${menuOpen ? 'is-open' : ''}`}>
-        {NAV_LINKS.map(link => (
+        {navLinks.map(link => (
           <Link
             key={link.href}
             href={link.href}
@@ -149,9 +163,16 @@ export default function Navbar() {
               <button onClick={handleLogout} className="btn btn--outline btn--sm">Logout</button>
             </div>
           ) : (
-            <Link href="/login">
-              <button className="btn btn--primary btn--full">Login</button>
-            </Link>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <Link href="/login?committee=true">
+                <button className="btn btn--outline btn--full" style={{ borderColor: 'var(--accent)', color: 'var(--accent)' }}>
+                  Committee Sign In
+                </button>
+              </Link>
+              <Link href="/login">
+                <button className="btn btn--primary btn--full">Login</button>
+              </Link>
+            </div>
           )}
         </div>
       </div>

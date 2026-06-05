@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import membersData from '../../data/members.json';
+import { Lock, Sparkles, Key, CheckCircle, AlertTriangle, ShieldCheck } from 'lucide-react';
 
 type LocalUser = {
   password?: string;
@@ -17,6 +18,7 @@ export default function LoginPage() {
   const router = useRouter();
   const [tab, setTab] = useState<'login' | 'create'>('login');
   const [step, setStep] = useState<'auth' | 'change_password' | 'claim_name'>('auth');
+  const [isCommitteeMode, setIsCommitteeMode] = useState(false);
   
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -31,6 +33,15 @@ export default function LoginPage() {
   const sortedMembers = [...membersData].sort((a, b) => a.name.localeCompare(b.name));
 
   useEffect(() => {
+    // Detect committee mode from URL query parameters
+    if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search);
+      if (searchParams.get('committee') === 'true') {
+        setIsCommitteeMode(true);
+        setTab('login');
+      }
+    }
+
     // If already logged in, redirect
     const user = localStorage.getItem('bras_user_name');
     if (user && step !== 'change_password' && step !== 'claim_name') {
@@ -211,7 +222,9 @@ export default function LoginPage() {
       <div className="page-container animate-fade-in" style={{ alignItems: 'center', paddingTop: '40px' }}>
         <div className="section-card" style={{ width: '100%', maxWidth: '440px' }}>
           <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-            <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: '8px' }}>🔒</span>
+            <span style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px', color: 'var(--primary)' }}>
+              <Lock size={40} />
+            </span>
             <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.8rem', marginBottom: '8px' }}>Update Password</h1>
             <p style={{ color: 'var(--text-muted)' }}>Welcome Committee Member! Please set a secure password.</p>
           </div>
@@ -225,7 +238,11 @@ export default function LoginPage() {
                 placeholder="Enter new password"
               />
             </div>
-            {errorMsg && <div className="notice notice--error">⚠️ {errorMsg}</div>}
+            {errorMsg && (
+              <div className="notice notice--error" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <AlertTriangle size={18} /> {errorMsg}
+              </div>
+            )}
             <button type="submit" className="btn btn--primary btn--full" disabled={isLoading}>
               {isLoading ? "Saving..." : "Save & Continue"}
             </button>
@@ -240,7 +257,9 @@ export default function LoginPage() {
       <div className="page-container animate-fade-in" style={{ alignItems: 'center', paddingTop: '40px' }}>
         <div className="section-card" style={{ width: '100%', maxWidth: '440px' }}>
           <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-            <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: '8px' }}>✨</span>
+            <span style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px', color: 'var(--primary)' }}>
+              <Sparkles size={40} />
+            </span>
             <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.8rem', marginBottom: '8px' }}>Claim Your Name</h1>
             <p style={{ color: 'var(--text-muted)' }}>Link your account to your past voting history.</p>
           </div>
@@ -254,7 +273,11 @@ export default function LoginPage() {
                 ))}
               </select>
             </div>
-            {errorMsg && <div className="notice notice--error">⚠️ {errorMsg}</div>}
+            {errorMsg && (
+              <div className="notice notice--error" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <AlertTriangle size={18} /> {errorMsg}
+              </div>
+            )}
             <button type="submit" className="btn btn--primary btn--full" disabled={isLoading}>
               {isLoading ? "Saving..." : "Complete Setup"}
             </button>
@@ -268,36 +291,60 @@ export default function LoginPage() {
     <div className="page-container animate-fade-in" style={{ alignItems: 'center', paddingTop: '20px' }}>
       <div className="section-card" style={{ width: '100%', maxWidth: '440px' }}>
         
-        <div style={{ display: 'flex', gap: '10px', marginBottom: '24px' }}>
-          <button 
-            type="button"
-            className={`btn ${tab === 'login' ? 'btn--primary' : 'btn--outline'}`} 
-            style={{ flex: 1 }}
-            onClick={() => { setTab('login'); setErrorMsg(null); }}
-          >
-            Sign In
-          </button>
-          <button 
-            type="button"
-            className={`btn ${tab === 'create' ? 'btn--primary' : 'btn--outline'}`} 
-            style={{ flex: 1 }}
-            onClick={() => { setTab('create'); setErrorMsg(null); }}
-          >
-            Create Account
-          </button>
-        </div>
+        {/* Tab switcher - hide if in committee mode */}
+        {!isCommitteeMode && (
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '24px' }}>
+            <button 
+              type="button"
+              className={`btn ${tab === 'login' ? 'btn--primary' : 'btn--outline'}`} 
+              style={{ flex: 1 }}
+              onClick={() => { setTab('login'); setErrorMsg(null); }}
+            >
+              Sign In
+            </button>
+            <button 
+              type="button"
+              className={`btn ${tab === 'create' ? 'btn--primary' : 'btn--outline'}`} 
+              style={{ flex: 1 }}
+              onClick={() => { setTab('create'); setErrorMsg(null); }}
+            >
+              Create Account
+            </button>
+          </div>
+        )}
 
         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-          <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: '8px' }}>
-            {tab === 'login' ? '🍺' : '👋'}
-          </span>
+          {isCommitteeMode ? (
+            <div style={{ 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: '6px', 
+              padding: '6px 12px', 
+              background: 'var(--surface-warm)', 
+              border: '1px solid var(--accent)', 
+              borderRadius: '6px', 
+              color: 'var(--accent)', 
+              fontWeight: 600, 
+              fontSize: '0.8rem',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              marginBottom: '16px'
+            }}>
+              <ShieldCheck size={14} /> Committee Mode
+            </div>
+          ) : (
+            <span style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px', color: 'var(--primary)' }}>
+              <Key size={40} />
+            </span>
+          )}
+          
           <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.8rem', marginBottom: '8px' }}>
-            {tab === 'login' ? 'Welcome Back' : 'Join the Society'}
+            {isCommitteeMode ? 'Committee Sign In' : (tab === 'login' ? 'Welcome Back' : 'Join the Society')}
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.5 }}>
-            {tab === 'login' 
-              ? 'Sign in to view member-only leaderboards.' 
-              : 'Create a username and password to get started.'}
+            {isCommitteeMode 
+              ? 'Sign in with your allocated committee account. Default seed password is BRAS2026!.'
+              : (tab === 'login' ? 'Sign in to view member-only leaderboards.' : 'Create a username and password to get started.')}
           </p>
         </div>
 
@@ -308,7 +355,7 @@ export default function LoginPage() {
               type="text"
               value={username}
               onChange={e => setUsername(e.target.value)}
-              placeholder="e.g. johnsmith"
+              placeholder="e.g. harry"
             />
           </div>
 
@@ -322,8 +369,16 @@ export default function LoginPage() {
             />
           </div>
 
-          {errorMsg && <div className="notice notice--error">⚠️ {errorMsg}</div>}
-          {successMsg && <div className="notice notice--success">✅ {successMsg}</div>}
+          {errorMsg && (
+            <div className="notice notice--error" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <AlertTriangle size={18} /> {errorMsg}
+            </div>
+          )}
+          {successMsg && (
+            <div className="notice notice--success" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <CheckCircle size={18} /> {successMsg}
+            </div>
+          )}
 
           <button
             type="submit"

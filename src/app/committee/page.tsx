@@ -4,13 +4,20 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import checklistData from '@/data/checklist.json';
-import { Beer, Gamepad2, Newspaper, Compass, Ban, CheckCircle, AlertTriangle, Users } from 'lucide-react';
+import { Beer, Gamepad2, Newspaper, Compass, Ban, CheckCircle, AlertTriangle, Users, Play, Square } from 'lucide-react';
 
 export default function CommitteePage() {
   const router = useRouter();
   const [isCommittee, setIsCommittee] = useState(false);
   const [memberName, setMemberName] = useState('');
   
+  // Active Pint Settings Form
+  const [activePubName, setActivePubName] = useState('');
+  const [activeBeerName, setActiveBeerName] = useState('');
+  const [activeBreweryName, setActiveBreweryName] = useState('');
+  const [activeDateString, setActiveDateString] = useState('');
+  const [currentActivePint, setCurrentActivePint] = useState<any | null>(null);
+
   // Wordle Settings Form
   const [wordleWord, setWordleWord] = useState('');
   const [wordleHint, setWordleHint] = useState('');
@@ -34,7 +41,8 @@ export default function CommitteePage() {
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Load Checklist & DB details
+  // List of unique checklist pubs for datalist dropdowns
+  const checklistPubs = checklistData.map(p => p.name).sort();
   const unvisitedPubs = checklistData.filter(p => p.status === 'Not Visited');
 
   useEffect(() => {
@@ -47,11 +55,14 @@ export default function CommitteePage() {
       setIsCommittee(true);
       setMemberName(name);
 
-      // Pre-fill today's date for pub visit logging
+      // Pre-fill today's date for forms
       const today = new Date();
-      setEventDate(today.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }));
+      const todayStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      setEventDate(todayStr);
+      setActiveDateString(todayStr);
 
-      // Fetch Wordle config & custom pages list
+      // Fetch Wordle config & custom pages list & active pint
+      fetchActivePint();
       fetchWordleConfig();
       fetchCustomPages();
 
@@ -60,6 +71,22 @@ export default function CommitteePage() {
       setLocalUsers(users);
     }
   }, []);
+
+  const fetchActivePint = async () => {
+    try {
+      const res = await fetch('/api/active-pint');
+      const data = await res.json();
+      if (data.activePint) {
+        setCurrentActivePint(data.activePint);
+        setActivePubName(data.activePint.pubName);
+        setActiveBeerName(data.activePint.beerName);
+        setActiveBreweryName(data.activePint.breweryName);
+        setActiveDateString(data.activePint.dateString);
+      }
+    } catch (e) {
+      console.warn("Could not fetch active pint", e);
+    }
+  };
 
   const toggleCommitteeRole = (username: string, currentRole: string) => {
     const db = JSON.parse(localStorage.getItem('bras_users') || '{}');
@@ -91,6 +118,74 @@ export default function CommitteePage() {
       }
     } catch (e) {
       console.warn(e);
+    }
+  };
+
+  const handleSetActivePint = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!activePubName.trim()) {
+      setErrorMsg("Pub name is required to set an active pint.");
+      return;
+    }
+
+    setIsLoading(true);
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
+    try {
+      const res = await fetch('/api/active-pint', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pubName: activePubName.trim(),
+          beerName: activeBeerName.trim(),
+          breweryName: activeBreweryName.trim(),
+          dateString: activeDateString.trim(),
+          role: "committee"
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to set active pint");
+
+      setCurrentActivePint(data.activePint);
+      setSuccessMsg(`Crawl Pint active: ${data.activePint.beerName} at ${data.activePint.pubName}! Members can now log scores.`);
+    } catch (err: any) {
+      setErrorMsg(err.message || "Something went wrong.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleClearActivePint = async () => {
+    setIsLoading(true);
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
+    try {
+      const res = await fetch('/api/active-pint', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pubName: "",
+          role: "committee"
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to clear active pint");
+
+      setCurrentActivePint(null);
+      setActivePubName('');
+      setActiveBeerName('');
+      setActiveBreweryName('');
+      const today = new Date();
+      setActiveDateString(today.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }));
+      setSuccessMsg("Active scoring pint cleared!");
+    } catch (err: any) {
+      setErrorMsg(err.message || "Something went wrong.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -231,7 +326,7 @@ export default function CommitteePage() {
         <span className="page-header__eyebrow">BRAS Committee Panel</span>
         <h1 className="page-header__title">Society Operations Dashboard</h1>
         <p className="page-header__subtitle">
-          Welcome back, <strong>{memberName}</strong>. Manage crawls, update Wordle, publish custom newsletters, and view our unvisited checklist.
+          Welcome back, <strong>{memberName}</strong>. Manage crawls, set active pints, update Wordle, and manage registered users.
         </p>
       </div>
 
@@ -250,13 +345,90 @@ export default function CommitteePage() {
       {/* Grid of Ops Panels */}
       <div className="grid-2">
         
-        {/* Panel 1: Log visited pub */}
+        {/* Panel 1: Set Active Pint */}
         <div className="section-card">
-          <h2 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Beer size={20} /> Log Visited Pub</h2>
+          <h2 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Beer size={20} /> Crawl Control (Active Pint)
+          </h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '16px', marginTop: '-8px' }}>
+            Set the pint that society members are currently rating. Setting an active pint also records it as a crawl event.
+          </p>
+          
+          <form onSubmit={handleSetActivePint} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div>
+              <label className="form-label">Pub Name</label>
+              <input 
+                type="text" 
+                list="committee-active-pubs"
+                value={activePubName} 
+                onChange={e => setActivePubName(e.target.value)} 
+                placeholder="e.g. Fiddler's Elbow" 
+                required 
+              />
+              <datalist id="committee-active-pubs">
+                {checklistPubs.map(p => (
+                  <option key={p} value={p} />
+                ))}
+              </datalist>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '16px' }}>
+              <div style={{ flex: 1 }}>
+                <label className="form-label">Cask Pint / Drink Name</label>
+                <input type="text" value={activeBeerName} onChange={e => setActiveBeerName(e.target.value)} placeholder="e.g. Sussex Best" />
+              </div>
+              <div style={{ flex: 1 }}>
+                <label className="form-label">Brewery</label>
+                <input type="text" value={activeBreweryName} onChange={e => setActiveBreweryName(e.target.value)} placeholder="e.g. Harvey's" />
+              </div>
+            </div>
+
+            <div>
+              <label className="form-label">Date of Visit</label>
+              <input type="text" value={activeDateString} onChange={e => setActiveDateString(e.target.value)} placeholder="e.g. 18 Dec 2025" />
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+              <button type="submit" className="btn btn--primary" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }} disabled={isLoading}>
+                <Play size={16} /> {currentActivePint ? "Update Active Pint" : "Start Scoring Pint"}
+              </button>
+              {currentActivePint && (
+                <button type="button" onClick={handleClearActivePint} className="btn btn--outline" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }} disabled={isLoading}>
+                  <Square size={16} /> Stop Scoring
+                </button>
+              )}
+            </div>
+          </form>
+
+          {currentActivePint && (
+            <div style={{ marginTop: '20px', padding: '12px', background: 'var(--surface-muted)', border: '1px dashed var(--border)', borderRadius: '6px', fontSize: '0.85rem' }}>
+              <strong>Currently Live:</strong> {currentActivePint.beerName} at <em>{currentActivePint.pubName}</em> ({currentActivePint.dateString})
+            </div>
+          )}
+        </div>
+
+        {/* Panel 2: Log visited pub (historical/manual override) */}
+        <div className="section-card">
+          <h2 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Beer size={20} /> Log Visited Pub (Manual)</h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '16px', marginTop: '-8px' }}>
+            Manually log a crawl event without forcing members to score it live.
+          </p>
           <form onSubmit={handleAddEvent} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div>
               <label className="form-label">Pub Name</label>
-              <input type="text" value={pubName} onChange={e => setPubName(e.target.value)} placeholder="e.g. Fiddler's Elbow" required />
+              <input 
+                type="text" 
+                list="committee-manual-pubs"
+                value={pubName} 
+                onChange={e => setPubName(e.target.value)} 
+                placeholder="e.g. Fiddler's Elbow" 
+                required 
+              />
+              <datalist id="committee-manual-pubs">
+                {checklistPubs.map(p => (
+                  <option key={p} value={p} />
+                ))}
+              </datalist>
             </div>
             
             <div style={{ display: 'flex', gap: '16px' }}>
@@ -275,13 +447,13 @@ export default function CommitteePage() {
               <input type="text" value={eventDate} onChange={e => setEventDate(e.target.value)} placeholder="e.g. 18 Dec 2025" />
             </div>
 
-            <button type="submit" className="btn btn--primary" disabled={isLoading} style={{ marginTop: '8px' }}>
-              {isLoading ? "Logging..." : "Log Visited Pub"}
+            <button type="submit" className="btn btn--outline" disabled={isLoading} style={{ marginTop: '8px' }}>
+              {isLoading ? "Logging..." : "Log Manual Visit"}
             </button>
           </form>
         </div>
 
-        {/* Panel 2: Configure Wordle */}
+        {/* Panel 3: Configure Wordle */}
         <div className="section-card">
           <h2 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Gamepad2 size={20} /> Daily Wordle Target</h2>
           <form onSubmit={handleUpdateWordle} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -314,7 +486,7 @@ export default function CommitteePage() {
           </form>
         </div>
 
-        {/* Panel 3: HTML Page Publisher */}
+        {/* Panel 4: HTML Page Publisher */}
         <div className="section-card">
           <h2 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Newspaper size={20} /> Newsletter Publisher</h2>
           <form onSubmit={handlePublishHtml} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -363,7 +535,7 @@ export default function CommitteePage() {
           )}
         </div>
 
-        {/* Panel 4: Unvisited Pub Research List */}
+        {/* Panel 5: Unvisited Pub Research List */}
         <div className="section-card" style={{ display: 'flex', flexDirection: 'column', maxHeight: '580px', padding: 0 }}>
           <h2 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '24px 32px 16px', margin: 0, position: 'sticky', top: 0, background: 'var(--surface)', zIndex: 5, borderRadius: 'var(--card-radius) var(--card-radius) 0 0' }}>
             <Compass size={20} /> Unvisited Pubs ({unvisitedPubs.length})
@@ -389,7 +561,7 @@ export default function CommitteePage() {
           </div>
         </div>
 
-        {/* Panel 5: User Management */}
+        {/* Panel 6: User Management */}
         <div className="section-card" style={{ display: 'flex', flexDirection: 'column', maxHeight: '580px', padding: 0 }}>
           <h2 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '24px 32px 16px', margin: 0, position: 'sticky', top: 0, background: 'var(--surface)', zIndex: 5, borderRadius: 'var(--card-radius) var(--card-radius) 0 0' }}>
             <Users size={20} /> User Management

@@ -1,4 +1,6 @@
-import React from 'react';
+"use client";
+
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import pubsData from '@/data/pubs.json';
 import membersData from '@/data/members.json';
@@ -6,6 +8,12 @@ import timelineData from '@/data/timeline.json';
 import { Beer, Trophy, Gamepad2, Medal } from 'lucide-react';
 
 export default function HomePage() {
+  const [isCommittee, setIsCommittee] = useState(false);
+
+  useEffect(() => {
+    const role = localStorage.getItem('bras_user_role');
+    setIsCommittee(role === 'committee');
+  }, []);
   // Stats calculation
   const totalPubs = new Set(pubsData.map(p => p.pub.toLowerCase())).size;
   const totalMembers = membersData.length;
@@ -113,23 +121,27 @@ export default function HomePage() {
           <Link href="/leaderboard"><button className="btn btn--outline btn--sm">View List</button></Link>
         </div>
 
-        <div className="section-card section-card--hoverable" style={{ textAlign: 'center', padding: '24px' }}>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px', color: 'var(--primary)' }}><Gamepad2 size={32} strokeWidth={1.5} /></div>
-          <h3 style={{ fontSize: '1.1rem', fontFamily: 'var(--font-heading)', marginBottom: '6px' }}>Pub Wordle</h3>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '16px' }}>
-            Test your real ale vocabulary daily.
-          </p>
-          <Link href="/wordle"><button className="btn btn--outline btn--sm">Play Now</button></Link>
-        </div>
+        {isCommittee && (
+          <div className="section-card section-card--hoverable" style={{ textAlign: 'center', padding: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px', color: 'var(--primary)' }}><Gamepad2 size={32} strokeWidth={1.5} /></div>
+            <h3 style={{ fontSize: '1.1rem', fontFamily: 'var(--font-heading)', marginBottom: '6px' }}>Pub Wordle</h3>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '16px' }}>
+              Test your real ale vocabulary daily.
+            </p>
+            <Link href="/wordle"><button className="btn btn--outline btn--sm">Play Now</button></Link>
+          </div>
+        )}
 
-        <div className="section-card section-card--hoverable" style={{ textAlign: 'center', padding: '24px' }}>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px', color: 'var(--primary)' }}><Medal size={32} strokeWidth={1.5} /></div>
-          <h3 style={{ fontSize: '1.1rem', fontFamily: 'var(--font-heading)', marginBottom: '6px' }}>Annual Awards</h3>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '16px' }}>
-            Nominate for end-of-year superlatives.
-          </p>
-          <Link href="/awards"><button className="btn btn--outline btn--sm">Vote</button></Link>
-        </div>
+        {isCommittee && (
+          <div className="section-card section-card--hoverable" style={{ textAlign: 'center', padding: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px', color: 'var(--primary)' }}><Medal size={32} strokeWidth={1.5} /></div>
+            <h3 style={{ fontSize: '1.1rem', fontFamily: 'var(--font-heading)', marginBottom: '6px' }}>Annual Awards</h3>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '16px' }}>
+              Nominate for end-of-year superlatives.
+            </p>
+            <Link href="/awards"><button className="btn btn--outline btn--sm">Vote</button></Link>
+          </div>
+        )}
       </div>
 
       {/* Stats */}

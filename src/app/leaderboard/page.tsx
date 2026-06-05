@@ -59,8 +59,8 @@ export default function LeaderboardPage() {
       valA = getNum(a.ratingsCount);
       valB = getNum(b.ratingsCount);
     } else if (sortKey === 'score') {
-      valA = a.score;
-      valB = b.score;
+      valA = a.score !== null && a.score !== undefined ? a.score : 0;
+      valB = b.score !== null && b.score !== undefined ? b.score : 0;
     } else if (sortKey === 'date') {
       valA = a.date;
       valB = b.date;
@@ -210,7 +210,7 @@ export default function LeaderboardPage() {
                         fontSize: '1.1rem',
                         color: 'var(--primary)'
                       }}>
-                        {pub.score.toFixed(2)}★
+                        {pub.score !== null && pub.score !== undefined ? `${pub.score.toFixed(2)}★` : 'N/A'}
                       </td>
                       <td style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
                         {pub.ratingsCount}

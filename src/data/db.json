@@ -3,5 +3,6 @@
   "wordleHint": "Describes an ale with a sweet, biscuit-like flavor derived from barley.",
   "wordleScores": [],
   "customPages": [],
-  "events": []
+  "events": [],
+  "activePint": null
 }
