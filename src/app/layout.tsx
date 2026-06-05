@@ -3,6 +3,7 @@ import { Lora, Inter } from 'next/font/google';
 import Link from 'next/link';
 import './globals.css';
 import Navbar from '../components/Navbar';
+import settingsData from '@/data/settings.json';
 
 const lora = Lora({ subsets: ['latin'], variable: '--font-serif', weight: ['400', '500', '600', '700'] });
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', weight: ['400', '500', '600', '700'] });
@@ -43,11 +44,11 @@ export default function RootLayout({
               </p>
             </div>
             <div className="site-footer__links">
-              <Link href="/about" className="site-footer__link">About</Link>
-              <Link href="/contact" className="site-footer__link">Contact</Link>
-              <Link href="/leaderboard" className="site-footer__link">Leaderboard</Link>
-              <Link href="/checklist" className="site-footer__link">Pubs</Link>
-              <Link href="/awards" className="site-footer__link">Awards</Link>
+              {settingsData.features.about && <Link href="/about" className="site-footer__link">About</Link>}
+              {settingsData.features.contact && <Link href="/contact" className="site-footer__link">Contact</Link>}
+              {settingsData.features.leaderboard && <Link href="/leaderboard" className="site-footer__link">Leaderboard</Link>}
+              {settingsData.features.checklist && <Link href="/checklist" className="site-footer__link">Pubs</Link>}
+              {settingsData.features.awards && <Link href="/awards" className="site-footer__link">Awards</Link>}
               <Link href="/login" className="site-footer__link">Login</Link>
             </div>
           </div>

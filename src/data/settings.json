@@ -1,0 +1,11 @@
+{
+  "features": {
+    "leaderboard": true,
+    "checklist": true,
+    "matrix": true,
+    "wordle": true,
+    "awards": true,
+    "about": true,
+    "contact": true
+  }
+}

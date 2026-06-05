@@ -85,13 +85,13 @@ export default function HomePage() {
         }}>
           <div>
             <span style={{ fontWeight: 'bold', textTransform: 'uppercase', fontSize: '0.8rem', letterSpacing: '0.05em' }}>
-              Latest crawl event
+              Last Social Score
             </span>
             <h3 style={{ margin: '4px 0 0 0', fontFamily: 'var(--font-heading)', fontSize: '1.4rem', color: 'var(--warning-text)' }}>
               {latestTimelineEvent.pub}
             </h3>
             <p style={{ fontSize: '0.95rem', margin: '4px 0 0 0' }}>
-              Visited on {latestTimelineEvent.date} • Average Pint Score: <strong>{latestTimelineEvent.avgScore.toFixed(2)}★</strong>
+              Visited on {latestTimelineEvent.date} • Social Score: <strong>{latestTimelineEvent.avgScore.toFixed(2)}★</strong>
             </p>
           </div>
           <Link href="/rate">

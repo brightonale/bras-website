@@ -4,15 +4,19 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
-const NAV_LINKS = [
-  { href: '/leaderboard', label: 'Leaderboard' },
-  { href: '/checklist', label: 'Pubs' },
-  { href: '/matrix', label: 'Members' },
-  { href: '/wordle', label: 'Wordle' },
-  { href: '/awards', label: 'Awards' },
-  { href: '/about', label: 'About' },
-  { href: '/contact', label: 'Contact' },
+import settingsData from '@/data/settings.json';
+
+const ALL_LINKS = [
+  { href: '/leaderboard', label: 'Leaderboard', key: 'leaderboard' },
+  { href: '/checklist', label: 'Pubs', key: 'checklist' },
+  { href: '/matrix', label: 'Members', key: 'matrix' },
+  { href: '/wordle', label: 'Wordle', key: 'wordle' },
+  { href: '/awards', label: 'Awards', key: 'awards' },
+  { href: '/about', label: 'About', key: 'about' },
+  { href: '/contact', label: 'Contact', key: 'contact' },
 ];
+
+const NAV_LINKS = ALL_LINKS.filter(link => (settingsData.features as any)[link.key] !== false);
 
 export default function Navbar() {
   const pathname = usePathname();
