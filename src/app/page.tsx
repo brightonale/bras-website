@@ -21,7 +21,7 @@ export default function HomePage() {
       <div className="hero-section" style={{ backgroundColor: 'var(--surface-warm)', color: 'var(--text-color)', boxShadow: 'none', border: '1px solid var(--border)' }}>
         <div className="hero-content">
           <img 
-            src="/assets/photos/photo-1.jpg" 
+            src="/assets/bras-logo.png" 
             alt="BRAS Logo" 
             style={{ width: '220px', height: '220px', objectFit: 'contain', marginBottom: '24px', borderRadius: '50%' }}
           />

@@ -59,7 +59,7 @@ export default function Navbar() {
         {/* Brand */}
         <Link href="/" className="site-nav__brand">
           <img
-            src="/assets/photos/photo-1.jpg"
+            src="/assets/bras-logo.png"
             alt="BRAS Logo"
             className="site-nav__logo"
             style={{ borderRadius: '50%' }}
