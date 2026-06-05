@@ -36,16 +36,21 @@ export default function Navbar({ settings }: { settings: any }) {
     const name = localStorage.getItem('bras_user_name');
     const role = localStorage.getItem('bras_user_role');
     if (name) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setUserName(name);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsCommittee(role === 'committee');
     } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setUserName(null);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsCommittee(false);
     }
   }, [pathname]);
 
   // Close mobile menu on navigation
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMenuOpen(false);
   }, [pathname]);
 
@@ -65,6 +70,7 @@ export default function Navbar({ settings }: { settings: any }) {
       <div className="site-nav__inner">
         {/* Brand */}
         <Link href="/" className="site-nav__brand">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/assets/bras-logo.png"
             alt="BRAS Logo"

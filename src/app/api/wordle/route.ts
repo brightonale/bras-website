@@ -5,9 +5,9 @@ export async function GET() {
   try {
     const settings = await prisma.settings.findUnique({ where: { id: 'global' } });
     if (!settings) {
-      return NextResponse.json({ wordB64: Buffer.from("STOUT").toString('base64'), hint: "A dark beer" });
+      return NextResponse.json({ word: Buffer.from("STOUT").toString('base64'), hint: "A dark beer" });
     }
-    return NextResponse.json({ wordB64: settings.wordleWord, hint: settings.wordleHint });
+    return NextResponse.json({ word: settings.wordleWord, hint: settings.wordleHint });
   } catch (err) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }

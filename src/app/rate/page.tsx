@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Beer, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Beer, AlertTriangle } from 'lucide-react';
 
 export default function RatePage() {
   const router = useRouter();
@@ -15,7 +15,7 @@ export default function RatePage() {
   const [score, setScore] = useState(6.0);
   const [dateString, setDateString] = useState('');
 
-  const [activePint, setActivePint] = useState<any | null>(null);
+  const [activePint, setActivePint] = useState<Record<string, unknown> | null>(null);
   const [activeLoaded, setActiveLoaded] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -29,7 +29,9 @@ export default function RatePage() {
       return;
     }
     
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoggedIn(true);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMemberName(user);
 
     // Fetch active pint from committee
@@ -50,7 +52,7 @@ export default function RatePage() {
         console.warn(err);
         setActiveLoaded(true);
       });
-  }, []);
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,8 +84,8 @@ export default function RatePage() {
       }
 
       setSuccessMsg(`Cheers! Your rating of ${score.toFixed(2)}★ for ${pubName} has been logged.`);
-    } catch (err: any) {
-      setErrorMsg(err.message || "Something went wrong.");
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
       setIsLoading(false);
     }

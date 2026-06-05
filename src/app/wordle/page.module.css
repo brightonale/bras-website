@@ -198,18 +198,42 @@
   background-color: #16a34a;
   border-color: #16a34a;
   color: white;
+  animation: flipRevealCorrect 0.5s ease forwards;
+}
+
+@keyframes flipRevealCorrect {
+  0% { transform: scaleY(1); background-color: var(--surface); border-color: var(--border-strong); color: var(--text-color); }
+  49% { transform: scaleY(0); background-color: var(--surface); border-color: var(--border-strong); color: var(--text-color); }
+  50% { transform: scaleY(0); background-color: #16a34a; border-color: #16a34a; color: white; }
+  100% { transform: scaleY(1); background-color: #16a34a; border-color: #16a34a; color: white; }
 }
 
 .tilePresent {
   background-color: var(--accent);
   border-color: var(--accent);
   color: white;
+  animation: flipRevealPresent 0.5s ease forwards;
+}
+
+@keyframes flipRevealPresent {
+  0% { transform: scaleY(1); background-color: var(--surface); border-color: var(--border-strong); color: var(--text-color); }
+  49% { transform: scaleY(0); background-color: var(--surface); border-color: var(--border-strong); color: var(--text-color); }
+  50% { transform: scaleY(0); background-color: var(--accent); border-color: var(--accent); color: white; }
+  100% { transform: scaleY(1); background-color: var(--accent); border-color: var(--accent); color: white; }
 }
 
 .tileAbsent {
   background-color: #9CA3AF;
   border-color: #9CA3AF;
   color: white;
+  animation: flipRevealAbsent 0.5s ease forwards;
+}
+
+@keyframes flipRevealAbsent {
+  0% { transform: scaleY(1); background-color: var(--surface); border-color: var(--border-strong); color: var(--text-color); }
+  49% { transform: scaleY(0); background-color: var(--surface); border-color: var(--border-strong); color: var(--text-color); }
+  50% { transform: scaleY(0); background-color: #9CA3AF; border-color: #9CA3AF; color: white; }
+  100% { transform: scaleY(1); background-color: #9CA3AF; border-color: #9CA3AF; color: white; }
 }
 
 .shake {

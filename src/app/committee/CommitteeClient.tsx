@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 import { Beer, Gamepad2, Newspaper, Compass, Ban, CheckCircle, AlertTriangle, Users, Play, Square } from 'lucide-react';
 
-export default function CommitteeClient({ initialPubs }: { initialPubs: any[] }) {
+export default function CommitteeClient({ initialPubs }: { initialPubs: { name: string; status: string; comment?: string }[] }) {
   const router = useRouter();
   const [isCommittee, setIsCommittee] = useState(false);
   const [memberName, setMemberName] = useState('');
@@ -16,7 +16,7 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: any[] })
   const [activeBeerName, setActiveBeerName] = useState('');
   const [activeBreweryName, setActiveBreweryName] = useState('');
   const [activeDateString, setActiveDateString] = useState('');
-  const [currentActivePint, setCurrentActivePint] = useState<any | null>(null);
+  const [currentActivePint, setCurrentActivePint] = useState<{ pubName: string; beerName: string; breweryName: string; dateString: string } | null>(null);
 
   // Feature Flags Form
   const [featureFlags, setFeatureFlags] = useState<Record<string, boolean>>({});
@@ -35,10 +35,10 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: any[] })
   const [pageTitle, setPageTitle] = useState('');
   const [pageSlug, setPageSlug] = useState('');
   const [htmlContent, setHtmlContent] = useState('');
-  const [customPages, setCustomPages] = useState<any[]>([]);
+  const [customPages, setCustomPages] = useState<{ slug: string; title: string }[]>([]);
 
   // User Management
-  const [localUsers, setLocalUsers] = useState<Record<string, any>>({});
+  const [localUsers, setLocalUsers] = useState<Record<string, { votingName?: string; role: string }>>({});
 
   const [isLoading, setIsLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -53,9 +53,12 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: any[] })
     const role = localStorage.getItem('bras_user_role');
 
     if (!name || role !== 'committee') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsCommittee(false);
     } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsCommittee(true);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setMemberName(name);
 
       // Pre-fill today's date for forms
@@ -74,7 +77,7 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: any[] })
     }
   }, []);
 
-  const fetchUsers = async () => {
+  async function fetchUsers() {
     try {
       const res = await fetch('/api/committee/users');
       const data = await res.json();
@@ -86,7 +89,7 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: any[] })
     }
   };
 
-  const fetchActivePint = async () => {
+  async function fetchActivePint() {
     try {
       const res = await fetch('/api/active-pint');
       const data = await res.json();
@@ -102,7 +105,7 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: any[] })
     }
   };
 
-  const toggleCommitteeRole = async (username: string, currentRole: string) => {
+  async function toggleCommitteeRole(username: string, currentRole: string) {
     const newRole = currentRole === 'committee' ? 'member' : 'committee';
     setIsLoading(true);
     setErrorMsg(null);
@@ -126,7 +129,7 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: any[] })
     }
   };
 
-  const fetchWordleConfig = async () => {
+  async function fetchWordleConfig() {
     try {
       const res = await fetch('/api/wordle');
       const data = await res.json();
@@ -137,7 +140,7 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: any[] })
     }
   };
 
-  const fetchCustomPages = async () => {
+  async function fetchCustomPages() {
     try {
       const res = await fetch('/api/committee/custom-html');
       const data = await res.json();
@@ -327,7 +330,7 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: any[] })
     }
   };
 
-  const fetchSettings = async () => {
+  async function fetchSettings() {
     try {
       const res = await fetch('/api/committee/settings');
       const data = await res.json();

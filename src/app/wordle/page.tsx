@@ -62,6 +62,33 @@ export default function WordlePage() {
     return points[attempts] || 0;
   };
 
+  const endGame = useCallback((won: boolean, attempts: number) => {
+    // Delay end screen to allow tiles to flip
+    setTimeout(async () => {
+      const finalScore = won ? calculateScore(attempts) : 0;
+      setScore(finalScore);
+      setScreen('end');
+      
+      setIsSaving(true);
+      try {
+        // 1. Google Sheets sync (legacy support)
+        fetch(`${SCRIPT_URL}?action=saveScore&teamName=${encodeURIComponent(teamName)}&score=${finalScore}&t=${Date.now()}`, { mode: 'no-cors' });
+        
+        // 2. Local Database sync (instant scores rendering)
+        await fetch('/api/wordle', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ teamName, score: finalScore })
+        });
+
+        setIsSaving(false);
+      } catch (err) {
+        console.error(err);
+        setIsSaving(false); // Fails gracefully
+      }
+    }, 1500);
+  }, [teamName]);
+
   const submitGuess = useCallback((guess: string) => {
     // Update keyboard colors
     const newKeyColors = { ...keyColors };
@@ -75,7 +102,10 @@ export default function WordlePage() {
         newKeyColors[letter] = styles.keyAbsent;
       }
     }
-    setKeyColors(newKeyColors);
+    // Delay keyboard update to match tile flip animation (150ms * 5 = 750ms)
+    setTimeout(() => {
+      setKeyColors(newKeyColors);
+    }, WORD_LENGTH * 150);
 
     // Check Win/Loss
     if (guess === targetWord) {
@@ -87,10 +117,10 @@ export default function WordlePage() {
     } else {
       setCurrentGuessIndex(prev => prev + 1);
     }
-  }, [keyColors, targetWord, currentGuessIndex]);
+  }, [keyColors, targetWord, currentGuessIndex, endGame]);
 
   const handleKeyPress = useCallback((key: string) => {
-    if (gameStatus !== 'playing') return;
+    if (screen !== 'game' || gameStatus !== 'playing') return;
 
     if (key === 'BACKSPACE' || key === 'DELETE') {
       setGuesses(prev => {
@@ -133,31 +163,9 @@ export default function WordlePage() {
         return prev;
       });
     }
-  }, [guesses, currentGuessIndex, gameStatus, submitGuess]);
+  }, [guesses, currentGuessIndex, gameStatus, screen, submitGuess]);
 
-  const endGame = async (won: boolean, attempts: number) => {
-    const finalScore = won ? calculateScore(attempts) : 0;
-    setScore(finalScore);
-    setScreen('end');
-    
-    setIsSaving(true);
-    try {
-      // 1. Google Sheets sync (legacy support)
-      fetch(`${SCRIPT_URL}?action=saveScore&teamName=${encodeURIComponent(teamName)}&score=${finalScore}&t=${Date.now()}`, { mode: 'no-cors' });
-      
-      // 2. Local Database sync (instant scores rendering)
-      await fetch('/api/wordle', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ teamName, score: finalScore })
-      });
 
-      setIsSaving(false);
-    } catch (err) {
-      console.error(err);
-      setIsSaving(false); // Fails gracefully
-    }
-  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -171,13 +179,14 @@ export default function WordlePage() {
   const renderGrid = () => {
     return guesses.map((guess, rowIndex) => {
       const isCurrentRow = rowIndex === currentGuessIndex;
-      const isSubmitted = rowIndex < currentGuessIndex || gameStatus !== 'playing';
+      const isSubmitted = rowIndex < currentGuessIndex || (gameStatus !== 'playing' && rowIndex <= currentGuessIndex);
+      const isJustSubmittedRow = gameStatus === 'playing' ? rowIndex === currentGuessIndex - 1 : rowIndex === currentGuessIndex;
       
       const tiles = Array(WORD_LENGTH).fill('').map((_, colIndex) => {
         const letter = guess[colIndex] || '';
         let tileClass = styles.tile;
         
-        if (letter && isCurrentRow) {
+        if (letter && isCurrentRow && gameStatus === 'playing') {
           tileClass = `${styles.tile} ${styles.tileActive}`;
         }
 
@@ -188,7 +197,11 @@ export default function WordlePage() {
         }
 
         return (
-          <div key={colIndex} className={tileClass}>
+          <div 
+            key={colIndex} 
+            className={tileClass}
+            style={isJustSubmittedRow && isSubmitted ? { animationDelay: `${colIndex * 150}ms` } : {}}
+          >
             {letter}
           </div>
         );
@@ -277,6 +290,19 @@ export default function WordlePage() {
           <div className="stat-box" style={{ margin: '24px 0' }}>
             <div className="stat-label">Points Scored</div>
             <div className="stat-value">{score}</div>
+            {score > 0 && (
+              <p style={{ color: 'var(--text-color)', fontSize: '0.9rem', marginTop: '10px', fontWeight: 'bold' }}>
+                Guessed in {currentGuessIndex} attempt{currentGuessIndex === 1 ? '' : 's'}
+              </p>
+            )}
+          </div>
+
+          <div style={{ background: 'var(--surface-muted)', padding: '16px', borderRadius: '8px', marginBottom: '20px', textAlign: 'center', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+            <p style={{ margin: '0 0 8px 0', fontWeight: 'bold', color: 'var(--text-color)' }}>Scoring Rules</p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
+              <span>1st: 100pts</span><span>2nd: 80pts</span><span>3rd: 60pts</span>
+              <span>4th: 40pts</span><span>5th: 20pts</span><span>6th: 10pts</span>
+            </div>
           </div>
           
           <p style={{ color: isSaving ? 'var(--text-muted)' : 'var(--success-text)', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>

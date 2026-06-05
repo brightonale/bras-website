@@ -11,16 +11,7 @@ import {
 
 import { Lock, Sparkles, Key, CheckCircle, AlertTriangle, ShieldCheck } from 'lucide-react';
 
-type LocalUser = {
-  password?: string;
-  role: string;
-  mustChange?: boolean;
-  votingName?: string;
-};
-
-const DEFAULT_COMMITTEE = ["Harry", "Max", "James G", "Albie", "Takara", "Harrison"];
-
-export default function LoginClient({ initialMembers }: { initialMembers: any[] }) {
+export default function LoginClient({ initialMembers }: { initialMembers: { name: string }[] }) {
   const router = useRouter();
   const [tab, setTab] = useState<'login' | 'create'>('login');
   const [step, setStep] = useState<'auth' | 'change_password' | 'claim_name'>('auth');
@@ -43,7 +34,9 @@ export default function LoginClient({ initialMembers }: { initialMembers: any[] 
     if (typeof window !== 'undefined') {
       const searchParams = new URLSearchParams(window.location.search);
       if (searchParams.get('committee') === 'true') {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setIsCommitteeMode(true);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setTab('login');
       }
     }

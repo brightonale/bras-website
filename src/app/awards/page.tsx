@@ -62,6 +62,7 @@ export default function AwardsPage() {
       id = 'device-' + Math.random().toString(36).substring(2, 15);
       localStorage.setItem('brasDeviceId', id);
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDeviceId(id);
   }, []);
 
