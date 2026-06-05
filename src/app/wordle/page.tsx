@@ -18,7 +18,7 @@ export default function WordlePage() {
   
   // Dynamic Target Word State
   const [targetWord, setTargetWord] = useState('MALTY');
-  const [hintText, setHintText] = useState('Describes an ale with a sweet, biscuit-like flavor derived from barley.');
+  const [hintText, setHintText] = useState('Describes an ale with a sweet, biscuit-like flavour derived from barley.');
 
   // Game State
   const [guesses, setGuesses] = useState<string[]>(Array(MAX_GUESSES).fill(''));
