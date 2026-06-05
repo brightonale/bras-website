@@ -8,6 +8,7 @@ type LocalUser = {
   password?: string;
   role: string;
   mustChange?: boolean;
+  votingName?: string;
 };
 
 const DEFAULT_COMMITTEE = ["Harry", "Max", "James G", "Albie", "Takara", "Harrison"];
@@ -15,11 +16,12 @@ const DEFAULT_COMMITTEE = ["Harry", "Max", "James G", "Albie", "Takara", "Harris
 export default function LoginPage() {
   const router = useRouter();
   const [tab, setTab] = useState<'login' | 'create'>('login');
-  const [step, setStep] = useState<'auth' | 'change_password'>('auth');
+  const [step, setStep] = useState<'auth' | 'change_password' | 'claim_name'>('auth');
   
-  const [selectedName, setSelectedName] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [selectedVotingName, setSelectedVotingName] = useState('');
   
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -31,7 +33,7 @@ export default function LoginPage() {
   useEffect(() => {
     // If already logged in, redirect
     const user = localStorage.getItem('bras_user_name');
-    if (user && step !== 'change_password') {
+    if (user && step !== 'change_password' && step !== 'claim_name') {
       router.push('/');
     }
     
@@ -40,7 +42,13 @@ export default function LoginPage() {
     if (!usersDb) {
       const initialDb: Record<string, LocalUser> = {};
       DEFAULT_COMMITTEE.forEach(name => {
-        initialDb[name] = { password: 'BRAS2026!', role: 'committee', mustChange: true };
+        const usernameKey = name.toLowerCase().replace(/\s+/g, ''); // e.g. "harry", "jamesg"
+        initialDb[usernameKey] = { 
+          password: 'BRAS2026!', 
+          role: 'committee', 
+          mustChange: true,
+          votingName: name 
+        };
       });
       localStorage.setItem('bras_users', JSON.stringify(initialDb));
     }
@@ -48,19 +56,19 @@ export default function LoginPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedName || !password) {
-      setErrorMsg("Please enter name and password.");
+    if (!username || !password) {
+      setErrorMsg("Please enter username and password.");
       return;
     }
     setIsLoading(true);
     
     const db = JSON.parse(localStorage.getItem('bras_users') || '{}');
-    const user = db[selectedName];
+    const userKey = username.toLowerCase().trim();
+    const user = db[userKey];
     
     setTimeout(() => {
       setIsLoading(false);
       
-      // Fallback to legacy global passwords if they haven't made an account yet
       const isLegacyCommittee = password === "bras2025";
       const isLegacyMember = password === "realale2026";
       
@@ -75,12 +83,18 @@ export default function LoginPage() {
           setErrorMsg(null);
           return;
         }
+
+        if (!user.votingName) {
+          setStep('claim_name');
+          setErrorMsg(null);
+          return;
+        }
         
-        loginSuccess(selectedName, user.role);
+        loginSuccess(user.votingName, user.role);
       } else if (isLegacyCommittee) {
-        loginSuccess(selectedName, 'committee');
+        loginSuccess(username, 'committee');
       } else if (isLegacyMember) {
-        loginSuccess(selectedName, 'member');
+        loginSuccess(username, 'member');
       } else {
         setErrorMsg("Account not found or incorrect password. Try 'Create Account'.");
       }
@@ -89,8 +103,8 @@ export default function LoginPage() {
 
   const handleCreateAccount = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedName || !password) {
-      setErrorMsg("Please select your name and choose a password.");
+    if (!username || !password) {
+      setErrorMsg("Please choose a username and password.");
       return;
     }
     
@@ -99,16 +113,18 @@ export default function LoginPage() {
     setTimeout(() => {
       setIsLoading(false);
       const db = JSON.parse(localStorage.getItem('bras_users') || '{}');
+      const userKey = username.toLowerCase().trim();
       
-      if (db[selectedName]) {
-        setErrorMsg("This name has already been claimed on this device. Please sign in instead.");
+      if (db[userKey]) {
+        setErrorMsg("This username is already taken. Please choose another.");
         return;
       }
       
-      db[selectedName] = { password, role: 'member', mustChange: false };
+      db[userKey] = { password, role: 'member', mustChange: false };
       localStorage.setItem('bras_users', JSON.stringify(db));
       
-      loginSuccess(selectedName, 'member');
+      setStep('claim_name');
+      setErrorMsg(null);
     }, 600);
   };
 
@@ -122,14 +138,44 @@ export default function LoginPage() {
     setIsLoading(true);
     setTimeout(() => {
       const db = JSON.parse(localStorage.getItem('bras_users') || '{}');
-      if (db[selectedName]) {
-        db[selectedName].password = newPassword;
-        db[selectedName].mustChange = false;
+      const userKey = username.toLowerCase().trim();
+      
+      if (db[userKey]) {
+        db[userKey].password = newPassword;
+        db[userKey].mustChange = false;
         localStorage.setItem('bras_users', JSON.stringify(db));
       }
       
       setIsLoading(false);
-      loginSuccess(selectedName, db[selectedName]?.role || 'committee');
+      
+      if (!db[userKey].votingName) {
+        setStep('claim_name');
+        setErrorMsg(null);
+      } else {
+        loginSuccess(db[userKey].votingName, db[userKey].role);
+      }
+    }, 600);
+  };
+
+  const handleClaimName = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedVotingName) {
+      setErrorMsg("Please select your voting name.");
+      return;
+    }
+
+    setIsLoading(true);
+    setTimeout(() => {
+      const db = JSON.parse(localStorage.getItem('bras_users') || '{}');
+      const userKey = username.toLowerCase().trim();
+      
+      if (db[userKey]) {
+        db[userKey].votingName = selectedVotingName;
+        localStorage.setItem('bras_users', JSON.stringify(db));
+      }
+      
+      setIsLoading(false);
+      loginSuccess(selectedVotingName, db[userKey]?.role || 'member');
     }, 600);
   };
 
@@ -169,6 +215,35 @@ export default function LoginPage() {
     );
   }
 
+  if (step === 'claim_name') {
+    return (
+      <div className="page-container animate-fade-in" style={{ alignItems: 'center', paddingTop: '40px' }}>
+        <div className="section-card" style={{ width: '100%', maxWidth: '440px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+            <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: '8px' }}>✨</span>
+            <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.8rem', marginBottom: '8px' }}>Claim Your Name</h1>
+            <p style={{ color: 'var(--text-muted)' }}>Link your account to your past voting history.</p>
+          </div>
+          <form onSubmit={handleClaimName} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+            <div>
+              <label className="form-label">Select Voting Name</label>
+              <select value={selectedVotingName} onChange={e => setSelectedVotingName(e.target.value)}>
+                <option value="">-- Choose Name --</option>
+                {sortedMembers.map(m => (
+                  <option key={m.name} value={m.name}>{m.name}</option>
+                ))}
+              </select>
+            </div>
+            {errorMsg && <div className="notice notice--error">⚠️ {errorMsg}</div>}
+            <button type="submit" className="btn btn--primary btn--full" disabled={isLoading}>
+              {isLoading ? "Saving..." : "Complete Setup"}
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="page-container animate-fade-in" style={{ alignItems: 'center', paddingTop: '20px' }}>
       <div className="section-card" style={{ width: '100%', maxWidth: '440px' }}>
@@ -194,31 +269,31 @@ export default function LoginPage() {
 
         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
           <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: '8px' }}>
-            {tab === 'login' ? '🍺' : '✨'}
+            {tab === 'login' ? '🍺' : '👋'}
           </span>
           <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.8rem', marginBottom: '8px' }}>
-            {tab === 'login' ? 'Welcome Back' : 'Claim Your Name'}
+            {tab === 'login' ? 'Welcome Back' : 'Join the Society'}
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.5 }}>
             {tab === 'login' 
               ? 'Sign in to view member-only leaderboards.' 
-              : 'Claim your past voting name and set a personal password.'}
+              : 'Create a username and password to get started.'}
           </p>
         </div>
 
         <form onSubmit={tab === 'login' ? handleLogin : handleCreateAccount} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
           <div>
-            <label className="form-label">Select Voting Name</label>
-            <select value={selectedName} onChange={e => setSelectedName(e.target.value)}>
-              <option value="">-- Choose Name --</option>
-              {sortedMembers.map(m => (
-                <option key={m.name} value={m.name}>{m.name}</option>
-              ))}
-            </select>
+            <label className="form-label">Username</label>
+            <input
+              type="text"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+              placeholder="e.g. johnsmith"
+            />
           </div>
 
           <div>
-            <label className="form-label">{tab === 'create' ? 'Choose Password' : 'Password'}</label>
+            <label className="form-label">Password</label>
             <input
               type="password"
               value={password}

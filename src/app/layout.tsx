@@ -54,7 +54,7 @@ export default function RootLayout({
           </div>
         </footer>
         <div style={{ position: 'fixed', bottom: '8px', left: '8px', fontSize: '0.75rem', color: 'var(--text-light)', zIndex: 9999, pointerEvents: 'none' }}>
-          v1.0.1
+          v1.0.2
         </div>
       </body>
     </html>

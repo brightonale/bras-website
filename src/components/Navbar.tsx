@@ -59,9 +59,10 @@ export default function Navbar() {
         {/* Brand */}
         <Link href="/" className="site-nav__brand">
           <img
-            src="/assets/bras-logo-roundel.png"
+            src="/assets/photos/photo-1.jpg"
             alt="BRAS Logo"
             className="site-nav__logo"
+            style={{ borderRadius: '50%' }}
             onError={(e) => { e.currentTarget.style.display = 'none'; }}
           />
           <div>

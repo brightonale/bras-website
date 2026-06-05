@@ -17,15 +17,13 @@ export default function HomePage() {
   return (
     <div className="page-container animate-fade-in" style={{ gap: '24px' }}>
       
-      {/* Cinematic Hero Section */}
-      <div className="hero-section">
-        <div className="hero-bg"></div>
-        <div className="hero-overlay"></div>
+      {/* Hero Section */}
+      <div className="hero-section" style={{ backgroundColor: 'var(--surface-warm)', color: 'var(--text-color)', boxShadow: 'none', border: '1px solid var(--border)' }}>
         <div className="hero-content">
           <img 
-            src="/assets/bras-logo-roundel-4k.png" 
-            alt="BRAS Logo Roundel" 
-            style={{ width: '220px', height: '220px', objectFit: 'contain', marginBottom: '24px' }}
+            src="/assets/photos/photo-1.jpg" 
+            alt="BRAS Logo" 
+            style={{ width: '220px', height: '220px', objectFit: 'contain', marginBottom: '24px', borderRadius: '50%' }}
           />
           <span style={{ 
             color: 'var(--accent)', 
@@ -43,12 +41,11 @@ export default function HomePage() {
             lineHeight: 1.1, 
             letterSpacing: '-0.02em', 
             marginBottom: '24px',
-            fontFamily: 'var(--font-heading)',
-            color: 'white'
+            fontFamily: 'var(--font-heading)'
           }}>
             Championing Real Ale &amp; Preserving Cask Heritage.
           </h1>
-          <p style={{ fontSize: '1.15rem', lineHeight: 1.6, marginBottom: '40px', maxWidth: '650px' }}>
+          <p style={{ fontSize: '1.15rem', color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: '40px', maxWidth: '650px' }}>
             We are the official University of Brighton student society dedicated to the Campaign for Real Ale (CAMRA) ethos. We reject mass-produced keg beers in favor of traditional, living, cask-conditioned ale, acting as amateur Pint Inspectors to rate independent pubs across Brighton & Hove. 
           </p>
           
@@ -59,7 +56,7 @@ export default function HomePage() {
               </button>
             </Link>
             <Link href="/leaderboard">
-              <button className="btn btn--outline btn--lg">
+              <button className="btn btn--outline btn--lg" style={{ color: 'var(--text-color)', borderColor: 'var(--border-strong)' }}>
                 View Rankings
               </button>
             </Link>
@@ -123,28 +120,6 @@ export default function HomePage() {
             Cast your nominations for the society's end-of-year superlatives.
           </p>
           <Link href="/awards"><button className="btn btn--outline btn--sm">Vote</button></Link>
-        </div>
-      </div>
-      
-      {/* Photo Gallery Section */}
-      <div className="section-card" style={{ padding: '0', overflow: 'hidden', marginBottom: '32px' }}>
-        <div style={{ padding: '32px 32px 0 32px', textAlign: 'center' }}>
-          <h3 className="section-card__title" style={{ borderBottom: 'none', paddingBottom: '0', margin: '0 0 8px 0' }}>Society Life</h3>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>Out and about in Brighton & Hove's finest establishments.</p>
-        </div>
-        <div className="gallery-grid">
-          <div className="gallery-item">
-            <img src="/assets/photos/photo-2.jpg" alt="Society social gathering" />
-          </div>
-          <div className="gallery-item">
-            <img src="/assets/photos/photo-3.jpg" alt="Enjoying cask ale" />
-          </div>
-          <div className="gallery-item">
-            <img src="/assets/photos/photo-4.jpg" alt="Brighton pub trip" />
-          </div>
-          <div className="gallery-item">
-            <img src="/assets/photos/photo-5.jpg" alt="Pint inspectors at work" />
-          </div>
         </div>
       </div>
 
