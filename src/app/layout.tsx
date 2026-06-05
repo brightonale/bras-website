@@ -12,6 +12,10 @@ export const metadata: Metadata = {
   title: 'Brighton Real Ale Society | BRAS',
   description: 'The official digital home for the Brighton Real Ale Society (BRAS). Rate pubs, play Wordle, vote in annual awards, and browse our leaderboards.',
   keywords: 'Brighton, Real Ale, Beer, Pub Crawls, University, Society, BRAS',
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-icon.png',
+  },
 };
 
 export default function RootLayout({
@@ -54,7 +58,7 @@ export default function RootLayout({
           </div>
         </footer>
         <div style={{ position: 'fixed', bottom: '8px', left: '8px', fontSize: '0.75rem', color: 'var(--text-light)', zIndex: 9999, pointerEvents: 'none' }}>
-          v1.0.4
+          v1.0.5
         </div>
       </body>
     </html>
