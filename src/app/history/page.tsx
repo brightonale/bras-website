@@ -87,12 +87,12 @@ export default async function HistoryPage() {
           <p style={{ fontSize: '1.05rem', lineHeight: '1.7', marginBottom: '24px', color: 'var(--text-color)' }}>
             The Brighton Real Ale Society (BRAS) is a university-rooted student and alumni collective dedicated to discovering, rating, and celebrating exceptional cask conditioned beers throughout Sussex. Founded in November 2023, our mission spans beyond casual socializing; we actively support independent local breweries, run certified charity pub quizzes, and participate in direct collaborative brewing operations.
           </p>
-          <div className="grid-3" style={{ gap: '16px' }}>
+          <div className="grid-auto" style={{ gap: '16px' }}>
             <div className="stat-box">
               <div style={{ display: 'flex', justifyContent: 'center', color: 'var(--primary)', marginBottom: '8px' }}>
                 <Clock size={24} />
               </div>
-              <div className="stat-value">20+ Mos</div>
+              <div className="stat-value">30+ Mos</div>
               <div className="stat-label">Active History</div>
             </div>
             <div className="stat-box">
@@ -118,7 +118,7 @@ export default async function HistoryPage() {
         <h2 style={{ fontSize: '1.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Users size={22} className="accent-text" /> Key Figures &amp; Committee
         </h2>
-        <div className="grid-3" style={{ gap: '24px' }}>
+        <div className="grid-auto" style={{ gap: '24px' }}>
           
           {/* Member 1: James Graham */}
           <div className="section-card" style={{ display: 'flex', flexDirection: 'column', padding: 0, overflow: 'hidden' }}>
@@ -274,7 +274,7 @@ export default async function HistoryPage() {
         <h2 style={{ fontSize: '1.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Building2 size={22} className="accent-text" /> Key Industry Partners
         </h2>
-        <div className="grid-2" style={{ gap: '24px' }}>
+        <div className="grid-auto" style={{ gap: '24px' }}>
           
           {/* Richard */}
           <div className="section-card" style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
@@ -292,6 +292,26 @@ export default async function HistoryPage() {
               <div style={{ display: 'flex', gap: '6px', marginTop: '12px' }}>
                 <span className="badge badge--primary">Brewing Partner</span>
                 <span className="badge badge--muted">Technical Advisor</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 360° Brewing Co */}
+          <div className="section-card" style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+            <div style={{ padding: '16px', borderRadius: '6px', backgroundColor: 'var(--surface-muted)', color: 'var(--primary)' }}>
+              <Building2 size={32} />
+            </div>
+            <div>
+              <h3 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '4px' }}>360° Brewing Co</h3>
+              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '10px' }}>
+                Brewing Collaborator, Sheffield Park
+              </div>
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: '1.5' }}>
+                Based in East Sussex, the 360° team hosted BRAS for a hands-on brewery experience, collaborating on recipe formulation and dry-hopping. This partnership produced the festival cask ale, "Full Circle Pale Ale".
+              </p>
+              <div style={{ display: 'flex', gap: '6px', marginTop: '12px' }}>
+                <span className="badge badge--primary">Brewing Partner</span>
+                <span className="badge badge--muted">Collaborator</span>
               </div>
             </div>
           </div>
