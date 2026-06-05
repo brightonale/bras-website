@@ -131,6 +131,8 @@ export default function LeaderboardClient({ initialPubs, isLoggedIn }: { initial
               <tr>
                 <th style={{ width: '80px', textAlign: 'center' }}>Rank</th>
                 <th>Pub</th>
+                <th>Pint Evaluated</th>
+                <th>Brewed By</th>
                 <th style={{ cursor: 'pointer' }} onClick={() => toggleSort('date')}>
                   Date {getSortIndicator('date')}
                 </th>
@@ -145,7 +147,7 @@ export default function LeaderboardClient({ initialPubs, isLoggedIn }: { initial
             <tbody>
               {sortedPubs.length === 0 ? (
                 <tr>
-                  <td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '40px' }}>
+                  <td colSpan={7} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '40px' }}>
                     No ratings logged for academic year {selectedYear}.
                   </td>
                 </tr>
@@ -168,6 +170,8 @@ export default function LeaderboardClient({ initialPubs, isLoggedIn }: { initial
                       <td style={{ fontWeight: 'bold', fontFamily: 'var(--font-heading)', fontSize: '1.05rem' }}>
                         {pub.pub}
                       </td>
+                      <td>{pub.pint}</td>
+                      <td style={{ fontStyle: 'italic', color: 'var(--text-muted)' }}>{pub.brewery}</td>
                       <td>{pub.date}</td>
                       <td style={{ 
                         textAlign: 'center', 

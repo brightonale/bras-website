@@ -15,17 +15,32 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const { user, score } = await req.json();
+    const { teamName, user, score } = await req.json();
+    const finalUser = teamName || user;
 
-    if (!user || typeof score !== 'number') {
+    if (!finalUser || typeof score !== 'number') {
       return NextResponse.json({ error: 'Missing data' }, { status: 400 });
     }
 
-    const usernameKey = user.toLowerCase().replace(/\s+/g, '');
-    const dbUser = await prisma.user.findUnique({ where: { name: usernameKey } });
+    const cleanName = finalUser.toLowerCase().replace(/\s+/g, '');
+    let dbUser = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { name: cleanName },
+          { votingName: finalUser }
+        ]
+      }
+    });
 
     if (!dbUser) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      dbUser = await prisma.user.create({
+        data: {
+          name: cleanName,
+          votingName: finalUser,
+          password: 'bras' + new Date().getFullYear(),
+          role: 'member'
+        }
+      });
     }
 
     // Get today's date string e.g. "2026-06-05"

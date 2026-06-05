@@ -11,27 +11,34 @@ export default async function LeaderboardPage() {
     include: { social: true }
   });
 
-  // Group and aggregate
+  // Group and aggregate by pubName + date
   const pubStats = new Map();
   for (const r of ratings) {
-    if (!pubStats.has(r.pubName)) {
-      pubStats.set(r.pubName, { 
+    const date = r.social?.date || r.createdAt.toISOString().split('T')[0];
+    const key = `${r.pubName}_${date}`;
+
+    if (!pubStats.has(key)) {
+      pubStats.set(key, { 
         pub: r.pubName, 
+        pint: r.social?.beerName || "Cask Ale",
+        brewery: r.social?.breweryName || "Local Brewery",
         scoreSum: 0, 
         count: 0, 
-        date: r.social?.date || r.createdAt.toISOString().split('T')[0], 
+        date: date, 
         academicYear: r.social?.academicYear || '25/26' 
       });
     }
-    const stat = pubStats.get(r.pubName);
+    const stat = pubStats.get(key);
     stat.scoreSum += r.score;
     stat.count++;
   }
 
   const initialPubs = Array.from(pubStats.values()).map(stat => ({
     pub: stat.pub,
+    pint: stat.pint,
+    brewery: stat.brewery,
     score: stat.scoreSum / stat.count,
-    ratingsCount: stat.count,
+    ratingsCount: stat.count === 1 ? 'Consensus' : stat.count.toString(),
     date: stat.date,
     academicYear: stat.academicYear,
   }));

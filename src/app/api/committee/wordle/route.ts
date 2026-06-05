@@ -1,13 +1,15 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
+import { getSession } from '@/app/actions';
 
 export async function POST(req: Request) {
   try {
-    const { password, word, hint } = await req.json();
-
-    if (password !== process.env.NEXT_PUBLIC_COMMITTEE_PASSWORD) {
+    const session = await getSession();
+    if (session.role !== 'committee') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const { word, hint } = await req.json();
 
     if (!word || word.length !== 5) {
       return NextResponse.json({ error: 'Word must be 5 letters' }, { status: 400 });
@@ -28,6 +30,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true });
   } catch (err) {
+    console.error("Wordle API error", err);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

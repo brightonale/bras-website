@@ -22,6 +22,8 @@ model Social {
   id           String   @id @default(uuid())
   date         String
   pubName      String
+  beerName     String?
+  breweryName  String?
   academicYear String
   active       Boolean  @default(false)
   ratings      Rating[]

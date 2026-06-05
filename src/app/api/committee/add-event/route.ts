@@ -1,34 +1,39 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
+import { getSession } from '@/app/actions';
 
 export async function POST(req: Request) {
   try {
-    const { pub, date, password } = await req.json();
-
-    if (password !== process.env.NEXT_PUBLIC_COMMITTEE_PASSWORD) {
+    const session = await getSession();
+    if (session.role !== 'committee') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    if (!pub || !date) {
-      return NextResponse.json({ error: 'Missing data' }, { status: 400 });
+    const { pubName, pintName, breweryName, dateString } = await req.json();
+
+    if (!pubName) {
+      return NextResponse.json({ error: 'Missing pub name' }, { status: 400 });
     }
 
+    const cleanDate = dateString || new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    
+    // Determine academic year
+    let academicYear = "25/26";
+    if (cleanDate.includes("2023") || cleanDate.includes("2024")) {
+      academicYear = cleanDate.includes("Sep") || cleanDate.includes("Oct") || cleanDate.includes("Nov") || cleanDate.includes("Dec") 
+        ? "24/25" : "23/24";
+    }
+
+    // Create the social event in the database
     await prisma.social.create({
       data: {
-        pubName: pub,
-        date: date,
-        academicYear: "25/26",
-        active: true, // Auto set as active pint target
+        pubName: pubName.trim(),
+        date: cleanDate,
+        beerName: pintName?.trim() || "Cask Ale",
+        breweryName: breweryName?.trim() || "Local Brewery",
+        academicYear,
+        active: false // Manual override logs don't automatically override the active scoring pint
       }
-    });
-
-    // Deactivate other socials
-    await prisma.social.updateMany({
-      where: {
-        pubName: { not: pub },
-        active: true
-      },
-      data: { active: false }
     });
 
     return NextResponse.json({ success: true });

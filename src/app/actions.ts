@@ -5,8 +5,9 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 export async function login(username: string, passwordAttempt: string) {
+  const cleanUsername = username.toLowerCase().replace(/\s+/g, '');
   const user = await prisma.user.findUnique({
-    where: { name: username.toLowerCase().replace(/\s+/g, '') }
+    where: { name: cleanUsername }
   });
 
   if (!user || user.password !== passwordAttempt) {
@@ -20,7 +21,81 @@ export async function login(username: string, passwordAttempt: string) {
   cookieStore.set('bras_voting_name', user.votingName || user.name, { httpOnly: true, path: '/' });
   cookieStore.set('bras_user_role', user.role, { httpOnly: true, path: '/' });
 
-  return { success: true };
+  return { 
+    success: true, 
+    user: { 
+      name: user.name, 
+      votingName: user.votingName, 
+      role: user.role, 
+      mustChange: user.mustChange 
+    } 
+  };
+}
+
+export async function createAccount(username: string, passwordAttempt: string) {
+  const cleanUsername = username.toLowerCase().replace(/\s+/g, '');
+  if (!cleanUsername) return { error: 'Username cannot be empty.' };
+
+  const existing = await prisma.user.findUnique({ where: { name: cleanUsername } });
+  if (existing) {
+    return { error: 'Username is already taken.' };
+  }
+
+  const user = await prisma.user.create({
+    data: {
+      name: cleanUsername,
+      password: passwordAttempt,
+      role: 'committee', // Everyone is committee now as per preferences
+    }
+  });
+
+  const cookieStore = await cookies();
+  cookieStore.set('bras_user_name', user.name, { httpOnly: true, path: '/' });
+  cookieStore.set('bras_voting_name', user.votingName || user.name, { httpOnly: true, path: '/' });
+  cookieStore.set('bras_user_role', user.role, { httpOnly: true, path: '/' });
+
+  return { 
+    success: true, 
+    user: { 
+      name: user.name, 
+      votingName: user.votingName, 
+      role: user.role, 
+      mustChange: false 
+    } 
+  };
+}
+
+export async function claimVotingName(username: string, votingName: string) {
+  try {
+    const cleanUsername = username.toLowerCase().replace(/\s+/g, '');
+    
+    const user = await prisma.user.update({
+      where: { name: cleanUsername },
+      data: { votingName }
+    });
+
+    const cookieStore = await cookies();
+    cookieStore.set('bras_voting_name', user.votingName || user.name, { httpOnly: true, path: '/' });
+
+    return { success: true, error: undefined };
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Failed to claim voting name.' };
+  }
+}
+
+export async function changePassword(username: string, newPasswordAttempt: string) {
+  try {
+    const cleanUsername = username.toLowerCase().replace(/\s+/g, '');
+    
+    await prisma.user.update({
+      where: { name: cleanUsername },
+      data: { password: newPasswordAttempt, mustChange: false }
+    });
+
+    return { success: true, error: undefined };
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Failed to update password.' };
+  }
 }
 
 export async function logout() {

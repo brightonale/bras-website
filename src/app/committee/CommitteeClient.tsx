@@ -70,11 +70,21 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: any[] })
       fetchCustomPages();
       fetchSettings();
 
-      // Fetch users from localStorage
-      const users = JSON.parse(localStorage.getItem('bras_users') || '{}');
-      setLocalUsers(users);
+      fetchUsers();
     }
   }, []);
+
+  const fetchUsers = async () => {
+    try {
+      const res = await fetch('/api/committee/users');
+      const data = await res.json();
+      if (data.users) {
+        setLocalUsers(data.users);
+      }
+    } catch (e) {
+      console.warn("Could not fetch users", e);
+    }
+  };
 
   const fetchActivePint = async () => {
     try {
@@ -92,13 +102,27 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: any[] })
     }
   };
 
-  const toggleCommitteeRole = (username: string, currentRole: string) => {
-    const db = JSON.parse(localStorage.getItem('bras_users') || '{}');
-    if (db[username]) {
-      const newRole = currentRole === 'committee' ? 'member' : 'committee';
-      db[username].role = newRole;
-      localStorage.setItem('bras_users', JSON.stringify(db));
-      setLocalUsers(db);
+  const toggleCommitteeRole = async (username: string, currentRole: string) => {
+    const newRole = currentRole === 'committee' ? 'member' : 'committee';
+    setIsLoading(true);
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
+    try {
+      const res = await fetch('/api/committee/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, role: newRole })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to update role");
+
+      setSuccessMsg(`Successfully updated role for @${username}!`);
+      fetchUsers();
+    } catch (err: any) {
+      setErrorMsg(err.message || "Failed to update role.");
+    } finally {
+      setIsLoading(false);
     }
   };
 

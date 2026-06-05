@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
+import { getSession } from '@/app/actions';
 
 export async function GET() {
   try {
@@ -28,11 +29,12 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const { password, features } = await req.json();
-
-    if (password !== process.env.NEXT_PUBLIC_COMMITTEE_PASSWORD) {
+    const session = await getSession();
+    if (session.role !== 'committee') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const { features } = await req.json();
 
     await prisma.settings.upsert({
       where: { id: 'global' },
@@ -42,6 +44,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true });
   } catch (err) {
+    console.error("Settings API error", err);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

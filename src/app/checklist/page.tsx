@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/db';
 import React from 'react';
+import { Map, CheckSquare, CheckCircle } from 'lucide-react';
 
 export default async function ChecklistPage() {
   const allPubs = await prisma.pub.findMany();
@@ -17,7 +18,9 @@ export default async function ChecklistPage() {
       {/* Page Header */}
       <div className="page-header">
         <span className="page-header__eyebrow">Pub Tracker</span>
-        <h1 className="page-header__title">🗺️ BRAS Pub Checklist</h1>
+        <h1 className="page-header__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Map size={28} className="accent-text" /> BRAS Pub Checklist
+        </h1>
         <p className="page-header__subtitle">
           Tracking every venue we&apos;ve officially visited during our legendary Socials.
         </p>
@@ -45,8 +48,8 @@ export default async function ChecklistPage() {
 
       {/* Visited Pubs List */}
       <div className="section-card">
-        <h3 className="section-card__title">
-          ✅ Visited Venues ({visitedPubs.length})
+        <h3 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <CheckSquare size={20} className="primary-text" /> Visited Venues ({visitedPubs.length})
         </h3>
 
         <div className="grid-auto">
@@ -62,7 +65,7 @@ export default async function ChecklistPage() {
                 background: 'var(--surface-warm)',
               }}
             >
-              <span style={{ fontSize: '1.2rem', flexShrink: 0 }}>✅</span>
+              <CheckCircle size={18} style={{ color: 'var(--primary)', flexShrink: 0 }} />
               <div>
                 <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-color)' }}>
                   {pub.name}

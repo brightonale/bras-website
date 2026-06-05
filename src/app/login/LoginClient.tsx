@@ -2,6 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { 
+  login as dbLogin, 
+  createAccount as dbCreateAccount, 
+  claimVotingName as dbClaimVotingName, 
+  changePassword as dbChangePassword 
+} from '@/app/actions';
 
 import { Lock, Sparkles, Key, CheckCircle, AlertTriangle, ShieldCheck } from 'lucide-react';
 
@@ -47,107 +53,44 @@ export default function LoginClient({ initialMembers }: { initialMembers: any[] 
     if (user && step !== 'change_password' && step !== 'claim_name') {
       router.push('/');
     }
-    
-    // Initialize or migrate local DB
-    const SCHEMA_VERSION = '2';
-    const currentVersion = localStorage.getItem('bras_db_version');
-    let db: Record<string, LocalUser> = {};
-    
-    try {
-      db = JSON.parse(localStorage.getItem('bras_users') || '{}');
-    } catch { db = {}; }
-    
-    // Deduplicate keys (migrate old CamelCase keys to lowercase)
-    Object.keys(db).forEach(key => {
-      const lowerKey = key.toLowerCase().replace(/\s+/g, '');
-      if (key !== lowerKey) {
-        if (!db[lowerKey]) {
-          db[lowerKey] = db[key];
-        }
-        delete db[key];
-      }
-    });
-    
-    // Always ensure committee defaults exist and have committee role
-    DEFAULT_COMMITTEE.forEach(name => {
-      const usernameKey = name.toLowerCase().replace(/\s+/g, '');
-      if (!db[usernameKey]) {
-        // New committee member — seed them
-        db[usernameKey] = { 
-          password: 'BRAS2026!', 
-          role: 'committee', 
-          mustChange: true,
-          votingName: name 
-        };
-      }
-      // Ensure votingName is set
-      if (!db[usernameKey].votingName) {
-        db[usernameKey].votingName = name;
-      }
-    });
-
-    // Make EVERYONE a committee member as per user request
-    Object.keys(db).forEach(key => {
-      if (db[key].role !== 'committee') {
-        db[key].role = 'committee';
-      }
-    });
-    
-    localStorage.setItem('bras_users', JSON.stringify(db));
-    
-    if (currentVersion !== SCHEMA_VERSION) {
-      localStorage.setItem('bras_db_version', SCHEMA_VERSION);
-    }
   }, [step, router]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username || !password) {
       setErrorMsg("Please enter username and password.");
       return;
     }
     setIsLoading(true);
+    setErrorMsg(null);
     
-    const db = JSON.parse(localStorage.getItem('bras_users') || '{}');
-    const userKey = username.toLowerCase().trim();
-    const user = db[userKey];
-    
-    setTimeout(() => {
+    try {
+      const res = await dbLogin(username, password);
       setIsLoading(false);
       
-      const isLegacyCommittee = password === (process.env.NEXT_PUBLIC_COMMITTEE_PASSWORD || "change_me");
-      const isLegacyMember = password === (process.env.NEXT_PUBLIC_MEMBER_PASSWORD || "change_me_member");
-      
-      if (user) {
-        if (user.password !== password) {
-          setErrorMsg("Incorrect password.");
-          return;
-        }
-        
-        if (user.mustChange) {
-          setStep('change_password');
-          setErrorMsg(null);
-          return;
-        }
-
-        if (!user.votingName) {
-          setStep('claim_name');
-          setErrorMsg(null);
-          return;
-        }
-        
-        loginSuccess(user.votingName, user.role);
-      } else if (isLegacyCommittee) {
-        loginSuccess(username, 'committee');
-      } else if (isLegacyMember) {
-        loginSuccess(username, 'member');
-      } else {
-        setErrorMsg("Account not found or incorrect password. Try 'Create Account'.");
+      if (res.error) {
+        setErrorMsg(res.error);
+        return;
       }
-    }, 600);
+      
+      if (res.user?.mustChange) {
+        setStep('change_password');
+        return;
+      }
+
+      if (!res.user?.votingName) {
+        setStep('claim_name');
+        return;
+      }
+      
+      loginSuccess(res.user.votingName, res.user.role);
+    } catch (err) {
+      setIsLoading(false);
+      setErrorMsg("Error communicating with database.");
+    }
   };
 
-  const handleCreateAccount = (e: React.FormEvent) => {
+  const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username || !password) {
       setErrorMsg("Please choose a username and password.");
@@ -155,26 +98,25 @@ export default function LoginClient({ initialMembers }: { initialMembers: any[] 
     }
     
     setIsLoading(true);
+    setErrorMsg(null);
     
-    setTimeout(() => {
+    try {
+      const res = await dbCreateAccount(username, password);
       setIsLoading(false);
-      const db = JSON.parse(localStorage.getItem('bras_users') || '{}');
-      const userKey = username.toLowerCase().trim();
       
-      if (db[userKey]) {
-        setErrorMsg("This username is already taken. Please choose another.");
+      if (res.error) {
+        setErrorMsg(res.error);
         return;
       }
       
-      db[userKey] = { password, role: 'committee', mustChange: false };
-      localStorage.setItem('bras_users', JSON.stringify(db));
-      
       setStep('claim_name');
-      setErrorMsg(null);
-    }, 600);
+    } catch (err) {
+      setIsLoading(false);
+      setErrorMsg("Error creating account in database.");
+    }
   };
 
-  const handleChangePassword = (e: React.FormEvent) => {
+  const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newPassword || newPassword.length < 6) {
       setErrorMsg("Password must be at least 6 characters.");
@@ -182,28 +124,25 @@ export default function LoginClient({ initialMembers }: { initialMembers: any[] 
     }
     
     setIsLoading(true);
-    setTimeout(() => {
-      const db = JSON.parse(localStorage.getItem('bras_users') || '{}');
-      const userKey = username.toLowerCase().trim();
-      
-      if (db[userKey]) {
-        db[userKey].password = newPassword;
-        db[userKey].mustChange = false;
-        localStorage.setItem('bras_users', JSON.stringify(db));
-      }
-      
+    setErrorMsg(null);
+    
+    try {
+      const res = await dbChangePassword(username, newPassword);
       setIsLoading(false);
       
-      if (!db[userKey].votingName) {
-        setStep('claim_name');
-        setErrorMsg(null);
-      } else {
-        loginSuccess(db[userKey].votingName, db[userKey].role);
+      if (res.error) {
+        setErrorMsg(res.error);
+        return;
       }
-    }, 600);
+      
+      setStep('claim_name');
+    } catch (err) {
+      setIsLoading(false);
+      setErrorMsg("Error changing password in database.");
+    }
   };
 
-  const handleClaimName = (e: React.FormEvent) => {
+  const handleClaimName = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedVotingName) {
       setErrorMsg("Please select your voting name.");
@@ -211,18 +150,17 @@ export default function LoginClient({ initialMembers }: { initialMembers: any[] 
     }
 
     setIsLoading(true);
-    setTimeout(() => {
-      const db = JSON.parse(localStorage.getItem('bras_users') || '{}');
-      const userKey = username.toLowerCase().trim();
-      
-      if (db[userKey]) {
-        db[userKey].votingName = selectedVotingName;
-        localStorage.setItem('bras_users', JSON.stringify(db));
-      }
-      
+    setErrorMsg(null);
+    
+    try {
+      const res = await dbClaimVotingName(username, selectedVotingName);
       setIsLoading(false);
-      loginSuccess(selectedVotingName, db[userKey]?.role || 'member');
-    }, 600);
+      
+      loginSuccess(selectedVotingName, 'committee');
+    } catch (err) {
+      setIsLoading(false);
+      setErrorMsg("Error claiming voting name in database.");
+    }
   };
 
   const loginSuccess = (name: string, role: string) => {
