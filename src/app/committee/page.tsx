@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import checklistData from '@/data/checklist.json';
+import { Beer, Gamepad2, Newspaper, Compass, Ban, CheckCircle, AlertTriangle } from 'lucide-react';
 
 export default function CommitteePage() {
   const router = useRouter();
@@ -190,7 +191,7 @@ export default function CommitteePage() {
     return (
       <div className="page-container animate-fade-in" style={{ alignItems: 'center', marginTop: '40px' }}>
         <div className="section-card" style={{ width: '100%', maxWidth: '500px', textAlign: 'center' }}>
-          <span style={{ fontSize: '2.5rem' }}>🚫</span>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px', color: 'var(--error-text)' }}><Ban size={48} /></div>
           <h2 className="section-card__title" style={{ marginTop: '12px', marginBottom: '8px', borderBottom: 'none' }}>
             Committee Access Denied
           </h2>
@@ -219,13 +220,13 @@ export default function CommitteePage() {
 
       {/* Success/Error Toasts */}
       {successMsg && (
-        <div className="notice notice--success">
-          ✅ {successMsg}
+        <div className="notice notice--success" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <CheckCircle size={18} /> {successMsg}
         </div>
       )}
       {errorMsg && (
-        <div className="notice notice--error">
-          ⚠️ {errorMsg}
+        <div className="notice notice--error" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <AlertTriangle size={18} /> {errorMsg}
         </div>
       )}
 
@@ -234,7 +235,7 @@ export default function CommitteePage() {
         
         {/* Panel 1: Log visited pub */}
         <div className="section-card">
-          <h2 className="section-card__title">🍻 Log Visited Pub</h2>
+          <h2 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Beer size={20} /> Log Visited Pub</h2>
           <form onSubmit={handleAddEvent} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div>
               <label className="form-label">Pub Name</label>
@@ -265,7 +266,7 @@ export default function CommitteePage() {
 
         {/* Panel 2: Configure Wordle */}
         <div className="section-card">
-          <h2 className="section-card__title">🎮 Daily Wordle Target</h2>
+          <h2 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Gamepad2 size={20} /> Daily Wordle Target</h2>
           <form onSubmit={handleUpdateWordle} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div>
               <label className="form-label">Target Word (Exactly 5 letters)</label>
@@ -298,7 +299,7 @@ export default function CommitteePage() {
 
         {/* Panel 3: HTML Page Publisher */}
         <div className="section-card">
-          <h2 className="section-card__title">📰 Newsletter Publisher</h2>
+          <h2 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Newspaper size={20} /> Newsletter Publisher</h2>
           <form onSubmit={handlePublishHtml} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div>
               <label className="form-label">Page Title</label>
@@ -347,8 +348,8 @@ export default function CommitteePage() {
 
         {/* Panel 4: Unvisited Pub Research List */}
         <div className="section-card" style={{ display: 'flex', flexDirection: 'column', maxHeight: '580px', padding: 0 }}>
-          <h2 className="section-card__title" style={{ padding: '24px 32px 16px', margin: 0, position: 'sticky', top: 0, background: 'var(--surface)', zIndex: 5, borderRadius: 'var(--card-radius) var(--card-radius) 0 0' }}>
-            🧭 Unvisited Pubs ({unvisitedPubs.length})
+          <h2 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '24px 32px 16px', margin: 0, position: 'sticky', top: 0, background: 'var(--surface)', zIndex: 5, borderRadius: 'var(--card-radius) var(--card-radius) 0 0' }}>
+            <Compass size={20} /> Unvisited Pubs ({unvisitedPubs.length})
           </h2>
           <div style={{ padding: '0 32px 32px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: '0 0 8px 0' }}>

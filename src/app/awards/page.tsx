@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import styles from './page.module.css';
+import { Beer, Crown, PartyPopper } from 'lucide-react';
 
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxW9kr6f0ysPfnUKnzF4_QtCcfFeO4bdP2__QdaQIPO5G5BLSa5dcJgG5NI_2PkOaEg/exec";
 const COMMITTEE_PASSWORD = "bras2025";
@@ -153,7 +154,7 @@ export default function AwardsPage() {
 
   const renderRoleSelect = () => (
     <div className={`section-card ${styles.view}`} style={{ maxWidth: '400px', margin: 'auto', padding: '40px', textAlign: 'center' }}>
-      <div className={styles.beerIcon}>🍺</div>
+      <div className={styles.beerIcon}><Beer size={64} className="accent-text" /></div>
       <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '2rem', marginBottom: '10px' }}>Brighton Real Ale Society</h1>
       <span className="badge badge--accent" style={{ alignSelf: 'center' }}>Annual Awards</span>
       
@@ -294,11 +295,11 @@ export default function AwardsPage() {
 
   const renderSuccess = () => (
     <div className={`section-card ${styles.view}`} style={{ maxWidth: '400px', margin: 'auto', padding: '50px', textAlign: 'center' }}>
-      <div className={styles.beerIcon}>🍺</div>
+      <div className={styles.beerIcon}><Beer size={64} className="accent-text" /></div>
       <h2 style={{ fontSize: '2rem', marginBottom: '16px', fontFamily: 'var(--font-heading)' }}>Cheers, Ballot Received!</h2>
       <p style={{ color: 'var(--text-muted)' }}>Your votes have been submitted successfully.</p>
-      <div className="notice notice--success" style={{ marginTop: '20px' }}>
-        🎉 Thank you for participating in the annual awards!
+      <div className="notice notice--success" style={{ marginTop: '20px', display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+        <PartyPopper size={20} /> Thank you for participating in the annual awards!
       </div>
     </div>
   );
@@ -340,8 +341,8 @@ export default function AwardsPage() {
                   {sortedResults.map((res, i) => (
                     <div key={res.name}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginBottom: '4px' }}>
-                        <span style={{ fontWeight: i === 0 ? 'bold' : 'normal', color: i === 0 ? 'var(--accent)' : 'var(--text-color)' }}>
-                          {res.name} {i === 0 ? '👑' : ''}
+                        <span style={{ fontWeight: i === 0 ? 'bold' : 'normal', color: i === 0 ? 'var(--accent)' : 'var(--text-color)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          {res.name} {i === 0 ? <Crown size={16} /> : ''}
                         </span>
                         <span style={{ color: 'var(--text-muted)' }}>{res.count} votes ({res.percent}%)</span>
                       </div>
@@ -363,7 +364,7 @@ export default function AwardsPage() {
     <div className={`page-container animate-fade-in ${styles.container}`}>
       {isLoading && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(250, 246, 240, 0.9)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className={styles.beerIcon}>🍺</div>
+          <div className={styles.beerIcon}><Beer size={64} className="accent-text" /></div>
         </div>
       )}
       

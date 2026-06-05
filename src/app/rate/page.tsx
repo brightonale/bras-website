@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import timelineData from '@/data/timeline.json';
 import checklistData from '@/data/checklist.json';
+import { Beer, CheckCircle, AlertTriangle } from 'lucide-react';
 
 export default function RatePage() {
   const router = useRouter();
@@ -95,7 +96,9 @@ export default function RatePage() {
       {/* Page Header */}
       <div className="page-header" style={{ textAlign: 'center' }}>
         <span className="page-header__eyebrow">Pint Inspector</span>
-        <h1 className="page-header__title">🍺 Pint Inspector Log</h1>
+        <h1 className="page-header__title" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+          <Beer size={32} className="accent-text" /> Pint Inspector Log
+        </h1>
         <p className="page-header__subtitle">
           Logging score as: <strong style={{ color: 'var(--text-color)' }}>{memberName}</strong>
         </p>
@@ -106,7 +109,9 @@ export default function RatePage() {
         {successMsg ? (
           <div style={{ textAlign: 'center' }}>
             <div className="notice notice--success" style={{ marginBottom: '20px' }}>
-              <span style={{ fontSize: '2rem', display: 'block', marginBottom: '8px' }}>✅</span>
+              <span style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
+                <CheckCircle size={32} color="var(--success-text)" />
+              </span>
               <p style={{ fontWeight: 'bold' }}>{successMsg}</p>
             </div>
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
@@ -186,8 +191,8 @@ export default function RatePage() {
 
             {/* Error Notice */}
             {errorMsg && (
-              <div className="notice notice--error">
-                ⚠️ {errorMsg}
+              <div className="notice notice--error" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <AlertTriangle size={18} /> {errorMsg}
               </div>
             )}
 

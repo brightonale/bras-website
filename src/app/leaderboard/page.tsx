@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import pubsData from '@/data/pubs.json';
+import { Lock, Trophy } from 'lucide-react';
 
 type SortKey = 'score' | 'date' | 'ratingsCount';
 type SortOrder = 'asc' | 'desc';
@@ -138,7 +139,9 @@ export default function LeaderboardPage() {
           gap: '16px'
         }}>
           <div style={{ flex: '1 1 300px' }}>
-            <h4 style={{ margin: 0, fontSize: '1.1rem', fontFamily: 'var(--font-heading)' }}>🔒 Top 10 View Only</h4>
+            <h4 style={{ margin: 0, fontSize: '1.1rem', fontFamily: 'var(--font-heading)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Lock size={18} /> Top 10 View Only
+            </h4>
             <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', lineHeight: 1.4 }}>
               To protect member scores and avoid slagging off lower-ranked pubs, we only show the Top 10 venues publicly. Log in as a member to view the complete rankings ({sortedPubs.length} pubs).
             </p>
@@ -182,14 +185,18 @@ export default function LeaderboardPage() {
               ) : (
                 displayedPubs.map((pub, idx) => {
                   const rankNum = idx + 1;
-                  const rankBadge = rankNum === 1 ? '🥇' : rankNum === 2 ? '🥈' : rankNum === 3 ? '🥉' : rankNum;
+                  const isTopThree = rankNum <= 3;
 
                   return (
                     <tr key={pub.pub + pub.date} style={{
-                      background: rankNum <= 3 ? 'var(--surface-warm)' : undefined
+                      background: isTopThree ? 'var(--surface-warm)' : undefined
                     }}>
                       <td style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '1.1rem' }}>
-                        {rankBadge}
+                        {isTopThree ? (
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                            {rankNum} <Trophy size={16} color={rankNum === 1 ? '#D4AF37' : rankNum === 2 ? '#C0C0C0' : '#CD7F32'} />
+                          </div>
+                        ) : rankNum}
                       </td>
                       <td style={{ fontWeight: 'bold', fontFamily: 'var(--font-heading)', fontSize: '1.05rem' }}>
                         {pub.pub}

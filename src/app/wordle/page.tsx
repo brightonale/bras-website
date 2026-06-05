@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styles from './page.module.css';
 import { VALID_WORDS } from './words';
+import { Beer, AlertTriangle, CheckCircle } from 'lucide-react';
 
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzc_J5FWm9-pKXfenwIyyvzdRJ3v1GPqsyr5VaAD1Fq54Ear4NVMrfcikHv6qxSVitWpg/exec";
 const MAX_GUESSES = 6;
@@ -233,7 +234,7 @@ export default function WordlePage() {
 
       {screen === 'login' && (
         <div className="section-card" style={{ maxWidth: '400px', margin: '40px auto', width: '100%' }}>
-          <h1 className="section-card__title" style={{ textAlign: 'center', borderBottom: 'none' }}>🍻 Pub Wordle</h1>
+          <h1 className="section-card__title" style={{ textAlign: 'center', borderBottom: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}><Beer size={32} className="accent-text" /> Pub Wordle</h1>
           <p style={{ textAlign: 'center', color: 'var(--text-muted)', marginBottom: '24px' }}>Daily cask ale anagram challenge.</p>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -249,7 +250,7 @@ export default function WordlePage() {
               />
             </div>
             {errorMsg && <div className="notice notice--error" style={{ padding: '8px' }}>{errorMsg}</div>}
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', textAlign: 'center' }}>⚠️ One entry per team.</p>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}><AlertTriangle size={14} /> One entry per team.</p>
             <button className="btn btn--primary btn--full" onClick={attemptLogin}>Start Game</button>
           </div>
         </div>
@@ -278,8 +279,8 @@ export default function WordlePage() {
             <div className="stat-value">{score}</div>
           </div>
           
-          <p style={{ color: isSaving ? 'var(--text-muted)' : 'var(--success-text)', fontWeight: 'bold' }}>
-            {isSaving ? 'Saving result...' : 'Result saved! ✅'}
+          <p style={{ color: isSaving ? 'var(--text-muted)' : 'var(--success-text)', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+            {isSaving ? 'Saving result...' : <><CheckCircle size={18} /> Result saved!</>}
           </p>
         </div>
       )}

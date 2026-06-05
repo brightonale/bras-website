@@ -3,6 +3,8 @@ export const metadata = {
   description: 'Learn about the Brighton Real Ale Society.',
 };
 
+import { Beer } from 'lucide-react';
+
 export default function About() {
   return (
     <div className="page-container animate-fade-in">
@@ -30,7 +32,9 @@ export default function About() {
 
       {/* Activities Card */}
       <div className="section-card" style={{ maxWidth: '800px' }}>
-        <h3 className="section-card__title">🍻 Our Core Activities</h3>
+        <h3 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Beer size={24} /> Our Core Activities
+        </h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
 
           <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>

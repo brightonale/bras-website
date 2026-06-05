@@ -3,6 +3,7 @@ import Link from 'next/link';
 import pubsData from '@/data/pubs.json';
 import membersData from '@/data/members.json';
 import timelineData from '@/data/timeline.json';
+import { Beer, Trophy, Gamepad2, Medal } from 'lucide-react';
 
 export default function HomePage() {
   // Stats calculation
@@ -60,7 +61,7 @@ export default function HomePage() {
           <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
             <Link href="/rate">
               <button className="btn btn--primary btn--lg">
-                🍺 Score a Pint
+                <Beer size={20} /> Score a Pint
               </button>
             </Link>
             <Link href="/leaderboard">
@@ -104,7 +105,7 @@ export default function HomePage() {
       {/* Quick Links Row */}
       <div className="grid-auto">
         <div className="section-card section-card--hoverable" style={{ textAlign: 'center', padding: '32px' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '16px' }}>🏆</div>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px', color: 'var(--primary)' }}><Trophy size={40} strokeWidth={1.5} /></div>
           <h3 className="section-card__title" style={{ borderBottom: 'none', paddingBottom: '0', marginBottom: '8px' }}>The Leaderboard</h3>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginBottom: '20px' }}>
             See which Brighton venues serve the finest cask condition.
@@ -113,7 +114,7 @@ export default function HomePage() {
         </div>
 
         <div className="section-card section-card--hoverable" style={{ textAlign: 'center', padding: '32px' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '16px' }}>🎮</div>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px', color: 'var(--primary)' }}><Gamepad2 size={40} strokeWidth={1.5} /></div>
           <h3 className="section-card__title" style={{ borderBottom: 'none', paddingBottom: '0', marginBottom: '8px' }}>Pub Wordle</h3>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginBottom: '20px' }}>
             Test your real ale vocabulary in our daily 5-letter anagram.
@@ -122,7 +123,7 @@ export default function HomePage() {
         </div>
 
         <div className="section-card section-card--hoverable" style={{ textAlign: 'center', padding: '32px' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '16px' }}>🏅</div>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px', color: 'var(--primary)' }}><Medal size={40} strokeWidth={1.5} /></div>
           <h3 className="section-card__title" style={{ borderBottom: 'none', paddingBottom: '0', marginBottom: '8px' }}>Annual Awards</h3>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginBottom: '20px' }}>
             Cast your nominations for the society's end-of-year superlatives.

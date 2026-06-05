@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import matrixData from '@/data/matrix.json';
+import { Lock } from 'lucide-react';
 
 export default function MatrixPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -16,7 +17,7 @@ export default function MatrixPage() {
     return (
       <div className="page-container animate-fade-in" style={{ alignItems: 'center', marginTop: '40px' }}>
         <div className="section-card" style={{ width: '100%', maxWidth: '500px', textAlign: 'center', padding: '40px' }}>
-          <span style={{ fontSize: '2.5rem' }}>🔒</span>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px', color: 'var(--text-muted)' }}><Lock size={48} /></div>
           <h2 className="section-card__title" style={{ marginTop: '12px', marginBottom: '8px', borderBottom: 'none' }}>
             Member Matrix Locked
           </h2>

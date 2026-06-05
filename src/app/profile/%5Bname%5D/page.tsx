@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import membersData from '@/data/members.json';
+import { ClipboardList } from 'lucide-react';
 
 export default function ProfilePage() {
   const params = useParams();
@@ -132,8 +133,8 @@ export default function ProfilePage() {
 
       {/* Visited Pubs List */}
       <div className="section-card">
-        <h3 className="section-card__title">
-          📋 Inspector Log History ({member.visitedPubs.length} entries)
+        <h3 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <ClipboardList size={20} /> Inspector Log History ({member.visitedPubs.length} entries)
         </h3>
 
         {member.visitedPubs.length === 0 ? (
