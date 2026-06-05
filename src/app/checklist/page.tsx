@@ -1,21 +1,11 @@
-"use client";
+import { prisma } from '@/lib/db';
+import React from 'react';
 
-import React, { useState, useEffect } from 'react';
-import checklistData from '@/data/checklist.json';
-
-export default function ChecklistPage() {
-  const [visitedPubs, setVisitedPubs] = useState<any[]>([]);
-  const [totalResearchPubs, setTotalResearchPubs] = useState(0);
-
-  useEffect(() => {
-    // Filter checklist items
-    const visited = checklistData.filter(p => p.status.startsWith('Visited'));
-    // Count original research pubs (visited + not visited, excluding 'Visited (Not on original list)' if it was not on list, or we just count all)
-    const totalResearch = checklistData.length;
-
-    setVisitedPubs(visited);
-    setTotalResearchPubs(totalResearch);
-  }, []);
+export default async function ChecklistPage() {
+  const allPubs = await prisma.pub.findMany();
+  
+  const visitedPubs = allPubs.filter(p => p.status.startsWith('Visited'));
+  const totalResearchPubs = allPubs.length;
 
   const progressPercent = totalResearchPubs > 0
     ? Math.round((visitedPubs.length / totalResearchPubs) * 100)

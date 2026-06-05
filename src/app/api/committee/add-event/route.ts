@@ -1,60 +1,39 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { prisma } from '@/lib/db';
 
-const dbPath = path.join(process.cwd(), 'src/data/db.json');
-
-export async function POST(request: Request) {
+export async function POST(req: Request) {
   try {
-    const { pubName, pintName, breweryName, dateString, role } = await request.json();
+    const { pub, date, password } = await req.json();
 
-    if (role !== 'committee') {
-      return NextResponse.json({ error: "Unauthorized access" }, { status: 403 });
+    if (password !== process.env.NEXT_PUBLIC_COMMITTEE_PASSWORD) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    if (!pubName) {
-      return NextResponse.json({ error: "Pub name is required" }, { status: 400 });
+    if (!pub || !date) {
+      return NextResponse.json({ error: 'Missing data' }, { status: 400 });
     }
 
-    let dbData = { wordleWord: "MALTY", wordleHint: "", wordleScores: [], customPages: [], events: [] as any[] };
-    if (fs.existsSync(dbPath)) {
-      try {
-        dbData = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
-      } catch (e) {
-        // fallback
+    await prisma.social.create({
+      data: {
+        pubName: pub,
+        date: date,
+        academicYear: "25/26",
+        active: true, // Auto set as active pint target
       }
-    }
+    });
 
-    if (!dbData.events) {
-      dbData.events = [];
-    }
+    // Deactivate other socials
+    await prisma.social.updateMany({
+      where: {
+        pubName: { not: pub },
+        active: true
+      },
+      data: { active: false }
+    });
 
-    const cleanDate = dateString || new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-
-    // Determine academic year
-    let academicYear = "25/26";
-    if (cleanDate.includes("2023") || cleanDate.includes("2024")) {
-      academicYear = cleanDate.includes("Sep") || cleanDate.includes("Oct") || cleanDate.includes("Nov") || cleanDate.includes("Dec") 
-        ? "24/25" : "23/24";
-    }
-
-    const newEvent = {
-      id: 'event-' + Date.now(),
-      pub: pubName.trim(),
-      pint: pintName?.trim() || "Cask Ale",
-      brewery: breweryName?.trim() || "Local Brewery",
-      date: cleanDate,
-      academicYear,
-      score: null, // calculated dynamically from ratings
-      ratingsCount: "0"
-    };
-
-    dbData.events.push(newEvent);
-
-    fs.writeFileSync(dbPath, JSON.stringify(dbData, null, 2), 'utf8');
-
-    return NextResponse.json({ success: true, event: newEvent });
+    return NextResponse.json({ success: true });
   } catch (err) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("API add-event error", err);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

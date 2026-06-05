@@ -1,0 +1,684 @@
+"use client";
+
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+
+import { Beer, Gamepad2, Newspaper, Compass, Ban, CheckCircle, AlertTriangle, Users, Play, Square } from 'lucide-react';
+
+export default function CommitteeClient({ initialPubs }: { initialPubs: any[] }) {
+  const router = useRouter();
+  const [isCommittee, setIsCommittee] = useState(false);
+  const [memberName, setMemberName] = useState('');
+  
+  // Active Pint Settings Form
+  const [activePubName, setActivePubName] = useState('');
+  const [activeBeerName, setActiveBeerName] = useState('');
+  const [activeBreweryName, setActiveBreweryName] = useState('');
+  const [activeDateString, setActiveDateString] = useState('');
+  const [currentActivePint, setCurrentActivePint] = useState<any | null>(null);
+
+  // Feature Flags Form
+  const [featureFlags, setFeatureFlags] = useState<Record<string, boolean>>({});
+
+  // Wordle Settings Form
+  const [wordleWord, setWordleWord] = useState('');
+  const [wordleHint, setWordleHint] = useState('');
+
+  // Add Pub Form (Simplified)
+  const [pubName, setPubName] = useState('');
+  const [pintName, setPintName] = useState('');
+  const [breweryName, setBreweryName] = useState('');
+  const [eventDate, setEventDate] = useState('');
+
+  // Custom HTML Form
+  const [pageTitle, setPageTitle] = useState('');
+  const [pageSlug, setPageSlug] = useState('');
+  const [htmlContent, setHtmlContent] = useState('');
+  const [customPages, setCustomPages] = useState<any[]>([]);
+
+  // User Management
+  const [localUsers, setLocalUsers] = useState<Record<string, any>>({});
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // List of unique checklist pubs for datalist dropdowns
+  const checklistPubs = initialPubs.map(p => p.name).sort();
+  const unvisitedPubs = initialPubs.filter(p => p.status === 'Not Visited');
+
+  useEffect(() => {
+    const name = localStorage.getItem('bras_user_name');
+    const role = localStorage.getItem('bras_user_role');
+
+    if (!name || role !== 'committee') {
+      setIsCommittee(false);
+    } else {
+      setIsCommittee(true);
+      setMemberName(name);
+
+      // Pre-fill today's date for forms
+      const today = new Date();
+      const todayStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      setEventDate(todayStr);
+      setActiveDateString(todayStr);
+
+      // Fetch Wordle config & custom pages list & active pint & settings
+      fetchActivePint();
+      fetchWordleConfig();
+      fetchCustomPages();
+      fetchSettings();
+
+      // Fetch users from localStorage
+      const users = JSON.parse(localStorage.getItem('bras_users') || '{}');
+      setLocalUsers(users);
+    }
+  }, []);
+
+  const fetchActivePint = async () => {
+    try {
+      const res = await fetch('/api/active-pint');
+      const data = await res.json();
+      if (data.activePint) {
+        setCurrentActivePint(data.activePint);
+        setActivePubName(data.activePint.pubName);
+        setActiveBeerName(data.activePint.beerName);
+        setActiveBreweryName(data.activePint.breweryName);
+        setActiveDateString(data.activePint.dateString);
+      }
+    } catch (e) {
+      console.warn("Could not fetch active pint", e);
+    }
+  };
+
+  const toggleCommitteeRole = (username: string, currentRole: string) => {
+    const db = JSON.parse(localStorage.getItem('bras_users') || '{}');
+    if (db[username]) {
+      const newRole = currentRole === 'committee' ? 'member' : 'committee';
+      db[username].role = newRole;
+      localStorage.setItem('bras_users', JSON.stringify(db));
+      setLocalUsers(db);
+    }
+  };
+
+  const fetchWordleConfig = async () => {
+    try {
+      const res = await fetch('/api/wordle');
+      const data = await res.json();
+      if (data.word) setWordleWord(data.word);
+      if (data.hint) setWordleHint(data.hint);
+    } catch (e) {
+      console.warn(e);
+    }
+  };
+
+  const fetchCustomPages = async () => {
+    try {
+      const res = await fetch('/api/committee/custom-html');
+      const data = await res.json();
+      if (data.pages) {
+        setCustomPages(data.pages);
+      }
+    } catch (e) {
+      console.warn(e);
+    }
+  };
+
+  const handleSetActivePint = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!activePubName.trim()) {
+      setErrorMsg("Pub name is required to set an active pint.");
+      return;
+    }
+
+    setIsLoading(true);
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
+    try {
+      const res = await fetch('/api/active-pint', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pubName: activePubName.trim(),
+          beerName: activeBeerName.trim(),
+          breweryName: activeBreweryName.trim(),
+          dateString: activeDateString.trim(),
+          role: "committee"
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to set active pint");
+
+      setCurrentActivePint(data.activePint);
+      setSuccessMsg(`Social Pint active: ${data.activePint.beerName} at ${data.activePint.pubName}! Members can now log scores.`);
+    } catch (err: any) {
+      setErrorMsg(err.message || "Something went wrong.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleClearActivePint = async () => {
+    setIsLoading(true);
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
+    try {
+      const res = await fetch('/api/active-pint', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pubName: "",
+          role: "committee"
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to clear active pint");
+
+      setCurrentActivePint(null);
+      setActivePubName('');
+      setActiveBeerName('');
+      setActiveBreweryName('');
+      const today = new Date();
+      setActiveDateString(today.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }));
+      setSuccessMsg("Active scoring pint cleared!");
+    } catch (err: any) {
+      setErrorMsg(err.message || "Something went wrong.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleUpdateWordle = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (wordleWord.trim().length !== 5) {
+      setErrorMsg("Wordle word must be exactly 5 letters.");
+      return;
+    }
+    
+    setIsLoading(true);
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
+    try {
+      const res = await fetch('/api/committee/wordle', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          word: wordleWord.trim(),
+          hint: wordleHint.trim(),
+          role: "committee"
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to update Wordle");
+
+      setSuccessMsg("Wordle target word and hint updated successfully!");
+    } catch (err: any) {
+      setErrorMsg(err.message || "Something went wrong.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAddEvent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!pubName.trim()) {
+      setErrorMsg("Pub name is required.");
+      return;
+    }
+
+    setIsLoading(true);
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
+    try {
+      const res = await fetch('/api/committee/add-event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pubName: pubName.trim(),
+          pintName: pintName.trim(),
+          breweryName: breweryName.trim(),
+          dateString: eventDate.trim(),
+          role: "committee"
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to log pub");
+
+      setSuccessMsg(`Successfully logged visit to ${pubName}!`);
+      // reset form
+      setPubName('');
+      setPintName('');
+      setBreweryName('');
+    } catch (err: any) {
+      setErrorMsg(err.message || "Something went wrong.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePublishHtml = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!pageTitle.trim() || !pageSlug.trim() || !htmlContent.trim()) {
+      setErrorMsg("All HTML uploader fields are required.");
+      return;
+    }
+
+    setIsLoading(true);
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
+    try {
+      const res = await fetch('/api/committee/custom-html', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: pageTitle.trim(),
+          slug: pageSlug.trim(),
+          htmlContent: htmlContent.trim(),
+          role: "committee"
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to publish page");
+
+      setSuccessMsg(`Published page: /custom/${data.page.slug}`);
+      setPageTitle('');
+      setPageSlug('');
+      setHtmlContent('');
+      fetchCustomPages();
+    } catch (err: any) {
+      setErrorMsg(err.message || "Something went wrong.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchSettings = async () => {
+    try {
+      const res = await fetch('/api/committee/settings');
+      const data = await res.json();
+      if (data.features) {
+        setFeatureFlags(data.features);
+      }
+    } catch (e) {
+      console.warn("Could not fetch settings", e);
+    }
+  };
+
+  const handleToggleFeature = async (featureName: string) => {
+    const newFlags = { ...featureFlags, [featureName]: !featureFlags[featureName] };
+    setFeatureFlags(newFlags);
+    
+    setIsLoading(true);
+    setErrorMsg(null);
+    setSuccessMsg(null);
+    try {
+      const res = await fetch('/api/committee/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ features: newFlags, role: "committee" })
+      });
+      if (!res.ok) throw new Error("Failed to update settings");
+      setSuccessMsg(`Page layout settings updated successfully!`);
+    } catch (err: any) {
+      setErrorMsg(err.message || "Failed to update settings");
+      // Revert on fail
+      setFeatureFlags(featureFlags);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (!isCommittee) {
+    return (
+      <div className="page-container animate-fade-in" style={{ alignItems: 'center', marginTop: '40px' }}>
+        <div className="section-card" style={{ width: '100%', maxWidth: '500px', textAlign: 'center' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px', color: 'var(--error-text)' }}><Ban size={48} /></div>
+          <h2 className="section-card__title" style={{ marginTop: '12px', marginBottom: '8px', borderBottom: 'none' }}>
+            Committee Access Denied
+          </h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginBottom: '24px', lineHeight: 1.5 }}>
+            This panel is restricted to Brighton Real Ale Society Committee members only. Please log in with the committee password to access these features.
+          </p>
+          <Link href="/login">
+            <button className="btn btn--primary">Go to Login</button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="page-container animate-fade-in">
+      
+      {/* Page Header */}
+      <div className="page-header">
+        <span className="page-header__eyebrow">BRAS Committee Panel</span>
+        <h1 className="page-header__title">Society Operations Dashboard</h1>
+        <p className="page-header__subtitle">
+          Welcome back, <strong>{memberName}</strong>. Manage Socials, set active pints, update Wordle, and manage registered users.
+        </p>
+      </div>
+
+      {/* Success/Error Toasts */}
+      {successMsg && (
+        <div className="notice notice--success" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <CheckCircle size={18} /> {successMsg}
+        </div>
+      )}
+      {errorMsg && (
+        <div className="notice notice--error" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <AlertTriangle size={18} /> {errorMsg}
+        </div>
+      )}
+
+      {/* Grid of Ops Panels */}
+      <div className="grid-2">
+        
+        {/* Panel 1: Set Active Pint */}
+        <div className="section-card">
+          <h2 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Beer size={20} /> Social Control (Active Pint)
+          </h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '16px', marginTop: '-8px' }}>
+            Set the pint that society members are currently rating. Setting an active pint also records it as a Social event.
+          </p>
+          
+          <form onSubmit={handleSetActivePint} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div>
+              <label className="form-label">Pub Name</label>
+              <input 
+                type="text" 
+                list="committee-active-pubs"
+                value={activePubName} 
+                onChange={e => setActivePubName(e.target.value)} 
+                placeholder="e.g. Fiddler's Elbow" 
+                required 
+              />
+              <datalist id="committee-active-pubs">
+                {checklistPubs.map(p => (
+                  <option key={p} value={p} />
+                ))}
+              </datalist>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '16px' }}>
+              <div style={{ flex: 1 }}>
+                <label className="form-label">Cask Pint / Drink Name</label>
+                <input type="text" value={activeBeerName} onChange={e => setActiveBeerName(e.target.value)} placeholder="e.g. Sussex Best" />
+              </div>
+              <div style={{ flex: 1 }}>
+                <label className="form-label">Brewery</label>
+                <input type="text" value={activeBreweryName} onChange={e => setActiveBreweryName(e.target.value)} placeholder="e.g. Harvey's" />
+              </div>
+            </div>
+
+            <div>
+              <label className="form-label">Date of Visit</label>
+              <input type="text" value={activeDateString} onChange={e => setActiveDateString(e.target.value)} placeholder="e.g. 18 Dec 2025" />
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+              <button type="submit" className="btn btn--primary" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }} disabled={isLoading}>
+                <Play size={16} /> {currentActivePint ? "Update Active Pint" : "Start Scoring Pint"}
+              </button>
+              {currentActivePint && (
+                <button type="button" onClick={handleClearActivePint} className="btn btn--outline" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }} disabled={isLoading}>
+                  <Square size={16} /> Stop Scoring
+                </button>
+              )}
+            </div>
+          </form>
+
+          {currentActivePint && (
+            <div style={{ marginTop: '20px', padding: '12px', background: 'var(--surface-muted)', border: '1px dashed var(--border)', borderRadius: '6px', fontSize: '0.85rem' }}>
+              <strong>Currently Live:</strong> {currentActivePint.beerName} at <em>{currentActivePint.pubName}</em> ({currentActivePint.dateString})
+            </div>
+          )}
+        </div>
+
+        {/* Panel 2: Log visited pub (historical/manual override) */}
+        <div className="section-card">
+          <h2 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Beer size={20} /> Log Visited Pub (Manual)</h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '16px', marginTop: '-8px' }}>
+            Manually log a Social event without forcing members to score it live.
+          </p>
+          <form onSubmit={handleAddEvent} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div>
+              <label className="form-label">Pub Name</label>
+              <input 
+                type="text" 
+                list="committee-manual-pubs"
+                value={pubName} 
+                onChange={e => setPubName(e.target.value)} 
+                placeholder="e.g. Fiddler's Elbow" 
+                required 
+              />
+              <datalist id="committee-manual-pubs">
+                {checklistPubs.map(p => (
+                  <option key={p} value={p} />
+                ))}
+              </datalist>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '16px' }}>
+              <div style={{ flex: 1 }}>
+                <label className="form-label">Cask Pint / Drink Name</label>
+                <input type="text" value={pintName} onChange={e => setPintName(e.target.value)} placeholder="e.g. Sussex Best" />
+              </div>
+              <div style={{ flex: 1 }}>
+                <label className="form-label">Brewery</label>
+                <input type="text" value={breweryName} onChange={e => setBreweryName(e.target.value)} placeholder="e.g. Harvey's" />
+              </div>
+            </div>
+
+            <div>
+              <label className="form-label">Date of Visit</label>
+              <input type="text" value={eventDate} onChange={e => setEventDate(e.target.value)} placeholder="e.g. 18 Dec 2025" />
+            </div>
+
+            <button type="submit" className="btn btn--outline" disabled={isLoading} style={{ marginTop: '8px' }}>
+              {isLoading ? "Logging..." : "Log Manual Visit"}
+            </button>
+          </form>
+        </div>
+
+        {/* Panel 3: Configure Wordle */}
+        <div className="section-card">
+          <h2 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Gamepad2 size={20} /> Daily Wordle Target</h2>
+          <form onSubmit={handleUpdateWordle} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div>
+              <label className="form-label">Target Word (Exactly 5 letters)</label>
+              <input 
+                type="text" 
+                maxLength={5} 
+                value={wordleWord} 
+                onChange={e => setWordleWord(e.target.value.toUpperCase())}
+                placeholder="MALTY" 
+                required 
+                style={{ textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 'bold' }}
+              />
+            </div>
+            
+            <div>
+              <label className="form-label">Hint Text</label>
+              <textarea 
+                value={wordleHint} 
+                onChange={e => setWordleHint(e.target.value)}
+                placeholder="Describes an ale with a sweet, biscuit-like flavor..."
+                rows={3}
+              />
+            </div>
+
+            <button type="submit" className="btn btn--accent" disabled={isLoading} style={{ marginTop: '8px' }}>
+              {isLoading ? "Updating..." : "Update Wordle Config"}
+            </button>
+          </form>
+        </div>
+
+        {/* Panel 4: HTML Page Publisher */}
+        <div className="section-card">
+          <h2 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Newspaper size={20} /> Newsletter Publisher</h2>
+          <form onSubmit={handlePublishHtml} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div>
+              <label className="form-label">Page Title</label>
+              <input type="text" value={pageTitle} onChange={e => setPageTitle(e.target.value)} placeholder="e.g. S3 Michaelmas Term Wrap-up" required />
+            </div>
+
+            <div>
+              <label className="form-label">URL Slug (alphanumeric and dashes only)</label>
+              <input type="text" value={pageSlug} onChange={e => setPageSlug(e.target.value)} placeholder="e.g. term-wrapup" required />
+            </div>
+
+            <div>
+              <label className="form-label">Paste raw HTML content</label>
+              <textarea 
+                value={htmlContent} 
+                onChange={e => setHtmlContent(e.target.value)}
+                placeholder="<h1>Term Wrap up</h1><p>We drank a lot of Sussex Best...</p>"
+                rows={6}
+                required
+                style={{ fontFamily: 'monospace', fontSize: '0.85rem' }}
+              />
+            </div>
+
+            <button type="submit" className="btn btn--primary" disabled={isLoading}>
+              {isLoading ? "Publishing..." : "Publish Custom HTML Page"}
+            </button>
+          </form>
+
+          {/* List of custom pages */}
+          {customPages.length > 0 && (
+            <div style={{ marginTop: '24px' }}>
+              <h4 style={{ fontSize: '0.9rem', fontWeight: 600, margin: '0 0 12px 0' }}>Live Custom Pages:</h4>
+              <ul style={{ paddingLeft: '0', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.85rem', listStyle: 'none' }}>
+                {customPages.map(page => (
+                  <li key={page.slug} style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                    <span className="badge badge--muted">/custom/{page.slug}</span>
+                    <Link href={`/custom/${page.slug}`} target="_blank" style={{ textDecoration: 'underline', color: 'var(--primary)', fontWeight: 'bold' }}>
+                      {page.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+
+        {/* Panel 5: Unvisited Pub Research List */}
+        <div className="section-card" style={{ display: 'flex', flexDirection: 'column', maxHeight: '580px', padding: 0 }}>
+          <h2 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '24px 32px 16px', margin: 0, position: 'sticky', top: 0, background: 'var(--surface)', zIndex: 5, borderRadius: 'var(--card-radius) var(--card-radius) 0 0' }}>
+            <Compass size={20} /> Unvisited Pubs ({unvisitedPubs.length})
+          </h2>
+          <div style={{ padding: '0 32px 32px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: '0 0 8px 0' }}>
+              Pubs from our target list we have not visited yet. James' notes included.
+            </p>
+
+            {unvisitedPubs.map(pub => (
+              <div key={pub.name} style={{ 
+                padding: '12px 16px', 
+                background: 'var(--surface-muted)', 
+                border: '1px solid var(--border)',
+                borderRadius: '8px'
+              }}>
+                <h4 style={{ margin: '0 0 4px 0', fontSize: '1rem', fontFamily: 'var(--font-heading)' }}>{pub.name}</h4>
+                <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--warning-text)', fontStyle: 'italic', fontWeight: 500 }}>
+                  {pub.comment ? `James' Notes: "${pub.comment}"` : "No notes logged."}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Panel 6: User Management */}
+        <div className="section-card" style={{ display: 'flex', flexDirection: 'column', maxHeight: '580px', padding: 0 }}>
+          <h2 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '24px 32px 16px', margin: 0, position: 'sticky', top: 0, background: 'var(--surface)', zIndex: 5, borderRadius: 'var(--card-radius) var(--card-radius) 0 0' }}>
+            <Users size={20} /> User Management
+          </h2>
+          <div style={{ padding: '0 32px 32px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: '0 0 8px 0' }}>
+              Grant or revoke committee privileges for registered accounts.
+            </p>
+
+            {Object.entries(localUsers).map(([username, user]) => {
+              // Ensure we check against lowercase spacing stripped
+              const isSelf = username === memberName.toLowerCase().replace(/\s+/g, '');
+              
+              return (
+                <div key={username} style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '12px 16px', 
+                  background: 'var(--surface-muted)', 
+                  border: '1px solid var(--border)',
+                  borderRadius: '8px'
+                }}>
+                  <div>
+                    <h4 style={{ margin: '0 0 4px 0', fontSize: '1rem', fontFamily: 'var(--font-heading)' }}>
+                      {user.votingName || username} 
+                      <span style={{ fontSize: '0.7rem', color: 'var(--text-light)', marginLeft: '8px', fontWeight: 'normal', fontFamily: 'var(--font-body)' }}>@{username}</span>
+                    </h4>
+                    <div className={`badge ${user.role === 'committee' ? 'badge--primary' : 'badge--muted'}`}>
+                      {user.role}
+                    </div>
+                  </div>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: isSelf ? 'not-allowed' : 'pointer', fontSize: '0.85rem', fontWeight: 600, opacity: isSelf ? 0.5 : 1 }}>
+                    <input 
+                      type="checkbox" 
+                      checked={user.role === 'committee'} 
+                      onChange={() => toggleCommitteeRole(username, user.role)}
+                      disabled={isSelf}
+                      style={{ width: '18px', height: '18px', cursor: isSelf ? 'not-allowed' : 'pointer' }}
+                    />
+                    Committee
+                  </label>
+                </div>
+              );
+            })}
+            
+            {Object.keys(localUsers).length === 0 && (
+               <p style={{ fontSize: '0.85rem', color: 'var(--text-light)' }}>No registered users found.</p>
+            )}
+          </div>
+        </div>
+
+        {/* Panel 7: Feature Flags (Page Layout Toggles) */}
+        <div className="section-card">
+          <h2 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Square size={20} /> Page Layout Settings</h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '16px', marginTop: '-8px' }}>
+            Enable or disable specific pages/sections across the entire website.
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {Object.keys(featureFlags).length === 0 && <p style={{ fontSize: '0.85rem', color: 'var(--text-light)' }}>Loading settings...</p>}
+            {Object.entries(featureFlags).map(([key, value]) => (
+              <label key={key} style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
+                <input 
+                  type="checkbox" 
+                  checked={value as boolean} 
+                  onChange={() => handleToggleFeature(key)} 
+                  disabled={isLoading}
+                  style={{ width: '18px', height: '18px' }}
+                />
+                <span style={{ textTransform: 'capitalize', fontWeight: 600 }}>{key} Page</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  );
+}

@@ -1,64 +1,61 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-
-const dbPath = path.join(process.cwd(), 'src/data/db.json');
+import { prisma } from '@/lib/db';
 
 export async function GET() {
   try {
-    let dbData = { wordleWord: "MALTY", wordleHint: "Describes an ale with a sweet, biscuit-like flavor derived from barley." };
-    if (fs.existsSync(dbPath)) {
-      try {
-        dbData = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
-      } catch (e) {
-        // fallback
-      }
+    const settings = await prisma.settings.findUnique({ where: { id: 'global' } });
+    if (!settings) {
+      return NextResponse.json({ wordB64: Buffer.from("STOUT").toString('base64'), hint: "A dark beer" });
     }
-    
-    // Return only public configurations (do not expose wordleWord in lower case or plain text directly if we want to prevent trivial cheat inspects, but for simplicity we return wordleWord capitalized)
-    return NextResponse.json({
-      word: btoa(dbData.wordleWord || "MALTY"),
-      hint: dbData.wordleHint || "Describes an ale with a sweet, biscuit-like flavor derived from barley."
-    });
+    return NextResponse.json({ wordB64: settings.wordleWord, hint: settings.wordleHint });
   } catch (err) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(req: Request) {
   try {
-    const { teamName, score } = await request.json();
+    const { user, score } = await req.json();
 
-    if (!teamName || score === undefined) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    if (!user || typeof score !== 'number') {
+      return NextResponse.json({ error: 'Missing data' }, { status: 400 });
     }
 
-    let dbData = { wordleWord: "MALTY", wordleHint: "", wordleScores: [] as any[] };
-    if (fs.existsSync(dbPath)) {
-      try {
-        dbData = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
-      } catch (e) {
-        // fallback
+    const usernameKey = user.toLowerCase().replace(/\s+/g, '');
+    const dbUser = await prisma.user.findUnique({ where: { name: usernameKey } });
+
+    if (!dbUser) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    // Get today's date string e.g. "2026-06-05"
+    const todayStr = new Date().toISOString().split('T')[0];
+
+    // Upsert so they can only submit once per day, or update their score
+    const existingScore = await prisma.wordleScore.findFirst({
+      where: {
+        userId: dbUser.id,
+        date: todayStr
       }
+    });
+
+    if (existingScore) {
+      await prisma.wordleScore.update({
+        where: { id: existingScore.id },
+        data: { score }
+      });
+    } else {
+      await prisma.wordleScore.create({
+        data: {
+          userId: dbUser.id,
+          date: todayStr,
+          score
+        }
+      });
     }
 
-    if (!dbData.wordleScores) {
-      dbData.wordleScores = [];
-    }
-
-    const newScore = {
-      teamName: teamName.trim().toUpperCase(),
-      score: parseInt(score),
-      date: new Date().toLocaleDateString('en-GB'),
-      timestamp: new Date().toISOString()
-    };
-
-    dbData.wordleScores.push(newScore);
-
-    fs.writeFileSync(dbPath, JSON.stringify(dbData, null, 2), 'utf8');
-
-    return NextResponse.json({ success: true, score: newScore });
+    return NextResponse.json({ success: true });
   } catch (err) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

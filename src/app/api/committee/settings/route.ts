@@ -1,27 +1,31 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-
-const settingsPath = path.join(process.cwd(), 'src/data/settings.json');
+import { prisma } from '@/lib/db';
 
 export async function GET() {
   try {
-    const data = fs.readFileSync(settingsPath, 'utf8');
-    return NextResponse.json(JSON.parse(data));
+    const settings = await prisma.settings.findUnique({ where: { id: 'global' } });
+    return NextResponse.json(settings || {});
   } catch (err) {
-    return NextResponse.json({ error: "Failed to read settings" }, { status: 500 });
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(req: Request) {
   try {
-    const body = await request.json();
-    if (body.role !== 'committee') {
-      return NextResponse.json({ error: "Unauthorized access" }, { status: 403 });
+    const { password, features } = await req.json();
+
+    if (password !== process.env.NEXT_PUBLIC_COMMITTEE_PASSWORD) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    fs.writeFileSync(settingsPath, JSON.stringify({ features: body.features }, null, 2), 'utf8');
-    return NextResponse.json({ success: true, features: body.features });
+
+    await prisma.settings.upsert({
+      where: { id: 'global' },
+      update: features,
+      create: { id: 'global', ...features }
+    });
+
+    return NextResponse.json({ success: true });
   } catch (err) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

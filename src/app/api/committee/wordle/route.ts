@@ -1,38 +1,33 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { prisma } from '@/lib/db';
 
-const dbPath = path.join(process.cwd(), 'src/data/db.json');
-
-export async function POST(request: Request) {
+export async function POST(req: Request) {
   try {
-    const { word, hint, role } = await request.json();
+    const { password, word, hint } = await req.json();
 
-    // Verification check (for simplicity, we verify the role or expect committee validation)
-    if (role !== 'committee') {
-      return NextResponse.json({ error: "Unauthorized access" }, { status: 403 });
+    if (password !== process.env.NEXT_PUBLIC_COMMITTEE_PASSWORD) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    if (!word || word.trim().length !== 5) {
-      return NextResponse.json({ error: "Word must be exactly 5 letters" }, { status: 400 });
+    if (!word || word.length !== 5) {
+      return NextResponse.json({ error: 'Word must be 5 letters' }, { status: 400 });
     }
 
-    let dbData = { wordleWord: "MALTY", wordleHint: "", wordleScores: [], customPages: [], events: [] };
-    if (fs.existsSync(dbPath)) {
-      try {
-        dbData = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
-      } catch (e) {
-        // fallback
+    await prisma.settings.upsert({
+      where: { id: 'global' },
+      update: {
+        wordleWord: Buffer.from(word.toUpperCase()).toString('base64'),
+        wordleHint: hint || "A tasty pint."
+      },
+      create: {
+        id: 'global',
+        wordleWord: Buffer.from(word.toUpperCase()).toString('base64'),
+        wordleHint: hint || "A tasty pint."
       }
-    }
+    });
 
-    dbData.wordleWord = word.trim().toUpperCase();
-    dbData.wordleHint = hint || "";
-
-    fs.writeFileSync(dbPath, JSON.stringify(dbData, null, 2), 'utf8');
-
-    return NextResponse.json({ success: true, word: dbData.wordleWord, hint: dbData.wordleHint });
+    return NextResponse.json({ success: true });
   } catch (err) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

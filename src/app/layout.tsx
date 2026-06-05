@@ -3,8 +3,7 @@ import { Lora, Inter } from 'next/font/google';
 import Link from 'next/link';
 import './globals.css';
 import Navbar from '../components/Navbar';
-import settingsData from '@/data/settings.json';
-
+import { prisma } from '@/lib/db';
 const lora = Lora({ subsets: ['latin'], variable: '--font-serif', weight: ['400', '500', '600', '700'] });
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', weight: ['400', '500', '600', '700'] });
 
@@ -18,15 +17,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const settings = await prisma.settings.findUnique({ where: { id: 'global' } });
+  
   return (
     <html lang="en" className={`${lora.variable} ${inter.variable}`}>
       <body style={{ fontFamily: 'var(--font-body)', display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <Navbar />
+        <Navbar settings={settings} />
         <main style={{
           flex: 1,
           padding: 'var(--section-gap) var(--page-px)',
@@ -48,11 +49,11 @@ export default function RootLayout({
               </p>
             </div>
             <div className="site-footer__links">
-              {settingsData.features.about && <Link href="/about" className="site-footer__link">About</Link>}
-              {settingsData.features.contact && <Link href="/contact" className="site-footer__link">Contact</Link>}
-              {settingsData.features.leaderboard && <Link href="/leaderboard" className="site-footer__link">Pint Leaderboard</Link>}
-              {settingsData.features.checklist && <Link href="/checklist" className="site-footer__link">Pubs</Link>}
-              {settingsData.features.awards && <Link href="/awards" className="site-footer__link">Awards</Link>}
+              {settings?.about && <Link href="/about" className="site-footer__link">About</Link>}
+              {settings?.contact && <Link href="/contact" className="site-footer__link">Contact</Link>}
+              {settings?.leaderboard && <Link href="/leaderboard" className="site-footer__link">Pint Leaderboard</Link>}
+              {settings?.checklist && <Link href="/checklist" className="site-footer__link">Pubs</Link>}
+              {settings?.awards && <Link href="/awards" className="site-footer__link">Awards</Link>}
               <Link href="/login" className="site-footer__link">Login</Link>
             </div>
           </div>

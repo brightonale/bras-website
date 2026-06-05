@@ -1,48 +1,39 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { prisma } from '@/lib/db';
 
-const dbPath = path.join(process.cwd(), 'src/data/db.json');
-
-export async function POST(request: Request) {
+export async function POST(req: Request) {
   try {
-    const { memberName, pubName, beerName, score, dateString } = await request.json();
+    const { user, pub, score } = await req.json();
 
-    if (!memberName || !pubName || !score) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    if (!user || !pub || typeof score !== 'number') {
+      return NextResponse.json({ error: 'Missing or invalid data' }, { status: 400 });
     }
 
-    // Read existing database
-    let dbData = { wordleWord: "MALTY", wordleHint: "", wordleScores: [], customPages: [], events: [], newRatings: [] as any[] };
-    if (fs.existsSync(dbPath)) {
-      try {
-        dbData = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
-      } catch (e) {
-        // use default
+    const usernameKey = user.toLowerCase().replace(/\s+/g, '');
+    const dbUser = await prisma.user.findUnique({ where: { name: usernameKey } });
+
+    if (!dbUser) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    // Check if there is an active social for this pub
+    const social = await prisma.social.findFirst({
+      where: { pubName: pub, active: true }
+    });
+
+    // Create the rating
+    await prisma.rating.create({
+      data: {
+        userId: dbUser.id,
+        pubName: pub,
+        score: score,
+        socialId: social ? social.id : null
       }
-    }
+    });
 
-    if (!dbData.newRatings) {
-      dbData.newRatings = [];
-    }
-
-    const newRating = {
-      id: 'rating-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
-      memberName,
-      pubName,
-      beerName: beerName || "Cask Ale",
-      score: parseFloat(score),
-      dateString: dateString || new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
-      timestamp: new Date().toISOString()
-    };
-
-    dbData.newRatings.push(newRating);
-
-    // Write back to db.json
-    fs.writeFileSync(dbPath, JSON.stringify(dbData, null, 2), 'utf8');
-
-    return NextResponse.json({ success: true, rating: newRating });
+    return NextResponse.json({ success: true });
   } catch (err) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("API /rate error", err);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

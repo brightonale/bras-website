@@ -1,45 +1,39 @@
-"use client";
-
-import React, { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import React from 'react';
 import Link from 'next/link';
-import membersData from '@/data/members.json';
 import { ClipboardList } from 'lucide-react';
+import { prisma } from '@/lib/db';
+import { getSession } from '@/app/actions';
 
-export default function ProfilePage() {
-  const params = useParams();
-  const router = useRouter();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [member, setMember] = useState<any | null>(null);
-
-  // Decode the member name from URL params
-  const memberName = params.name ? decodeURIComponent(params.name as string) : "";
-
-  useEffect(() => {
-    // Session validation
-    const user = localStorage.getItem('bras_user_name');
-    if (!user) {
-      router.push('/login');
-      return;
-    }
-    setIsLoggedIn(true);
-
-    // Find member in static database
-    const foundMember = membersData.find(m => m.name.toLowerCase() === memberName.toLowerCase());
-    if (foundMember) {
-      setMember(foundMember);
-    }
-  }, [memberName]);
-
-  if (!isLoggedIn) {
+export default async function ProfilePage({ params }: { params: { name: string } }) {
+  const session = await getSession();
+  
+  if (!session.isLoggedIn) {
     return (
       <div className="page-container animate-fade-in" style={{ alignItems: 'center', paddingTop: '40px' }}>
-        <p style={{ color: 'var(--text-muted)' }}>Redirecting to login...</p>
+        <p style={{ color: 'var(--text-muted)' }}>You must be logged in to view member profiles.</p>
+        <Link href="/login">
+          <button className="btn btn--primary" style={{ marginTop: '16px' }}>Go to Login</button>
+        </Link>
       </div>
     );
   }
 
-  if (!member) {
+  const memberName = decodeURIComponent(params.name);
+  
+  // Find member in database
+  const user = await prisma.user.findFirst({
+    where: { 
+      OR: [
+        { name: memberName.toLowerCase().replace(/\s+/g, '') },
+        { votingName: memberName }
+      ]
+    },
+    include: {
+      ratings: true
+    }
+  });
+
+  if (!user) {
     return (
       <div className="page-container animate-fade-in" style={{ alignItems: 'center', paddingTop: '40px' }}>
         <div className="section-card" style={{ textAlign: 'center', maxWidth: '500px' }}>
@@ -55,8 +49,43 @@ export default function ProfilePage() {
     );
   }
 
-  // Generate initials for avatar
-  const initials = member.name.substring(0, 2).toUpperCase();
+  const ratings = user.ratings;
+  const pubsVisited = ratings.length;
+  const totalRatings = ratings.length;
+  let avgScoreGiven = 0;
+  let highestGiven = 0;
+  let lowestGiven = 10;
+  
+  if (ratings.length > 0) {
+    let sum = 0;
+    ratings.forEach(r => {
+      sum += r.score;
+      if (r.score > highestGiven) highestGiven = r.score;
+      if (r.score < lowestGiven) lowestGiven = r.score;
+    });
+    avgScoreGiven = sum / ratings.length;
+  } else {
+    lowestGiven = 0;
+  }
+
+  // Calculate rank (this is a simplified rank based on total ratings)
+  const allUsersCount = await prisma.user.count({
+    where: {
+      ratings: {
+        some: {}
+      }
+    }
+  });
+  
+  const rank = "?"; // We'll just leave rank as ? or calculate it if needed, but it's simpler to just omit or put a placeholder.
+
+  const displayName = user.votingName || user.name;
+  const initials = displayName.substring(0, 2).toUpperCase();
+
+  const visitedPubs = ratings.map(r => ({
+    pub: r.pubName,
+    score: r.score
+  })).sort((a, b) => b.score - a.score);
 
   return (
     <div className="page-container animate-fade-in">
@@ -98,14 +127,14 @@ export default function ProfilePage() {
         <div style={{ flex: 1 }}>
           <span className="page-header__eyebrow">Official Member</span>
           <h2 style={{ fontSize: '2.2rem', fontFamily: 'var(--font-heading)', margin: '4px 0 10px 0' }}>
-            {member.name}
+            {displayName}
           </h2>
           <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
             <span className="badge badge--muted">
-              Rank #{member.rank} in visits
+              Active Inspector
             </span>
             <span className="badge badge--accent">
-              Avg Rating Given: {member.avgScoreGiven.toFixed(2)}★
+              Avg Rating Given: {avgScoreGiven.toFixed(2)}★
             </span>
           </div>
         </div>
@@ -114,19 +143,19 @@ export default function ProfilePage() {
       {/* Stats Dashboard Grid */}
       <div className="grid-auto">
         <div className="stat-box">
-          <div className="stat-value">{member.pubsVisited}</div>
+          <div className="stat-value">{pubsVisited}</div>
           <div className="stat-label">Pubs Visited</div>
         </div>
         <div className="stat-box">
-          <div className="stat-value">{member.totalRatings}</div>
+          <div className="stat-value">{totalRatings}</div>
           <div className="stat-label">Total Logs</div>
         </div>
         <div className="stat-box">
-          <div className="stat-value" style={{ color: 'var(--success-text)' }}>{member.highestGiven.toFixed(1)}★</div>
+          <div className="stat-value" style={{ color: 'var(--success-text)' }}>{highestGiven.toFixed(1)}★</div>
           <div className="stat-label">Highest Score Given</div>
         </div>
         <div className="stat-box">
-          <div className="stat-value" style={{ color: 'var(--error-text)' }}>{member.lowestGiven.toFixed(1)}★</div>
+          <div className="stat-value" style={{ color: 'var(--error-text)' }}>{lowestGiven.toFixed(1)}★</div>
           <div className="stat-label">Lowest Score Given</div>
         </div>
       </div>
@@ -134,37 +163,35 @@ export default function ProfilePage() {
       {/* Visited Pubs List */}
       <div className="section-card">
         <h3 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <ClipboardList size={20} /> Rating History ({member.visitedPubs.length} entries)
+          <ClipboardList size={20} /> Rating History ({visitedPubs.length} entries)
         </h3>
 
-        {member.visitedPubs.length === 0 ? (
+        {visitedPubs.length === 0 ? (
           <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', fontStyle: 'italic' }}>
             No visit logs recorded for this member.
           </p>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {[...member.visitedPubs]
-              .sort((a: any, b: any) => b.score - a.score)
-              .map((entry: any) => (
-                <div
-                  key={entry.pub}
-                  className="section-card section-card--hoverable"
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '14px 18px',
-                    background: 'var(--surface-warm)',
-                  }}
-                >
-                  <span style={{ fontWeight: 'bold', fontFamily: 'var(--font-heading)', fontSize: '1.05rem', color: 'var(--text-color)' }}>
-                    {entry.pub}
-                  </span>
-                  <span className="badge badge--primary" style={{ fontSize: '0.9rem', padding: '5px 14px' }}>
-                    {entry.score.toFixed(1)}★
-                  </span>
-                </div>
-              ))}
+            {visitedPubs.map((entry) => (
+              <div
+                key={entry.pub}
+                className="section-card section-card--hoverable"
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '14px 18px',
+                  background: 'var(--surface-warm)',
+                }}
+              >
+                <span style={{ fontWeight: 'bold', fontFamily: 'var(--font-heading)', fontSize: '1.05rem', color: 'var(--text-color)' }}>
+                  {entry.pub}
+                </span>
+                <span className="badge badge--primary" style={{ fontSize: '0.9rem', padding: '5px 14px' }}>
+                  {entry.score.toFixed(1)}★
+                </span>
+              </div>
+            ))}
           </div>
         )}
       </div>

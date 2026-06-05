@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
-import settingsData from '@/data/settings.json';
 
 const ALL_LINKS = [
   { href: '/leaderboard', label: 'Pint Leaderboard', key: 'leaderboard' },
@@ -18,7 +17,7 @@ const ALL_LINKS = [
 
 // NAV_LINKS is calculated dynamically inside the component body based on role
 
-export default function Navbar() {
+export default function Navbar({ settings }: { settings: any }) {
   const pathname = usePathname();
   const router = useRouter();
   const [userName, setUserName] = useState<string | null>(null);
@@ -29,7 +28,7 @@ export default function Navbar() {
     if (link.key === 'wordle' || link.key === 'awards') {
       return isCommittee;
     }
-    return (settingsData.features as any)[link.key] !== false;
+    return settings ? settings[link.key] !== false : true;
   });
 
   useEffect(() => {

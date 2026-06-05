@@ -1,17 +1,12 @@
-"use client";
-
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import matrixData from '@/data/matrix.json';
 import { Lock } from 'lucide-react';
+import { prisma } from '@/lib/db';
+import { getSession } from '@/app/actions';
 
-export default function MatrixPage() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    const user = localStorage.getItem('bras_user_name');
-    setIsLoggedIn(!!user);
-  }, []);
+export default async function MatrixPage() {
+  const session = await getSession();
+  const isLoggedIn = session.isLoggedIn;
 
   if (!isLoggedIn) {
     return (
@@ -32,9 +27,31 @@ export default function MatrixPage() {
     );
   }
 
-  // matrixData has: { pubs: [...], rows: [ { member: '...', ratings: { 'pub': score } } ] }
-  const pubs = matrixData.pubs;
-  const rows = matrixData.rows;
+  // Fetch all ratings
+  const ratings = await prisma.rating.findMany({
+    include: { user: true }
+  });
+
+  // Extract unique pubs that have been rated
+  const ratedPubsSet = new Set<string>();
+  ratings.forEach(r => ratedPubsSet.add(r.pubName));
+  const pubs = Array.from(ratedPubsSet).sort();
+
+  // Extract members and their ratings
+  const memberMap = new Map<string, Record<string, number | null>>();
+  ratings.forEach(r => {
+    if (!memberMap.has(r.user.votingName || r.user.name)) {
+      const initialRatings: Record<string, number | null> = {};
+      pubs.forEach(p => initialRatings[p] = null);
+      memberMap.set(r.user.votingName || r.user.name, initialRatings);
+    }
+    memberMap.get(r.user.votingName || r.user.name)![r.pubName] = r.score;
+  });
+
+  const rows = Array.from(memberMap.entries()).map(([member, ratings]) => ({
+    member,
+    ratings
+  })).sort((a, b) => a.member.localeCompare(b.member));
 
   const getCellBg = (val: number | null) => {
     if (val === null) return '#ffffff';
@@ -135,7 +152,7 @@ export default function MatrixPage() {
                     </Link>
                   </td>
                   {pubs.map(pub => {
-                    const score = (row.ratings as Record<string, number | null>)[pub];
+                    const score = row.ratings[pub];
                     return (
                       <td 
                         key={pub} 
