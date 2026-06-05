@@ -352,7 +352,8 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: any[] })
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ features: newFlags, role: "committee" })
       });
-      if (!res.ok) throw new Error("Failed to update settings");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to update settings");
       setSuccessMsg(`Page layout settings updated successfully!`);
     } catch (err: any) {
       setErrorMsg(err.message || "Failed to update settings");
