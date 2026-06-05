@@ -3,8 +3,8 @@
     "rank": 1,
     "name": "Harry",
     "pubsVisited": 18,
-    "totalRatings": 19,
-    "avgScoreGiven": 6.44,
+    "totalRatings": 18,
+    "avgScoreGiven": 6.42,
     "highestGiven": 8.31,
     "lowestGiven": 1.2,
     "visitedPubs": [
@@ -235,8 +235,8 @@
     "rank": 5,
     "name": "Cal",
     "pubsVisited": 9,
-    "totalRatings": 10,
-    "avgScoreGiven": 6.94,
+    "totalRatings": 9,
+    "avgScoreGiven": 6.87,
     "highestGiven": 9.5,
     "lowestGiven": 4.0,
     "visitedPubs": [
@@ -368,8 +368,8 @@
     "rank": 8,
     "name": "Harrison",
     "pubsVisited": 8,
-    "totalRatings": 9,
-    "avgScoreGiven": 7.22,
+    "totalRatings": 8,
+    "avgScoreGiven": 7.24,
     "highestGiven": 8.5,
     "lowestGiven": 6.5,
     "visitedPubs": [
@@ -606,8 +606,8 @@
     "rank": 14,
     "name": "Alex",
     "pubsVisited": 5,
-    "totalRatings": 6,
-    "avgScoreGiven": 6.4,
+    "totalRatings": 4,
+    "avgScoreGiven": 5.6,
     "highestGiven": 9.0,
     "lowestGiven": 3.2,
     "visitedPubs": [
@@ -862,8 +862,8 @@
     "rank": 26,
     "name": "James Graham",
     "pubsVisited": 1,
-    "totalRatings": 1,
-    "avgScoreGiven": 6.0,
+    "totalRatings": 0,
+    "avgScoreGiven": 0.0,
     "highestGiven": 6.0,
     "lowestGiven": 6.0,
     "visitedPubs": [
@@ -953,7 +953,7 @@
     "name": "Aziz",
     "pubsVisited": 1,
     "totalRatings": 1,
-    "avgScoreGiven": 6.05,
+    "avgScoreGiven": 6.0,
     "highestGiven": 6.05,
     "lowestGiven": 6.05,
     "visitedPubs": [
@@ -1073,7 +1073,7 @@
     "name": "Romeo",
     "pubsVisited": 1,
     "totalRatings": 1,
-    "avgScoreGiven": 8.69,
+    "avgScoreGiven": 8.7,
     "highestGiven": 8.69,
     "lowestGiven": 8.69,
     "visitedPubs": [
@@ -1103,7 +1103,7 @@
     "name": "Kicken",
     "pubsVisited": 1,
     "totalRatings": 1,
-    "avgScoreGiven": 6.56,
+    "avgScoreGiven": 6.6,
     "highestGiven": 6.56,
     "lowestGiven": 6.56,
     "visitedPubs": [
