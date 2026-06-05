@@ -120,22 +120,22 @@ export default async function HistoryPage() {
         </h2>
         <div className="grid-3" style={{ gap: '24px' }}>
           
-          {/* Member 1: Harry */}
+          {/* Member 1: James Graham */}
           <div className="section-card" style={{ display: 'flex', flexDirection: 'column', padding: 0, overflow: 'hidden' }}>
             <div style={{ position: 'relative', height: '240px', width: '100%', overflow: 'hidden', backgroundColor: 'var(--surface-muted)' }}>
               <img 
                 src="/assets/photos/photo-1.jpg" 
-                alt="Harry James Rogers" 
+                alt="James Graham" 
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
             </div>
             <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-              <h3 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '4px' }}>Harry James Rogers</h3>
+              <h3 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '4px' }}>James Graham</h3>
               <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>
                 Founding President (2023–2025)
               </div>
               <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: '1.5', marginBottom: '16px' }}>
-                Known formally as James within the society's operational logs, Harry was the driving force behind the initial 20 months of the BRAS. He established the standard operating protocol of weekly pub reviews, systematically assigning ratings to local cask ales. Under his leadership, the club transitioned from a small circle of friends into an accredited society featured in local media and regional CAMRA press. He formally signed off as executive head in June 2025.
+                James was the driving force behind the initial 20 months of the BRAS. He established the standard operating protocol of weekly pub reviews, systematically assigning ratings to local cask ales. Under his leadership, the club transitioned from a small circle of friends into an accredited society featured in local media and regional CAMRA press. He formally signed off as executive head in June 2025.
               </p>
               <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: 'auto' }}>
                 <span className="badge badge--primary">Founder</span>
