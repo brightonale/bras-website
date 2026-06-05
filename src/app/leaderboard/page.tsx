@@ -96,9 +96,9 @@ export default function LeaderboardPage() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
         <div className="page-header" style={{ marginBottom: 0 }}>
           <span className="page-header__eyebrow">Rankings</span>
-          <h1 className="page-header__title">Official Pub Leaderboard</h1>
+          <h1 className="page-header__title">Pint Leaderboard</h1>
           <p className="page-header__subtitle">
-            Ranked by average score given by Brighton Real Ale Society inspectors.
+            Ranked by average score given by Brighton Real Ale Society members.
           </p>
         </div>
 

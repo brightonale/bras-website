@@ -96,7 +96,7 @@ export default function ProfilePage() {
 
         {/* Name & Badges */}
         <div style={{ flex: 1 }}>
-          <span className="page-header__eyebrow">Official Pint Inspector</span>
+          <span className="page-header__eyebrow">Official Member</span>
           <h2 style={{ fontSize: '2.2rem', fontFamily: 'var(--font-heading)', margin: '4px 0 10px 0' }}>
             {member.name}
           </h2>
@@ -134,7 +134,7 @@ export default function ProfilePage() {
       {/* Visited Pubs List */}
       <div className="section-card">
         <h3 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <ClipboardList size={20} /> Inspector Log History ({member.visitedPubs.length} entries)
+          <ClipboardList size={20} /> Rating History ({member.visitedPubs.length} entries)
         </h3>
 
         {member.visitedPubs.length === 0 ? (

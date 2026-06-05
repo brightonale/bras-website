@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import membersData from '@/data/members.json';
 
-const COMMITTEE_PASSWORD = "bras2025";
-const MEMBER_PASSWORD = "realale2026";
+const COMMITTEE_PASSWORD = process.env.COMMITTEE_PASSWORD || "change_me";
+const MEMBER_PASSWORD = process.env.MEMBER_PASSWORD || "change_me";
 
 export async function POST(request: Request) {
   try {

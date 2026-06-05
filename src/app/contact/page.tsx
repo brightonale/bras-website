@@ -14,7 +14,7 @@ export default function Contact() {
         <span className="page-header__eyebrow">Get in touch</span>
         <h1 className="page-header__title">Contact Us</h1>
         <p className="page-header__subtitle">
-          Have a pub recommendation or want to join the pint inspectors? Let us know.
+          Have a pub recommendation or want to join the society? Let us know.
         </p>
       </div>
 

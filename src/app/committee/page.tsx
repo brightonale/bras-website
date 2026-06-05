@@ -18,6 +18,9 @@ export default function CommitteePage() {
   const [activeDateString, setActiveDateString] = useState('');
   const [currentActivePint, setCurrentActivePint] = useState<any | null>(null);
 
+  // Feature Flags Form
+  const [featureFlags, setFeatureFlags] = useState<Record<string, boolean>>({});
+
   // Wordle Settings Form
   const [wordleWord, setWordleWord] = useState('');
   const [wordleHint, setWordleHint] = useState('');
@@ -61,10 +64,11 @@ export default function CommitteePage() {
       setEventDate(todayStr);
       setActiveDateString(todayStr);
 
-      // Fetch Wordle config & custom pages list & active pint
+      // Fetch Wordle config & custom pages list & active pint & settings
       fetchActivePint();
       fetchWordleConfig();
       fetchCustomPages();
+      fetchSettings();
 
       // Fetch users from localStorage
       const users = JSON.parse(localStorage.getItem('bras_users') || '{}');
@@ -149,7 +153,7 @@ export default function CommitteePage() {
       if (!res.ok) throw new Error(data.error || "Failed to set active pint");
 
       setCurrentActivePint(data.activePint);
-      setSuccessMsg(`Crawl Pint active: ${data.activePint.beerName} at ${data.activePint.pubName}! Members can now log scores.`);
+      setSuccessMsg(`Social Pint active: ${data.activePint.beerName} at ${data.activePint.pubName}! Members can now log scores.`);
     } catch (err: any) {
       setErrorMsg(err.message || "Something went wrong.");
     } finally {
@@ -299,6 +303,42 @@ export default function CommitteePage() {
     }
   };
 
+  const fetchSettings = async () => {
+    try {
+      const res = await fetch('/api/committee/settings');
+      const data = await res.json();
+      if (data.features) {
+        setFeatureFlags(data.features);
+      }
+    } catch (e) {
+      console.warn("Could not fetch settings", e);
+    }
+  };
+
+  const handleToggleFeature = async (featureName: string) => {
+    const newFlags = { ...featureFlags, [featureName]: !featureFlags[featureName] };
+    setFeatureFlags(newFlags);
+    
+    setIsLoading(true);
+    setErrorMsg(null);
+    setSuccessMsg(null);
+    try {
+      const res = await fetch('/api/committee/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ features: newFlags, role: "committee" })
+      });
+      if (!res.ok) throw new Error("Failed to update settings");
+      setSuccessMsg(`Page layout settings updated successfully!`);
+    } catch (err: any) {
+      setErrorMsg(err.message || "Failed to update settings");
+      // Revert on fail
+      setFeatureFlags(featureFlags);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (!isCommittee) {
     return (
       <div className="page-container animate-fade-in" style={{ alignItems: 'center', marginTop: '40px' }}>
@@ -326,7 +366,7 @@ export default function CommitteePage() {
         <span className="page-header__eyebrow">BRAS Committee Panel</span>
         <h1 className="page-header__title">Society Operations Dashboard</h1>
         <p className="page-header__subtitle">
-          Welcome back, <strong>{memberName}</strong>. Manage crawls, set active pints, update Wordle, and manage registered users.
+          Welcome back, <strong>{memberName}</strong>. Manage Socials, set active pints, update Wordle, and manage registered users.
         </p>
       </div>
 
@@ -348,10 +388,10 @@ export default function CommitteePage() {
         {/* Panel 1: Set Active Pint */}
         <div className="section-card">
           <h2 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Beer size={20} /> Crawl Control (Active Pint)
+            <Beer size={20} /> Social Control (Active Pint)
           </h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '16px', marginTop: '-8px' }}>
-            Set the pint that society members are currently rating. Setting an active pint also records it as a crawl event.
+            Set the pint that society members are currently rating. Setting an active pint also records it as a Social event.
           </p>
           
           <form onSubmit={handleSetActivePint} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -411,7 +451,7 @@ export default function CommitteePage() {
         <div className="section-card">
           <h2 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Beer size={20} /> Log Visited Pub (Manual)</h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '16px', marginTop: '-8px' }}>
-            Manually log a crawl event without forcing members to score it live.
+            Manually log a Social event without forcing members to score it live.
           </p>
           <form onSubmit={handleAddEvent} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div>
@@ -542,7 +582,7 @@ export default function CommitteePage() {
           </h2>
           <div style={{ padding: '0 32px 32px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: '0 0 8px 0' }}>
-              Pubs from our target list we have not crawled yet. James' notes included.
+              Pubs from our target list we have not visited yet. James' notes included.
             </p>
 
             {unvisitedPubs.map(pub => (
@@ -611,6 +651,29 @@ export default function CommitteePage() {
             {Object.keys(localUsers).length === 0 && (
                <p style={{ fontSize: '0.85rem', color: 'var(--text-light)' }}>No registered users found.</p>
             )}
+          </div>
+        </div>
+
+        {/* Panel 7: Feature Flags (Page Layout Toggles) */}
+        <div className="section-card">
+          <h2 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Square size={20} /> Page Layout Settings</h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '16px', marginTop: '-8px' }}>
+            Enable or disable specific pages/sections across the entire website.
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {Object.keys(featureFlags).length === 0 && <p style={{ fontSize: '0.85rem', color: 'var(--text-light)' }}>Loading settings...</p>}
+            {Object.entries(featureFlags).map(([key, value]) => (
+              <label key={key} style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
+                <input 
+                  type="checkbox" 
+                  checked={value as boolean} 
+                  onChange={() => handleToggleFeature(key)} 
+                  disabled={isLoading}
+                  style={{ width: '18px', height: '18px' }}
+                />
+                <span style={{ textTransform: 'capitalize', fontWeight: 600 }}>{key} Page</span>
+              </label>
+            ))}
           </div>
         </div>
 

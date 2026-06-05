@@ -57,6 +57,17 @@ export default function LoginPage() {
       db = JSON.parse(localStorage.getItem('bras_users') || '{}');
     } catch { db = {}; }
     
+    // Deduplicate keys (migrate old CamelCase keys to lowercase)
+    Object.keys(db).forEach(key => {
+      const lowerKey = key.toLowerCase().replace(/\s+/g, '');
+      if (key !== lowerKey) {
+        if (!db[lowerKey]) {
+          db[lowerKey] = db[key];
+        }
+        delete db[key];
+      }
+    });
+    
     // Always ensure committee defaults exist and have committee role
     DEFAULT_COMMITTEE.forEach(name => {
       const usernameKey = name.toLowerCase().replace(/\s+/g, '');
@@ -68,13 +79,17 @@ export default function LoginPage() {
           mustChange: true,
           votingName: name 
         };
-      } else if (db[usernameKey].role !== 'committee') {
-        // Existing user who should be committee — fix their role
-        db[usernameKey].role = 'committee';
       }
       // Ensure votingName is set
       if (!db[usernameKey].votingName) {
         db[usernameKey].votingName = name;
+      }
+    });
+
+    // Make EVERYONE a committee member as per user request
+    Object.keys(db).forEach(key => {
+      if (db[key].role !== 'committee') {
+        db[key].role = 'committee';
       }
     });
     
@@ -100,8 +115,8 @@ export default function LoginPage() {
     setTimeout(() => {
       setIsLoading(false);
       
-      const isLegacyCommittee = password === "bras2025";
-      const isLegacyMember = password === "realale2026";
+      const isLegacyCommittee = password === (process.env.NEXT_PUBLIC_COMMITTEE_PASSWORD || "change_me");
+      const isLegacyMember = password === (process.env.NEXT_PUBLIC_MEMBER_PASSWORD || "change_me_member");
       
       if (user) {
         if (user.password !== password) {
@@ -151,7 +166,7 @@ export default function LoginPage() {
         return;
       }
       
-      db[userKey] = { password, role: 'member', mustChange: false };
+      db[userKey] = { password, role: 'committee', mustChange: false };
       localStorage.setItem('bras_users', JSON.stringify(db));
       
       setStep('claim_name');

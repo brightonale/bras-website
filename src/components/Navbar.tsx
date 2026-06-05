@@ -100,7 +100,7 @@ export default function Navbar() {
         </div>
 
         {/* Desktop auth */}
-        <div className="site-nav__auth" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <div className="site-nav__auth" style={{ gap: '8px', alignItems: 'center' }}>
           {userName ? (
             <>
               <span className="site-nav__user">
@@ -112,13 +112,11 @@ export default function Navbar() {
             </>
           ) : (
             <>
-              <Link href="/login?committee=true">
-                <button className="btn btn--outline btn--sm" style={{ borderColor: 'var(--accent)', color: 'var(--accent)' }}>
-                  Committee Sign In
-                </button>
+              <Link href="/login?committee=true" className="btn btn--outline btn--sm" style={{ borderColor: 'var(--accent)', color: 'var(--accent)' }}>
+                Committee Sign In
               </Link>
-              <Link href="/login">
-                <button className="btn btn--primary btn--sm">Login</button>
+              <Link href="/login" className="btn btn--primary btn--sm">
+                Login
               </Link>
             </>
           )}
@@ -164,13 +162,11 @@ export default function Navbar() {
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <Link href="/login?committee=true">
-                <button className="btn btn--outline btn--full" style={{ borderColor: 'var(--accent)', color: 'var(--accent)' }}>
-                  Committee Sign In
-                </button>
+              <Link href="/login?committee=true" className="btn btn--outline btn--full" style={{ borderColor: 'var(--accent)', color: 'var(--accent)', textAlign: 'center' }}>
+                Committee Sign In
               </Link>
-              <Link href="/login">
-                <button className="btn btn--primary btn--full">Login</button>
+              <Link href="/login" className="btn btn--primary btn--full" style={{ textAlign: 'center' }}>
+                Login
               </Link>
             </div>
           )}

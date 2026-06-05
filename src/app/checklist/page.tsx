@@ -29,7 +29,7 @@ export default function ChecklistPage() {
         <span className="page-header__eyebrow">Pub Tracker</span>
         <h1 className="page-header__title">🗺️ BRAS Pub Checklist</h1>
         <p className="page-header__subtitle">
-          Tracking every venue we&apos;ve officially visited during our legendary crawls.
+          Tracking every venue we&apos;ve officially visited during our legendary Socials.
         </p>
       </div>
 
@@ -37,7 +37,7 @@ export default function ChecklistPage() {
       <div className="section-card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
           <h3 className="section-card__title" style={{ borderBottom: 'none', marginBottom: 0, paddingBottom: 0 }}>
-            Brighton Crawl Progress
+            Brighton Social Progress
           </h3>
           <span style={{ fontWeight: 'bold', color: 'var(--primary)', fontSize: '1.1rem', fontFamily: 'var(--font-heading)' }}>
             {visitedPubs.length} / {totalResearchPubs} Pubs Conquered ({progressPercent}%)

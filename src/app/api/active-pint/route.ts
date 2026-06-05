@@ -57,7 +57,7 @@ export async function POST(request: Request) {
         dateString: cleanDate
       };
 
-      // Also ensure this is logged as a crawl event in events list if it doesn't exist
+      // Also ensure this is logged as a Social event in events list if it doesn't exist
       if (!dbData.events) {
         dbData.events = [];
       }

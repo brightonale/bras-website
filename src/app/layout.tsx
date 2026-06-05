@@ -11,7 +11,7 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter', weight: ['40
 export const metadata: Metadata = {
   title: 'Brighton Real Ale Society | BRAS',
   description: 'The official digital home for the Brighton Real Ale Society (BRAS). Rate pubs, play Wordle, vote in annual awards, and browse our leaderboards.',
-  keywords: 'Brighton, Real Ale, Beer, Pub Crawls, University, Society, BRAS',
+  keywords: 'Brighton, Real Ale, Beer, Pub Socials, University, Society, BRAS',
   icons: {
     icon: '/favicon.ico',
     apple: '/apple-icon.png',

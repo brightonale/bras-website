@@ -17,7 +17,7 @@ export async function GET() {
     
     // Return only public configurations (do not expose wordleWord in lower case or plain text directly if we want to prevent trivial cheat inspects, but for simplicity we return wordleWord capitalized)
     return NextResponse.json({
-      word: dbData.wordleWord || "MALTY",
+      word: btoa(dbData.wordleWord || "MALTY"),
       hint: dbData.wordleHint || "Describes an ale with a sweet, biscuit-like flavor derived from barley."
     });
   } catch (err) {

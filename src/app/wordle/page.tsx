@@ -37,7 +37,7 @@ export default function WordlePage() {
     fetch('/api/wordle')
       .then(res => res.json())
       .then(data => {
-        if (data.word) setTargetWord(data.word.toUpperCase().trim());
+        if (data.word) setTargetWord(atob(data.word).toUpperCase().trim());
         if (data.hint) setHintText(data.hint);
       })
       .catch(err => console.warn("Could not load word config from server", err));

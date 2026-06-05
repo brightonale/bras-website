@@ -5,7 +5,7 @@ import styles from './page.module.css';
 import { Beer, Crown, PartyPopper } from 'lucide-react';
 
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxW9kr6f0ysPfnUKnzF4_QtCcfFeO4bdP2__QdaQIPO5G5BLSa5dcJgG5NI_2PkOaEg/exec";
-const COMMITTEE_PASSWORD = "bras2025";
+const COMMITTEE_PASSWORD = process.env.NEXT_PUBLIC_COMMITTEE_PASSWORD || "change_me";
 
 type Category = {
   id: string;
@@ -25,7 +25,7 @@ const categoryDescriptions: Record<string, string> = {
 };
 
 const defaultCategories: Category[] = [
-  { id: "analyzer", title: "Pint Inspector", options: ["Harry R.", "James W.", "Ben T."] },
+  { id: "analyzer", title: "Top Member", options: ["Harry R.", "James W.", "Ben T."] },
   { id: "lightweight", title: "The Half-Pinter", options: ["Tom S.", "Alice M."] },
   { id: "funniest_drunk", title: "The Pub Comedian", options: ["Harry R.", "Pete J."] },
   { id: "most_punctual", title: "The Early Bird", options: ["Ben T.", "Alice M."] },

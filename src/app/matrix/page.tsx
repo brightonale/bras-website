@@ -52,7 +52,7 @@ export default function MatrixPage() {
         <span className="page-header__eyebrow">Analysis</span>
         <h1 className="page-header__title">Member × Pub Rating Matrix</h1>
         <p className="page-header__subtitle">
-          Detailed grid showing every rating given by each BRAS inspector across all crawled pubs.
+          Detailed grid showing every rating given by each BRAS member across all visited pubs.
         </p>
       </div>
 

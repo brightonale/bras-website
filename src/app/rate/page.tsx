@@ -102,9 +102,9 @@ export default function RatePage() {
 
       {/* Page Header */}
       <div className="page-header" style={{ textAlign: 'center' }}>
-        <span className="page-header__eyebrow">Pint Inspector</span>
+        <span className="page-header__eyebrow">Member</span>
         <h1 className="page-header__title" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-          <Beer size={32} className="accent-text" /> Pint Inspector Log
+          <Beer size={32} className="accent-text" /> Member Rating Log
         </h1>
         <p className="page-header__subtitle">
           Logging score as: <strong style={{ color: 'var(--text-color)' }}>{memberName}</strong>
@@ -115,7 +115,7 @@ export default function RatePage() {
 
         {!activeLoaded ? (
           <div style={{ textAlign: 'center', padding: '20px' }}>
-            <p style={{ color: 'var(--text-muted)' }}>Loading active crawl pint details...</p>
+            <p style={{ color: 'var(--text-muted)' }}>Loading active Social pint details...</p>
           </div>
         ) : successMsg ? (
           <div style={{ textAlign: 'center' }}>
@@ -137,7 +137,7 @@ export default function RatePage() {
               No Active Pint Set
             </h2>
             <p style={{ color: 'var(--text-muted)', textAlign: 'center', lineHeight: 1.5, marginBottom: '24px', fontSize: '0.95rem' }}>
-              The committee has not activated a pint for scoring yet. Please check back during the crawl when the committee starts a round!
+              The committee has not activated a pint for scoring yet. Please check back during the Social when the committee starts a round!
             </p>
             <button className="btn btn--outline btn--sm" onClick={() => router.push('/')}>
               Back to Home
@@ -174,7 +174,7 @@ export default function RatePage() {
                 )}
               </div>
               <div>
-                <span className="form-label" style={{ marginBottom: '2px', display: 'block', fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Date of Crawl</span>
+                <span className="form-label" style={{ marginBottom: '2px', display: 'block', fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Date of Social</span>
                 <span style={{ fontSize: '0.9rem', color: 'var(--text-light)' }}>{dateString}</span>
               </div>
             </div>

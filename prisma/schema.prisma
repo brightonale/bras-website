@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String   @unique
+  votingName   String?
+  role         String   @default("committee")
+  password     String
+  mustChange   Boolean  @default(false)
+  ratings      Rating[]
+  wordleScores WordleScore[]
+}
+
+model Social {
+  id           String   @id @default(uuid())
+  date         String
+  pubName      String
+  academicYear String
+  active       Boolean  @default(false)
+  ratings      Rating[]
+}
+
+model Rating {
+  id        String   @id @default(uuid())
+  score     Float
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  pubName   String
+  socialId  String?
+  social    Social?  @relation(fields: [socialId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model WordleScore {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  score     Int
+  date      String
+  timestamp DateTime @default(now())
+}
+
+model CustomPage {
+  id          String   @id
+  title       String
+  dateString  String
+  htmlContent String
+  createdAt   DateTime @default(now())
+}
+
+model Settings {
+  id          String  @id @default("global")
+  leaderboard Boolean @default(true)
+  checklist   Boolean @default(true)
+  matrix      Boolean @default(true)
+  wordle      Boolean @default(true)
+  awards      Boolean @default(true)
+  about       Boolean @default(true)
+  contact     Boolean @default(true)
+  wordleWord  String  @default("MALTY")
+  wordleHint  String  @default("...")
+}
+
+model Pub {
+  name        String  @id
+  status      String  @default("Not Visited")
+  comment     String?
+}
