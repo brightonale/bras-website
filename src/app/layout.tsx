@@ -38,7 +38,7 @@ export default function RootLayout({
             <div>
               <div className="site-footer__brand">Brighton Real Ale Society</div>
               <p className="site-footer__copy">
-                Est. 2023 · University of Sussex<br />
+                Est. 2023 · University of Brighton<br />
                 May your pints be cask-conditioned.
               </p>
             </div>

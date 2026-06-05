@@ -22,10 +22,10 @@ export default function About() {
       <div className="section-card" style={{ maxWidth: '800px' }}>
         <div style={{ color: 'var(--text-muted)', fontSize: '1.05rem', lineHeight: 1.8, display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <p>
-            The Brighton Real Ale Society (BRAS) is the official University of Brighton student society dedicated to exploring the vibrant pub culture of Brighton, UK.
+            The Brighton Real Ale Society (BRAS) is the official University of Brighton student society deeply aligned with the Campaign for Real Ale (CAMRA) philosophy. We are dedicated to exploring, preserving, and championing the vibrant, traditional pub culture of Brighton and Hove.
           </p>
           <p>
-            Rather than just going out for drinks, the society adds a layer of structure and camaraderie to their outings. We act as amateur &ldquo;Pint Inspectors&rdquo; to rate the quality of the pubs, the atmosphere, and the beer itself.
+            At our core, we believe in the superiority of traditional, living, cask-conditioned ale over mass-produced, artificially carbonated keg beers. Rather than just going out for drinks, the society adds a layer of structure and camaraderie to our outings. We act as amateur &ldquo;Pint Inspectors&rdquo; to rate the quality of the pubs, the atmosphere, and the cellar-craft of the beer itself. By supporting independent breweries and historic public houses, we aim to ensure that real ale continues to thrive for generations of students to come.
           </p>
         </div>
       </div>

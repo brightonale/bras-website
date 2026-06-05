@@ -30,9 +30,9 @@ export default function HomePage() {
       }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', maxWidth: '800px' }}>
           <img 
-            src="/assets/bras-logo-roundel.png" 
+            src="/assets/bras-logo-roundel-4k.png" 
             alt="BRAS Logo Roundel" 
-            style={{ width: '180px', height: '180px', objectFit: 'contain', marginBottom: '32px' }}
+            style={{ width: '320px', height: '320px', objectFit: 'contain', marginBottom: '32px' }}
           />
           <span style={{ 
             color: 'var(--accent)', 
@@ -52,10 +52,10 @@ export default function HomePage() {
             marginBottom: '24px',
             fontFamily: 'var(--font-heading)'
           }}>
-            Preserving Cask Heritage, One Pint at a Time.
+            Championing Real Ale &amp; Preserving Cask Heritage.
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '1.15rem', lineHeight: 1.6, marginBottom: '40px', maxWidth: '650px' }}>
-            We are the official University of Brighton student society acting as amateur Pint Inspectors to rate pub atmospheres, cask beer selection, and quality across Brighton & Hove. 
+            We are the official University of Brighton student society dedicated to the Campaign for Real Ale (CAMRA) ethos. We reject mass-produced keg beers in favor of traditional, living, cask-conditioned ale, acting as amateur Pint Inspectors to rate independent pubs across Brighton & Hove. 
           </p>
           
           <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
