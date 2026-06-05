@@ -46,7 +46,7 @@ export default function RootLayout({
             <div className="site-footer__links">
               {settingsData.features.about && <Link href="/about" className="site-footer__link">About</Link>}
               {settingsData.features.contact && <Link href="/contact" className="site-footer__link">Contact</Link>}
-              {settingsData.features.leaderboard && <Link href="/leaderboard" className="site-footer__link">Leaderboard</Link>}
+              {settingsData.features.leaderboard && <Link href="/leaderboard" className="site-footer__link">Pint Leaderboard</Link>}
               {settingsData.features.checklist && <Link href="/checklist" className="site-footer__link">Pubs</Link>}
               {settingsData.features.awards && <Link href="/awards" className="site-footer__link">Awards</Link>}
               <Link href="/login" className="site-footer__link">Login</Link>

@@ -106,7 +106,7 @@ export default function HomePage() {
       <div className="grid-auto">
         <div className="section-card section-card--hoverable" style={{ textAlign: 'center', padding: '32px' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px', color: 'var(--primary)' }}><Trophy size={40} strokeWidth={1.5} /></div>
-          <h3 className="section-card__title" style={{ borderBottom: 'none', paddingBottom: '0', marginBottom: '8px' }}>The Leaderboard</h3>
+          <h3 className="section-card__title" style={{ borderBottom: 'none', paddingBottom: '0', marginBottom: '8px' }}>The Pint Leaderboard</h3>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginBottom: '20px' }}>
             See which Brighton venues serve the finest cask condition.
           </p>
