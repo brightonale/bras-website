@@ -11,9 +11,11 @@ export async function GET() {
     });
 
     if (!activeSocial) {
-      activeSocial = await prisma.social.findFirst({
-        orderBy: { date: 'desc' }
-      });
+      const allSocials = await prisma.social.findMany();
+      if (allSocials.length > 0) {
+        allSocials.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        activeSocial = allSocials[0];
+      }
     }
 
     return NextResponse.json({

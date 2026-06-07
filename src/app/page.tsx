@@ -21,8 +21,15 @@ export default async function HomePage() {
     
     // Find the latest active social, or the most recent one
     latestSocial = await prisma.social.findFirst({
-      orderBy: { date: 'desc' },
+      where: { active: true }
     });
+    if (!latestSocial) {
+      const allSocials = await prisma.social.findMany();
+      if (allSocials.length > 0) {
+        allSocials.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        latestSocial = allSocials[0];
+      }
+    }
 
     if (latestSocial) {
       // Calculate average score for the latest social
@@ -55,7 +62,7 @@ export default async function HomePage() {
         <img 
           src="/assets/bras-logo.png" 
           alt="BRAS Logo" 
-          style={{ width: '160px', height: '160px', objectFit: 'contain', marginBottom: '24px' }}
+          style={{ width: '320px', height: '320px', objectFit: 'contain', marginBottom: '24px' }}
         />
         <div style={{ 
           color: 'var(--accent)', 
