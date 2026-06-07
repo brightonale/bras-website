@@ -35,6 +35,7 @@ export default async function HomePage() {
 
       latestTimelineEvent = {
         pub: latestSocial.pubName,
+        beerName: latestSocial.beerName,
         date: latestSocial.date,
         avgScore
       };
@@ -54,7 +55,7 @@ export default async function HomePage() {
         <img 
           src="/assets/bras-logo.png" 
           alt="BRAS Logo" 
-          style={{ width: '160px', height: '160px', objectFit: 'contain', marginBottom: '24px' }}
+          style={{ width: '160px', height: '160px', objectFit: 'contain', marginBottom: '24px', mixBlendMode: 'multiply' }}
         />
         <div style={{ 
           color: 'var(--accent)', 
@@ -113,7 +114,7 @@ export default async function HomePage() {
               Last Social Score
             </span>
             <h3 style={{ margin: '4px 0 0 0', fontFamily: 'var(--font-heading)', fontSize: '1.2rem', color: 'var(--warning-text)' }}>
-              {latestTimelineEvent.pub}
+              {latestTimelineEvent.pub} - {latestTimelineEvent.beerName || "Cask Ale"}
             </h3>
             <p style={{ fontSize: '0.9rem', margin: '4px 0 0 0' }}>
               Visited on {latestTimelineEvent.date} · Social Score: <strong>{latestTimelineEvent.avgScore.toFixed(2)}★</strong>
@@ -176,7 +177,7 @@ export default async function HomePage() {
         </div>
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontFamily: 'var(--font-heading)', fontSize: '2rem', fontWeight: 700, color: 'var(--primary)' }}>{totalRatings}</div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Cask Pints Scored</div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Member Ratings Cast</div>
         </div>
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontFamily: 'var(--font-heading)', fontSize: '2rem', fontWeight: 700, color: 'var(--primary)' }}>{totalMembers}</div>

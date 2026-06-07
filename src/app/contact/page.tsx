@@ -27,16 +27,19 @@ export default function Contact() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div>
             <label className="form-label">Email Address</label>
-            <div style={{ 
+            <a href="mailto:brightonrealalesocietybras@gmail.com" style={{ 
               background: 'var(--surface-muted)', 
               padding: '12px 16px', 
               borderRadius: '8px', 
               border: '1px solid var(--border)',
               fontWeight: 600,
-              color: 'var(--primary)'
+              color: 'var(--primary)',
+              display: 'inline-block',
+              textDecoration: 'none',
+              wordBreak: 'break-all'
             }}>
               brightonrealalesocietybras@gmail.com
-            </div>
+            </a>
           </div>
           
           <div>

@@ -6,9 +6,15 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const activeSocial = await prisma.social.findFirst({
+    let activeSocial = await prisma.social.findFirst({
       where: { active: true }
     });
+
+    if (!activeSocial) {
+      activeSocial = await prisma.social.findFirst({
+        orderBy: { date: 'desc' }
+      });
+    }
 
     return NextResponse.json({
       success: true,

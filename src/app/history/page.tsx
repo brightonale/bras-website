@@ -136,9 +136,22 @@ export default async function HistoryPage() {
             </div>
             <div>
               <h3 style={{ fontSize: '1.35rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '4px' }}>Max</h3>
-              <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Socials &amp; Media Officer (2024–2025)</div>
+              <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Socials &amp; Media Officer (2024–2026)</div>
               <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '16px' }}>
-                Max served as the creative lead for the 2024/25 academic year, transforming the society's visual outreach. He was responsible for designing promotional materials, managing weekly social announcements, and coordinating venue outreach across Brighton. His artistic and logistical efforts kept the local community informed and actively growing.
+                Max served as the creative lead, transforming the society's visual outreach. He was responsible for designing promotional materials, managing weekly social announcements, and coordinating venue outreach across Brighton. His artistic and logistical efforts kept the local community informed and actively growing.
+              </p>
+            </div>
+          </div>
+
+          <div className="section-card" style={{ display: 'flex', gap: '24px', alignItems: 'flex-start', borderRadius: '2px' }}>
+            <div style={{ flexShrink: 0, width: '120px', height: '120px', backgroundColor: 'var(--surface-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)', borderRadius: '2px' }}>
+              <ImageIcon size={32} color="var(--text-light)" />
+            </div>
+            <div>
+              <h3 style={{ fontSize: '1.35rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '4px' }}>Harry</h3>
+              <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Vice President &amp; IT Officer (2025–2026)</div>
+              <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '16px' }}>
+                Harry was a core figure in establishing the society's digital presence and scaling operations. He handled the society's tech infrastructure alongside taking charge of the BRAS wordle and custom web solutions.
               </p>
             </div>
           </div>
@@ -149,7 +162,7 @@ export default async function HistoryPage() {
             </div>
             <div>
               <h3 style={{ fontSize: '1.35rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '4px' }}>Albie Gullis</h3>
-              <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Society President (2025–Present)</div>
+              <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Society President (2025–2026)</div>
               <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '16px' }}>
                 Albie assumed executive management of the BRAS in June 2025 following the transition of the founding committee. Tasked with scaling the society's presence, Albie has driven a massive expansion into multi-society collaborative events and targeted regional pub crawls.
               </p>
@@ -161,10 +174,23 @@ export default async function HistoryPage() {
               <ImageIcon size={32} color="var(--text-light)" />
             </div>
             <div>
-              <h3 style={{ fontSize: '1.35rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '4px' }}>Sidney</h3>
-              <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Finance Director (2024–2025)</div>
+              <h3 style={{ fontSize: '1.35rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '4px' }}>Takara</h3>
+              <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Society President (2026–Present)</div>
               <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '16px' }}>
-                Sidney managed the society’s financial architecture during its breakout 2024/25 operational year. From regulating ticket sales for historic charity fundraisers to authorising accounts for collaborative commercial brewing batches, Sidney kept the society's books perfectly balanced.
+                Takara stepped up as President in 2026, leading the next generation of real ale enthusiasts and continuing the BRAS legacy of celebrating quality cask conditioned beer across Brighton and Sussex.
+              </p>
+            </div>
+          </div>
+
+          <div className="section-card" style={{ display: 'flex', gap: '24px', alignItems: 'flex-start', borderRadius: '2px' }}>
+            <div style={{ flexShrink: 0, width: '120px', height: '120px', backgroundColor: 'var(--surface-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)', borderRadius: '2px' }}>
+              <ImageIcon size={32} color="var(--text-light)" />
+            </div>
+            <div>
+              <h3 style={{ fontSize: '1.35rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '4px' }}>Harrison</h3>
+              <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Finance Director (2026–Present)</div>
+              <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '16px' }}>
+                Harrison took over the financial architecture in 2026, regulating ticket sales, balancing the books, and ensuring the society's commercial operations run smoothly.
               </p>
             </div>
           </div>
@@ -262,23 +288,37 @@ export default async function HistoryPage() {
                 </div>
                 
                 <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-                  {/* Image Placeholder */}
+                  {/* Instagram Image Embed */}
                   <div style={{ 
                     width: '280px', 
-                    height: '200px', 
+                    height: '280px', 
                     backgroundColor: 'var(--surface-muted)', 
                     border: '1px solid var(--border)',
                     borderRadius: '2px',
+                    overflow: 'hidden',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: 'var(--text-light)',
-                    gap: '8px',
                     flexShrink: 0
                   }}>
-                    <ImageIcon size={32} />
-                    <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Image Placeholder</span>
+                    {post.url.includes('instagram.com') ? (
+                      <img 
+                        src={`/api/proxy-image?url=${encodeURIComponent(post.url + 'media/?size=l')}`} 
+                        alt="Instagram Image Placeholder" 
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    ) : null}
+                    <div style={{ 
+                      display: post.url.includes('instagram.com') ? 'none' : 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      color: 'var(--text-light)',
+                      gap: '8px'
+                    }}>
+                      <ImageIcon size={32} />
+                      <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Image Placeholder</span>
+                    </div>
                   </div>
 
                   {/* Caption Content */}

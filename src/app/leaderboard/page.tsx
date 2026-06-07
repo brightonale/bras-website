@@ -21,21 +21,23 @@ export default async function LeaderboardPage() {
     const ratings = await prisma.rating.findMany();
 
     // 3. Aggregate ratings per pub
-    const pubStats: Record<string, { totalScore: number, count: number, latestDate: string, academicYear: string }> = {};
+    const pubStats: Record<string, { totalScore: number, count: number, latestDate: string, academicYear: string, pint: string, brewery: string }> = {};
 
     for (const r of ratings) {
       if (!pubStats[r.pubName]) {
-        pubStats[r.pubName] = { totalScore: 0, count: 0, latestDate: '', academicYear: '25/26' };
+        pubStats[r.pubName] = { totalScore: 0, count: 0, latestDate: '', academicYear: '25/26', pint: 'Cask Ale', brewery: 'Local Brewery' };
       }
       pubStats[r.pubName].totalScore += r.score;
       pubStats[r.pubName].count += 1;
     }
 
-    // 4. Assign dates and academic years from Socials
+    // 4. Assign dates, pints, breweries and academic years from Socials
     for (const s of socials) {
       if (pubStats[s.pubName]) {
         pubStats[s.pubName].latestDate = s.date;
         pubStats[s.pubName].academicYear = s.academicYear || '24/25';
+        if (s.beerName) pubStats[s.pubName].pint = s.beerName;
+        if (s.breweryName) pubStats[s.pubName].brewery = s.breweryName;
       }
     }
 
@@ -43,8 +45,11 @@ export default async function LeaderboardPage() {
     initialPubs = Object.keys(pubStats).map(pubName => {
       const stats = pubStats[pubName];
       return {
-        name: pubName,
+        pub: pubName,
+        pint: stats.pint,
+        brewery: stats.brewery,
         score: parseFloat((stats.totalScore / stats.count).toFixed(2)),
+        ratingsCount: stats.count,
         date: stats.latestDate || 'Historic',
         academicYear: stats.academicYear
       };
