@@ -22,7 +22,12 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const settings = await prisma.settings.findUnique({ where: { id: 'global' } });
+  let settings = null;
+  try {
+    settings = await prisma.settings.findUnique({ where: { id: 'global' } });
+  } catch (e) {
+    console.warn('Failed to load settings', e);
+  }
   
   return (
     <html lang="en" className={`${lora.variable} ${inter.variable}`}>

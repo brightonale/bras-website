@@ -15,7 +15,9 @@ export default function RatePage() {
   const [score, setScore] = useState(6.0);
   const [dateString, setDateString] = useState('');
 
-  const [activePint, setActivePint] = useState<Record<string, unknown> | null>(null);
+  interface ActivePint { pubName: string; beerName: string; breweryName?: string; dateString: string }
+
+const [activePint, setActivePint] = useState<ActivePint | null>(null);
   const [activeLoaded, setActiveLoaded] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -168,7 +170,7 @@ export default function RatePage() {
                   <span className="form-label" style={{ marginBottom: '2px', display: 'block', fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Cask Pint</span>
                   <span style={{ fontWeight: 600 }}>{beerName || 'Cask Ale'}</span>
                 </div>
-                {activePint.breweryName && (
+                {activePint?.breweryName && (
                   <div style={{ flex: 1 }}>
                     <span className="form-label" style={{ marginBottom: '2px', display: 'block', fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Brewery</span>
                     <span style={{ fontWeight: 600 }}>{activePint.breweryName}</span>

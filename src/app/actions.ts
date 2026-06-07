@@ -6,9 +6,15 @@ import { redirect } from 'next/navigation';
 
 export async function login(username: string, passwordAttempt: string) {
   const cleanUsername = username.toLowerCase().replace(/\s+/g, '');
-  const user = await prisma.user.findUnique({
-    where: { name: cleanUsername }
-  });
+  let user;
+  try {
+    user = await prisma.user.findUnique({
+      where: { name: cleanUsername }
+    });
+  } catch (err) {
+    console.error("Login DB error", err);
+    return { error: 'Database connection failed.' };
+  }
 
   if (!user || user.password !== passwordAttempt) {
     return { error: 'Invalid credentials.' };
@@ -36,18 +42,30 @@ export async function createAccount(username: string, passwordAttempt: string) {
   const cleanUsername = username.toLowerCase().replace(/\s+/g, '');
   if (!cleanUsername) return { error: 'Username cannot be empty.' };
 
-  const existing = await prisma.user.findUnique({ where: { name: cleanUsername } });
+  let existing;
+  try {
+    existing = await prisma.user.findUnique({ where: { name: cleanUsername } });
+  } catch (err) {
+    console.error("CreateAccount DB error", err);
+    return { error: 'Database connection failed.' };
+  }
   if (existing) {
     return { error: 'Username is already taken.' };
   }
 
-  const user = await prisma.user.create({
-    data: {
-      name: cleanUsername,
-      password: passwordAttempt,
-      role: 'committee', // Everyone is committee now as per preferences
-    }
-  });
+  let user;
+  try {
+    user = await prisma.user.create({
+      data: {
+        name: cleanUsername,
+        password: passwordAttempt,
+        role: 'committee', // Everyone is committee now as per preferences
+      }
+    });
+  } catch (err) {
+    console.error("CreateAccount DB error", err);
+    return { error: 'Database connection failed while creating user.' };
+  }
 
   const cookieStore = await cookies();
   cookieStore.set('bras_user_name', user.name, { httpOnly: true, path: '/' });

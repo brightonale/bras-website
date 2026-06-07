@@ -54,6 +54,12 @@ export default function WordlePage() {
       return;
     }
     setErrorMsg('');
+    // Reset game state for a fresh start
+    setGuesses(Array(MAX_GUESSES).fill(''));
+    setCurrentGuessIndex(0);
+    setGameStatus('playing');
+    setScore(0);
+    setKeyColors({});
     setScreen('game');
   };
 
@@ -167,13 +173,17 @@ export default function WordlePage() {
 
 
 
+  // Attach global key listener only when in the game screen
   useEffect(() => {
+    if (screen !== 'game') return; // Do nothing on login/end screens
     const handleKeyDown = (e: KeyboardEvent) => {
       handleKeyPress(e.key.toUpperCase());
     };
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleKeyPress]);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleKeyPress, screen]);
 
   // Render Grid
   const renderGrid = () => {
@@ -292,7 +302,7 @@ export default function WordlePage() {
             <div className="stat-value">{score}</div>
             {score > 0 && (
               <p style={{ color: 'var(--text-color)', fontSize: '0.9rem', marginTop: '10px', fontWeight: 'bold' }}>
-                Guessed in {currentGuessIndex} attempt{currentGuessIndex === 1 ? '' : 's'}
+                Guessed in {currentGuessIndex + 1} attempt{currentGuessIndex === 0 ? '' : 's'}
               </p>
             )}
           </div>

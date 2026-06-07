@@ -4,6 +4,8 @@ import { ClipboardList } from 'lucide-react';
 import { prisma } from '@/lib/db';
 import { getSession } from '@/app/actions';
 
+export const dynamic = 'force-dynamic';
+
 export default async function ProfilePage({ params }: { params: { name: string } }) {
   const session = await getSession();
   
@@ -21,17 +23,22 @@ export default async function ProfilePage({ params }: { params: { name: string }
   const memberName = decodeURIComponent(params.name);
   
   // Find member in database
-  const user = await prisma.user.findFirst({
-    where: { 
-      OR: [
-        { name: memberName.toLowerCase().replace(/\s+/g, '') },
-        { votingName: memberName }
-      ]
-    },
-    include: {
-      ratings: true
-    }
-  });
+  let user = null;
+  try {
+    user = await prisma.user.findFirst({
+      where: { 
+        OR: [
+          { name: memberName.toLowerCase().replace(/\s+/g, '') },
+          { votingName: memberName }
+        ]
+      },
+      include: {
+        ratings: true
+      }
+    });
+  } catch (err) {
+    console.error("Failed to fetch user", err);
+  }
 
   if (!user) {
     return (
@@ -69,13 +76,18 @@ export default async function ProfilePage({ params }: { params: { name: string }
   }
 
   // Calculate rank (this is a simplified rank based on total ratings)
-  const allUsersCount = await prisma.user.count({
-    where: {
-      ratings: {
-        some: {}
+  let allUsersCount = 0;
+  try {
+    allUsersCount = await prisma.user.count({
+      where: {
+        ratings: {
+          some: {}
+        }
       }
-    }
-  });
+    });
+  } catch (err) {
+    console.error("Failed to count users", err);
+  }
   
   const rank = "?"; // We'll just leave rank as ? or calculate it if needed, but it's simpler to just omit or put a placeholder.
 

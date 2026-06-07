@@ -3,34 +3,44 @@ import Link from 'next/link';
 import { prisma } from '@/lib/db';
 import { Beer, Trophy, Gamepad2, Medal } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
   // Fetch stats from database
-  const totalPubs = await prisma.pub.count();
-  const totalMembers = await prisma.user.count();
-  const totalRatings = await prisma.rating.count();
-
-  const settings = await prisma.settings.findUnique({ where: { id: 'global' } });
-  
-  // Find the latest active social, or the most recent one
-  const latestSocial = await prisma.social.findFirst({
-    orderBy: { date: 'desc' },
-  });
-
+  let totalPubs = 0, totalMembers = 0, totalRatings = 0;
+  let settings = null;
+  let latestSocial = null;
   let latestTimelineEvent = null;
-  if (latestSocial) {
-    // Calculate average score for the latest social
-    const ratings = await prisma.rating.findMany({
-      where: { pubName: latestSocial.pubName }
-    });
-    const avgScore = ratings.length > 0 
-      ? ratings.reduce((acc, r) => acc + r.score, 0) / ratings.length 
-      : 0;
 
-    latestTimelineEvent = {
-      pub: latestSocial.pubName,
-      date: latestSocial.date,
-      avgScore
-    };
+  try {
+    totalPubs = await prisma.pub.count();
+    totalMembers = await prisma.user.count();
+    totalRatings = await prisma.rating.count();
+
+    settings = await prisma.settings.findUnique({ where: { id: 'global' } });
+    
+    // Find the latest active social, or the most recent one
+    latestSocial = await prisma.social.findFirst({
+      orderBy: { date: 'desc' },
+    });
+
+    if (latestSocial) {
+      // Calculate average score for the latest social
+      const ratings = await prisma.rating.findMany({
+        where: { pubName: latestSocial.pubName }
+      });
+      const avgScore = ratings.length > 0 
+        ? ratings.reduce((acc, r) => acc + r.score, 0) / ratings.length 
+        : 0;
+
+      latestTimelineEvent = {
+        pub: latestSocial.pubName,
+        date: latestSocial.date,
+        avgScore
+      };
+    }
+  } catch (e) {
+    console.warn('Failed to load database content on home page', e);
   }
 
   return (

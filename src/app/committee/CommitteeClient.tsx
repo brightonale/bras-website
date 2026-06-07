@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 import { Beer, Gamepad2, Newspaper, Compass, Ban, CheckCircle, AlertTriangle, Users, Play, Square } from 'lucide-react';
 
-export default function CommitteeClient({ initialPubs }: { initialPubs: { name: string; status: string; comment?: string }[] }) {
+export default function CommitteeClient({ initialPubs }: { initialPubs: { name: string; status: string; comment?: string | null }[] }) {
   const router = useRouter();
   const [isCommittee, setIsCommittee] = useState(false);
   const [memberName, setMemberName] = useState('');
@@ -124,6 +124,29 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: { name: 
       fetchUsers();
     } catch (err: any) {
       setErrorMsg(err.message || "Failed to update role.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleUpdatePubStatus = async (pubName: string, status: string) => {
+    setIsLoading(true);
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
+    try {
+      const res = await fetch('/api/committee/pubs', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pubName, status })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to update pub status");
+
+      setSuccessMsg(`Marked ${pubName} as ${status}!`);
+      router.refresh();
+    } catch (err: any) {
+      setErrorMsg(err.message || "Failed to update pub status");
     } finally {
       setIsLoading(false);
     }
@@ -618,12 +641,24 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: { name: 
                 padding: '12px 16px', 
                 background: 'var(--surface-muted)', 
                 border: '1px solid var(--border)',
-                borderRadius: '8px'
+                borderRadius: '8px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
               }}>
-                <h4 style={{ margin: '0 0 4px 0', fontSize: '1rem', fontFamily: 'var(--font-heading)' }}>{pub.name}</h4>
-                <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--warning-text)', fontStyle: 'italic', fontWeight: 500 }}>
-                  {pub.comment ? `James' Notes: "${pub.comment}"` : "No notes logged."}
-                </p>
+                <div>
+                  <h4 style={{ margin: '0 0 4px 0', fontSize: '1rem', fontFamily: 'var(--font-heading)' }}>{pub.name}</h4>
+                  <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--warning-text)', fontStyle: 'italic', fontWeight: 500 }}>
+                    {pub.comment ? `James' Notes: "${pub.comment}"` : "No notes logged."}
+                  </p>
+                </div>
+                <button 
+                  className="btn btn--outline btn--sm" 
+                  onClick={() => handleUpdatePubStatus(pub.name, 'Visited')}
+                  disabled={isLoading}
+                >
+                  Mark Visited
+                </button>
               </div>
             ))}
           </div>

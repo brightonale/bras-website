@@ -92,6 +92,13 @@ export async function POST(req: Request) {
       data: { active: false }
     });
 
+    // Update pub status to Visited
+    await prisma.pub.upsert({
+      where: { name: pubName.trim() },
+      update: { status: `Visited (${academicYear})` },
+      create: { name: pubName.trim(), status: `Visited (${academicYear})` }
+    });
+
     return NextResponse.json({
       success: true,
       activePint: {

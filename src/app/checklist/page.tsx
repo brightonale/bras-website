@@ -2,8 +2,15 @@ import { prisma } from '@/lib/db';
 import React from 'react';
 import { Map, CheckSquare, CheckCircle } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 export default async function ChecklistPage() {
-  const allPubs = await prisma.pub.findMany();
+  let allPubs: { name: string, status: string, comment: string | null }[] = [];
+  try {
+    allPubs = await prisma.pub.findMany();
+  } catch (err) {
+    console.error("Failed to load pubs", err);
+  }
   
   const visitedPubs = allPubs.filter(p => p.status.startsWith('Visited'));
   const totalResearchPubs = allPubs.length;

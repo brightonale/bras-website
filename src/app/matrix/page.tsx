@@ -4,6 +4,8 @@ import { Lock } from 'lucide-react';
 import { prisma } from '@/lib/db';
 import { getSession } from '@/app/actions';
 
+export const dynamic = 'force-dynamic';
+
 export default async function MatrixPage() {
   const session = await getSession();
   const isLoggedIn = session.isLoggedIn;
@@ -28,9 +30,14 @@ export default async function MatrixPage() {
   }
 
   // Fetch all ratings
-  const ratings = await prisma.rating.findMany({
-    include: { user: true }
-  });
+  let ratings: any[] = [];
+  try {
+    ratings = await prisma.rating.findMany({
+      include: { user: true }
+    });
+  } catch (err) {
+    console.error("Failed to fetch ratings", err);
+  }
 
   // Extract unique pubs that have been rated
   const ratedPubsSet = new Set<string>();
