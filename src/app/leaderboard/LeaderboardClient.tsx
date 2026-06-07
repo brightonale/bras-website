@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Lock, Trophy } from 'lucide-react';
 
-type SortKey = 'score' | 'date' | 'ratingsCount';
+type SortKey = 'score' | 'date' | 'ratingsCount' | 'pub' | 'pint' | 'brewery';
 type SortOrder = 'asc' | 'desc';
 
 export default function LeaderboardClient({ initialPubs, isLoggedIn }: { initialPubs: any[], isLoggedIn: boolean }) {
@@ -25,7 +25,7 @@ export default function LeaderboardClient({ initialPubs, isLoggedIn }: { initial
 
     if (sortKey === 'ratingsCount') {
       const getNum = (val: string | number) => {
-        if (val === 'Consensus') return 999;
+        if (val === 'Consensus') return 1;
         const parsed = typeof val === 'string' ? parseInt(val) : val;
         return isNaN(parsed) ? 0 : parsed;
       };
@@ -35,8 +35,12 @@ export default function LeaderboardClient({ initialPubs, isLoggedIn }: { initial
       valA = a.score !== null && a.score !== undefined ? a.score : 0;
       valB = b.score !== null && b.score !== undefined ? b.score : 0;
     } else if (sortKey === 'date') {
-      valA = a.date || '';
-      valB = b.date || '';
+      valA = a.date ? new Date(a.date).getTime() : 0;
+      valB = b.date ? new Date(b.date).getTime() : 0;
+    } else if (sortKey === 'pub' || sortKey === 'pint' || sortKey === 'brewery') {
+      valA = (a[sortKey] || '').toString().toLowerCase();
+      valB = (b[sortKey] || '').toString().toLowerCase();
+      // For alphabetical sorting, standard is A-Z is 'asc'
     }
 
     if (valA < valB) return sortOrder === 'desc' ? 1 : -1;
@@ -44,7 +48,6 @@ export default function LeaderboardClient({ initialPubs, isLoggedIn }: { initial
     return 0;
   });
 
-  // Limit output if logged out
   const displayedPubs = isLoggedIn ? sortedPubs : sortedPubs.slice(0, 10);
   const isCapped = !isLoggedIn && sortedPubs.length > 10;
 
@@ -53,7 +56,7 @@ export default function LeaderboardClient({ initialPubs, isLoggedIn }: { initial
       setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc');
     } else {
       setSortKey(key);
-      setSortOrder('desc');
+      setSortOrder(key === 'pub' || key === 'pint' || key === 'brewery' ? 'asc' : 'desc');
     }
   };
 
@@ -77,7 +80,7 @@ export default function LeaderboardClient({ initialPubs, isLoggedIn }: { initial
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>Filter Year:</span>
           <div style={{ display: 'flex', gap: '6px', background: 'var(--border)', padding: '4px', borderRadius: '8px' }}>
-            {['All', '23/24', '24/25', '25/26'].map(year => (
+            {['All', '23/24', '24/25', '25/26', '26/27'].map(year => (
               <button 
                 key={year}
                 onClick={() => setSelectedYear(year)}
@@ -130,9 +133,15 @@ export default function LeaderboardClient({ initialPubs, isLoggedIn }: { initial
             <thead>
               <tr>
                 <th style={{ width: '80px', textAlign: 'center' }}>Rank</th>
-                <th>Pub</th>
-                <th>Pint Evaluated</th>
-                <th>Brewed By</th>
+                <th style={{ cursor: 'pointer' }} onClick={() => toggleSort('pub')}>
+                  Pub {getSortIndicator('pub')}
+                </th>
+                <th style={{ cursor: 'pointer' }} onClick={() => toggleSort('pint')}>
+                  Pint Evaluated {getSortIndicator('pint')}
+                </th>
+                <th style={{ cursor: 'pointer' }} onClick={() => toggleSort('brewery')}>
+                  Brewed By {getSortIndicator('brewery')}
+                </th>
                 <th style={{ cursor: 'pointer' }} onClick={() => toggleSort('date')}>
                   Date {getSortIndicator('date')}
                 </th>
@@ -182,7 +191,7 @@ export default function LeaderboardClient({ initialPubs, isLoggedIn }: { initial
                         {pub.score !== null && pub.score !== undefined ? `${pub.score.toFixed(2)}★` : 'N/A'}
                       </td>
                       <td style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-                        {pub.ratingsCount}
+                        {pub.ratingsCount === 1 ? 'Consensus' : pub.ratingsCount}
                       </td>
                     </tr>
                   );

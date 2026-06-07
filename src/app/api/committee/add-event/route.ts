@@ -19,9 +19,21 @@ export async function POST(req: Request) {
     
     // Determine academic year
     let academicYear = "25/26";
-    if (cleanDate.includes("2023") || cleanDate.includes("2024")) {
-      academicYear = cleanDate.includes("Sep") || cleanDate.includes("Oct") || cleanDate.includes("Nov") || cleanDate.includes("Dec") 
-        ? "24/25" : "23/24";
+    const d = new Date(cleanDate);
+    if (!isNaN(d.getTime())) {
+      const m = d.getMonth();
+      const y = d.getFullYear();
+      if (y === 2023) {
+        academicYear = m >= 8 ? "23/24" : "22/23";
+      } else if (y === 2024) {
+        academicYear = m >= 8 ? "24/25" : "23/24";
+      } else if (y === 2025) {
+        academicYear = m >= 9 ? "25/26" : "24/25"; // October cutoff for 2025
+      } else if (y === 2026) {
+        academicYear = m >= 8 ? "26/27" : "25/26"; // September cutoff for 2026
+      } else if (y >= 2027) {
+        academicYear = m >= 8 ? `${y.toString().slice(-2)}/${(y + 1).toString().slice(-2)}` : `${(y - 1).toString().slice(-2)}/${y.toString().slice(-2)}`;
+      }
     }
 
     // Create the social event in the database

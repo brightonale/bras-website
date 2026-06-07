@@ -26,7 +26,11 @@ export default async function HomePage() {
     if (!latestSocial) {
       const allSocials = await prisma.social.findMany();
       if (allSocials.length > 0) {
-        allSocials.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        allSocials.sort((a, b) => {
+          const timeA = new Date(a.date).getTime() || 0;
+          const timeB = new Date(b.date).getTime() || 0;
+          return timeB - timeA;
+        });
         latestSocial = allSocials[0];
       }
     }
