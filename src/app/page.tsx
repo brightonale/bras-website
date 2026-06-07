@@ -55,7 +55,7 @@ export default async function HomePage() {
         <img 
           src="/assets/bras-logo.png" 
           alt="BRAS Logo" 
-          style={{ width: '160px', height: '160px', objectFit: 'contain', marginBottom: '24px', mixBlendMode: 'multiply' }}
+          style={{ width: '160px', height: '160px', objectFit: 'contain', marginBottom: '24px' }}
         />
         <div style={{ 
           color: 'var(--accent)', 

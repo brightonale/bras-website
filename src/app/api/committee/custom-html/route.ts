@@ -1,13 +1,35 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
+import { getSession } from '@/app/actions';
+
+export async function GET() {
+  try {
+    const session = await getSession();
+    if (session.role !== 'committee') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const pages = await prisma.customPage.findMany({
+      select: { id: true, title: true }
+    });
+    
+    // Map slug from the primary key id
+    const mappedPages = pages.map(p => ({ slug: p.id, title: p.title }));
+    
+    return NextResponse.json({ pages: mappedPages });
+  } catch (err) {
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}
 
 export async function POST(req: Request) {
   try {
-    const { password, title, slug, dateString, htmlContent } = await req.json();
-
-    if (password !== process.env.NEXT_PUBLIC_COMMITTEE_PASSWORD) {
+    const session = await getSession();
+    if (session.role !== 'committee') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const { title, slug, dateString, htmlContent } = await req.json();
 
     if (!title || !slug || !htmlContent) {
       return NextResponse.json({ error: 'Missing data' }, { status: 400 });
@@ -30,8 +52,9 @@ export async function POST(req: Request) {
       }
     });
 
-    return NextResponse.json({ success: true, slug: safeSlug });
+    return NextResponse.json({ success: true, page: { slug: safeSlug } });
   } catch (err) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
+
