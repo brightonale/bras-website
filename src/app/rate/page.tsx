@@ -12,7 +12,7 @@ export default function RatePage() {
   // Rating states (loaded from active pint)
   const [pubName, setPubName] = useState('');
   const [beerName, setBeerName] = useState('');
-  const [score, setScore] = useState(6.0);
+  const [score, setScore] = useState('');
   const [dateString, setDateString] = useState('');
 
   interface ActivePint { pubName: string; beerName: string; breweryName?: string; dateString: string }
@@ -63,6 +63,14 @@ const [activePint, setActivePint] = useState<ActivePint | null>(null);
       return;
     }
 
+    const parsedScore = parseFloat(score);
+    if (isNaN(parsedScore) || parsedScore < 1 || parsedScore > 10) {
+      setErrorMsg("Please enter a valid score between 1 and 10.");
+      return;
+    }
+
+    const finalScore = parseFloat(parsedScore.toFixed(2));
+
     setIsLoading(true);
     setErrorMsg(null);
     setSuccessMsg(null);
@@ -75,7 +83,7 @@ const [activePint, setActivePint] = useState<ActivePint | null>(null);
           memberName,
           pubName: pubName.trim(),
           beerName: beerName.trim(),
-          score,
+          score: finalScore,
           dateString
         })
       });
@@ -85,7 +93,8 @@ const [activePint, setActivePint] = useState<ActivePint | null>(null);
         throw new Error(data.error || "Failed to submit score");
       }
 
-      setSuccessMsg(`Cheers! Your rating of ${score.toFixed(2)}★ for ${pubName} has been logged.`);
+      setSuccessMsg(`Cheers! Your rating of ${finalScore.toFixed(2)}★ for ${pubName} has been logged.`);
+      setScore('');
     } catch (err: unknown) {
       setErrorMsg(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
@@ -183,27 +192,23 @@ const [activePint, setActivePint] = useState<ActivePint | null>(null);
               </div>
             </div>
 
-            {/* Rating Score Slider */}
+            {/* Rating Score Input */}
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '6px' }}>
-                <label className="form-label" style={{ marginBottom: 0 }}>Score (/10)</label>
-                <span style={{ color: 'var(--primary)', fontSize: '1.25rem', fontWeight: 'bold', fontFamily: 'var(--font-heading)' }}>
-                  {score.toFixed(2)}★
-                </span>
-              </div>
+              <label className="form-label" style={{ marginBottom: '6px' }}>Score (/10)</label>
               <input
-                type="range"
-                min="1.0"
-                max="10.0"
-                step="0.05"
+                type="number"
+                min="1"
+                max="10"
+                step="0.01"
+                placeholder="e.g. 7.45"
                 value={score}
-                onChange={e => setScore(parseFloat(e.target.value))}
-                style={{ width: '100%', accentColor: 'var(--primary)' }}
+                onChange={e => setScore(e.target.value)}
+                style={{ width: '100%', fontSize: '1.25rem', padding: '12px', textAlign: 'center', fontFamily: 'var(--font-heading)', fontWeight: 'bold' }}
+                required
               />
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                <span>1.0 (Undrinkable)</span>
-                <span>5.0 (Average)</span>
-                <span>10.0 (Nectar)</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '6px' }}>
+                <span>1.0 = Undrinkable</span>
+                <span>10.0 = Nectar</span>
               </div>
             </div>
 
