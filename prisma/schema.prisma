@@ -67,6 +67,7 @@ model Settings {
   awards      Boolean @default(true)
   about       Boolean @default(true)
   contact     Boolean @default(true)
+  rate        Boolean @default(true)
   wordleWord  String  @default("MALTY")
   wordleHint  String  @default("...")
 }

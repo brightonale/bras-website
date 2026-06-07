@@ -11,6 +11,7 @@ const ALL_LINKS = [
   { href: '/matrix', label: 'Members', key: 'matrix' },
   { href: '/wordle', label: 'Wordle', key: 'wordle' },
   { href: '/awards', label: 'Awards', key: 'awards' },
+  { href: '/rate', label: 'Rate a Pint', key: 'rate' },
   { href: '/history', label: 'History', key: 'about' },
   { href: '/about', label: 'About', key: 'about' },
   { href: '/contact', label: 'Contact', key: 'contact' },

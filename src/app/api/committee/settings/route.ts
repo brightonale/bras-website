@@ -18,7 +18,8 @@ export async function GET() {
       wordle: settings.wordle,
       awards: settings.awards,
       about: settings.about,
-      contact: settings.contact
+      contact: settings.contact,
+      rate: settings.rate
     };
 
     return NextResponse.json({ features });
