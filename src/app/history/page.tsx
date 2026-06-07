@@ -161,6 +161,19 @@ export default async function HistoryPage() {
               <ImageIcon size={32} color="var(--text-light)" />
             </div>
             <div>
+              <h3 style={{ fontSize: '1.35rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '4px' }}>Sidney</h3>
+              <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Finance Officer (2024–2025)</div>
+              <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '16px' }}>
+                Sidney handled the society's finances for the 2024/25 academic year, overlooking all payments made by the society. An architecture student with an affinity for pale ales and skating, Sidney ensured the books stayed balanced as BRAS expanded its socials and events.
+              </p>
+            </div>
+          </div>
+
+          <div className="section-card" style={{ display: 'flex', gap: '24px', alignItems: 'flex-start', borderRadius: '2px' }}>
+            <div style={{ flexShrink: 0, width: '120px', height: '120px', backgroundColor: 'var(--surface-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)', borderRadius: '2px' }}>
+              <ImageIcon size={32} color="var(--text-light)" />
+            </div>
+            <div>
               <h3 style={{ fontSize: '1.35rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '4px' }}>Albie Gullis</h3>
               <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Society President (2025–2026)</div>
               <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '16px' }}>
