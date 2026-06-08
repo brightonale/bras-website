@@ -13,6 +13,7 @@ const ALL_LINKS = [
   { href: '/awards', label: 'Awards', key: 'awards' },
   { href: '/rate', label: 'Rate a Pint', key: 'rate' },
   { href: '/history', label: 'History', key: 'about' },
+  { href: '/gallery', label: 'Gallery', key: 'about' },
   { href: '/about', label: 'About', key: 'about' },
   { href: '/contact', label: 'Contact', key: 'contact' },
 ];

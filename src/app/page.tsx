@@ -70,6 +70,8 @@ export default async function HomePage() {
           width={320}
           height={320}
           style={{ objectFit: 'contain', marginBottom: '24px' }}
+          quality={100}
+          unoptimized={true}
           priority
         />
         <div style={{ 
