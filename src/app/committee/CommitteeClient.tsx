@@ -105,8 +105,7 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: { name: 
     }
   };
 
-  async function toggleCommitteeRole(username: string, currentRole: string) {
-    const newRole = currentRole === 'committee' ? 'member' : 'committee';
+  async function updateUserRole(username: string, newRole: string) {
     setIsLoading(true);
     setErrorMsg(null);
     setSuccessMsg(null);
@@ -120,7 +119,7 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: { name: 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to update role");
 
-      setSuccessMsg(`Successfully updated role for @${username}!`);
+      setSuccessMsg(`Successfully updated role for @${username} to ${newRole}!`);
       fetchUsers();
     } catch (err: any) {
       setErrorMsg(err.message || "Failed to update role.");
@@ -665,54 +664,96 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: { name: 
         </div>
 
         {/* Panel 6: User Management */}
-        <div className="section-card" style={{ display: 'flex', flexDirection: 'column', maxHeight: '580px', padding: 0 }}>
+        <div className="section-card" style={{ display: 'flex', flexDirection: 'column', maxHeight: '580px', padding: 0, gridColumn: '1 / -1' }}>
           <h2 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '24px 32px 16px', margin: 0, position: 'sticky', top: 0, background: 'var(--surface)', zIndex: 5, borderRadius: 'var(--card-radius) var(--card-radius) 0 0' }}>
-            <Users size={20} /> User Management
+            <Users size={20} /> User Allocations & Roles
           </h2>
-          <div style={{ padding: '0 32px 32px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: '0 0 8px 0' }}>
-              Grant or revoke committee privileges for registered accounts.
+          <div style={{ padding: '0 32px 32px', overflowY: 'auto' }}>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: '0 0 24px 0' }}>
+              Assign roles to registered accounts. <strong>Users</strong> are non-members with restricted access. <strong>Members</strong> have full gallery access. <strong>Committee</strong> have admin privileges.
             </p>
 
-            {Object.entries(localUsers).map(([username, user]) => {
-              // Ensure we check against lowercase spacing stripped
-              const isSelf = username === memberName.toLowerCase().replace(/\s+/g, '');
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '24px' }}>
               
-              return (
-                <div key={username} style={{ 
-                  display: 'flex', 
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: '12px 16px', 
-                  background: 'var(--surface-muted)', 
-                  border: '1px solid var(--border)',
-                  borderRadius: '8px'
-                }}>
-                  <div>
-                    <h4 style={{ margin: '0 0 4px 0', fontSize: '1rem', fontFamily: 'var(--font-heading)' }}>
-                      {user.votingName || username} 
-                      <span style={{ fontSize: '0.7rem', color: 'var(--text-light)', marginLeft: '8px', fontWeight: 'normal', fontFamily: 'var(--font-body)' }}>@{username}</span>
-                    </h4>
-                    <div className={`badge ${user.role === 'committee' ? 'badge--primary' : 'badge--muted'}`}>
-                      {user.role}
+              {/* Column 1: Committee */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <h3 style={{ fontSize: '1rem', borderBottom: '2px solid var(--primary)', paddingBottom: '8px', margin: 0 }}>
+                  Committee ({Object.values(localUsers).filter(u => u.role === 'committee').length})
+                </h3>
+                {Object.entries(localUsers).filter(([_, u]) => u.role === 'committee').map(([username, user]) => {
+                  const isSelf = username === memberName.toLowerCase().replace(/\s+/g, '');
+                  return (
+                    <div key={username} style={{ padding: '12px', background: 'var(--surface-muted)', border: '1px solid var(--border)', borderRadius: '8px' }}>
+                      <h4 style={{ margin: '0 0 4px 0', fontSize: '0.95rem' }}>{user.votingName || username}</h4>
+                      <p style={{ margin: '0 0 8px 0', fontSize: '0.75rem', color: 'var(--text-light)' }}>@{username}</p>
+                      <select 
+                        disabled={isSelf || isLoading}
+                        value={user.role}
+                        onChange={(e) => updateUserRole(username, e.target.value)}
+                        className="form-input"
+                        style={{ padding: '4px 8px', fontSize: '0.8rem', height: 'auto' }}
+                      >
+                        <option value="committee">Committee</option>
+                        <option value="member">Member</option>
+                        <option value="user">User (Non-Member)</option>
+                      </select>
                     </div>
+                  );
+                })}
+              </div>
+
+              {/* Column 2: Members */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <h3 style={{ fontSize: '1rem', borderBottom: '2px solid var(--border)', paddingBottom: '8px', margin: 0 }}>
+                  Members ({Object.values(localUsers).filter(u => u.role === 'member').length})
+                </h3>
+                {Object.entries(localUsers).filter(([_, u]) => u.role === 'member').map(([username, user]) => (
+                  <div key={username} style={{ padding: '12px', background: 'var(--surface-muted)', border: '1px solid var(--border)', borderRadius: '8px' }}>
+                    <h4 style={{ margin: '0 0 4px 0', fontSize: '0.95rem' }}>{user.votingName || username}</h4>
+                    <p style={{ margin: '0 0 8px 0', fontSize: '0.75rem', color: 'var(--text-light)' }}>@{username}</p>
+                    <select 
+                      disabled={isLoading}
+                      value={user.role}
+                      onChange={(e) => updateUserRole(username, e.target.value)}
+                      className="form-input"
+                      style={{ padding: '4px 8px', fontSize: '0.8rem', height: 'auto' }}
+                    >
+                      <option value="committee">Committee</option>
+                      <option value="member">Member</option>
+                      <option value="user">User (Non-Member)</option>
+                    </select>
                   </div>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: isSelf ? 'not-allowed' : 'pointer', fontSize: '0.85rem', fontWeight: 600, opacity: isSelf ? 0.5 : 1 }}>
-                    <input 
-                      type="checkbox" 
-                      checked={user.role === 'committee'} 
-                      onChange={() => toggleCommitteeRole(username, user.role)}
-                      disabled={isSelf}
-                      style={{ width: '18px', height: '18px', cursor: isSelf ? 'not-allowed' : 'pointer' }}
-                    />
-                    Committee
-                  </label>
-                </div>
-              );
-            })}
-            
+                ))}
+              </div>
+
+              {/* Column 3: Users */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <h3 style={{ fontSize: '1rem', borderBottom: '2px dashed var(--border)', paddingBottom: '8px', margin: 0, color: 'var(--text-muted)' }}>
+                  Users ({Object.values(localUsers).filter(u => u.role === 'user').length})
+                </h3>
+                {Object.entries(localUsers).filter(([_, u]) => u.role === 'user').map(([username, user]) => (
+                  <div key={username} style={{ padding: '12px', background: 'transparent', border: '1px dashed var(--border)', borderRadius: '8px', opacity: 0.8 }}>
+                    <h4 style={{ margin: '0 0 4px 0', fontSize: '0.95rem' }}>{user.votingName || username}</h4>
+                    <p style={{ margin: '0 0 8px 0', fontSize: '0.75rem', color: 'var(--text-light)' }}>@{username}</p>
+                    <select 
+                      disabled={isLoading}
+                      value={user.role}
+                      onChange={(e) => updateUserRole(username, e.target.value)}
+                      className="form-input"
+                      style={{ padding: '4px 8px', fontSize: '0.8rem', height: 'auto' }}
+                    >
+                      <option value="committee">Committee</option>
+                      <option value="member">Member</option>
+                      <option value="user">User (Non-Member)</option>
+                    </select>
+                  </div>
+                ))}
+              </div>
+
+            </div>
+
             {Object.keys(localUsers).length === 0 && (
-               <p style={{ fontSize: '0.85rem', color: 'var(--text-light)' }}>No registered users found.</p>
+               <p style={{ fontSize: '0.85rem', color: 'var(--text-light)', marginTop: '16px' }}>No registered users found.</p>
             )}
           </div>
         </div>

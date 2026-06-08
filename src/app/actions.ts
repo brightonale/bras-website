@@ -60,7 +60,7 @@ export async function createAccount(username: string, passwordAttempt: string) {
       data: {
         name: cleanUsername,
         password: await bcrypt.hash(passwordAttempt, 10),
-        role: 'member', // Default to member to prevent privilege escalation
+        role: 'user', // Default to user (non-member)
       }
     });
   } catch (err) {

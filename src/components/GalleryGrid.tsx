@@ -20,8 +20,7 @@ export default function GalleryGrid({ data, isMember }: GalleryGridProps) {
     if (isMember) {
       window.open(GOOGLE_DRIVE_LINK, '_blank');
     } else {
-      alert("🔒 Member Access Required\n\nYou must be an approved BRAS member and logged in to view the full gallery or upload photos.");
-      // Optional: window.location.href = '/login';
+      window.location.href = '/non-member';
     }
   };
 
