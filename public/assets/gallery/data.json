@@ -1,23 +1,6 @@
 [
   {
-    "name": "Week 1 - Hole in the Wall",
-    "images": [
-      "/assets/gallery/Week 1 - Hole in the Wall/photo-1.jpg",
-      "/assets/gallery/Week 1 - Hole in the Wall/photo-2.jpg"
-    ]
-  },
-  {
-    "name": "Week 2 - The Basketmakers",
-    "images": [
-      "/assets/gallery/Week 2 - The Basketmakers/photo-3.jpg"
-    ]
-  },
-  {
     "name": "2025-10-23 - Brighton Bierhaus",
-    "images": []
-  },
-  {
-    "name": "2025-10-29 - Brighton Bierhaus",
     "images": []
   },
   {
@@ -26,10 +9,6 @@
   },
   {
     "name": "2025-10-30 - Dark Mile",
-    "images": []
-  },
-  {
-    "name": "2025-11-02 - Dark Mile",
     "images": []
   },
   {
@@ -54,10 +33,6 @@
   },
   {
     "name": "2025-12-18 - The Hole in The Wall",
-    "images": []
-  },
-  {
-    "name": "2025-12-19 - The Hole in The Wall",
     "images": []
   },
   {
@@ -89,10 +64,6 @@
     "images": []
   },
   {
-    "name": "2026-03-27 - Mitre Tavern",
-    "images": []
-  },
-  {
     "name": "2026-04-23 - The Great Eastern",
     "images": []
   },
@@ -106,14 +77,6 @@
   },
   {
     "name": "2026-05-21 - The Independent Taproom",
-    "images": []
-  },
-  {
-    "name": "2026-05-22 - The Independent Taproom",
-    "images": []
-  },
-  {
-    "name": "2026-05-26 - The Independent Taproom",
     "images": []
   },
   {
@@ -188,9 +151,5 @@
       "/assets/gallery/2026-06-04 - The Hole in The Wall/IMG-20260605-WA0075.jpeg",
       "/assets/gallery/2026-06-04 - The Hole in The Wall/IMG-20260605-WA0077.jpg"
     ]
-  },
-  {
-    "name": "2026-06-05 - The Hole in The Wall",
-    "images": []
   }
 ]
