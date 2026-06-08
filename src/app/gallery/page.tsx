@@ -8,12 +8,18 @@ export const metadata = {
   description: 'A collection of photos from Brighton Real Ale Society socials.',
 };
 
+import { cookies } from 'next/headers';
+
 type GalleryFolder = {
   name: string;
   images: string[];
 };
 
 export default async function GalleryPage() {
+  const cookieStore = await cookies();
+  const role = cookieStore.get('bras_user_role')?.value;
+  const isMember = role === 'member' || role === 'committee';
+
   let galleryData: GalleryFolder[] = [];
   
   try {
@@ -44,7 +50,7 @@ export default async function GalleryPage() {
           No photos found. Drop folders into your I:/My Drive/BRAS_Gallery folder and run npm run sync-gallery!
         </div>
       ) : (
-        <GalleryGrid data={galleryData} />
+        <GalleryGrid data={galleryData} isMember={isMember} />
       )}
     </div>
   );

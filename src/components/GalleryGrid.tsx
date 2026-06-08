@@ -1,206 +1,123 @@
 "use client";
 
-import React, { useState } from 'react';
 import Image from 'next/image';
 
-type GalleryFolder = {
+interface GalleryFolder {
   name: string;
   images: string[];
-};
+}
 
-export default function GalleryGrid({ data }: { data: GalleryFolder[] }) {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [openFolder, setOpenFolder] = useState<string | null>(null);
+interface GalleryGridProps {
+  data: GalleryFolder[];
+  isMember: boolean;
+}
 
-  // Close lightbox on escape key
-  React.useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setSelectedImage(null);
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+export default function GalleryGrid({ data, isMember }: GalleryGridProps) {
+  // If no environment variable is set, fallback to the placeholder
+  const GOOGLE_DRIVE_LINK = process.env.NEXT_PUBLIC_GALLERY_LINK || "https://drive.google.com/drive/folders/YOUR_FOLDER_ID_HERE";
+
+  const handlePhotoClick = () => {
+    if (isMember) {
+      window.open(GOOGLE_DRIVE_LINK, '_blank');
+    } else {
+      alert("🔒 Member Access Required\n\nYou must be an approved BRAS member and logged in to view the full gallery or upload photos.");
+      // Optional: window.location.href = '/login';
+    }
+  };
 
   return (
-    <>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '32px' }}>
-        {data.map((folder, folderIndex) => {
-          const isOpen = openFolder === folder.name;
-          
-          return (
-            <div key={folderIndex} className="section-card" style={{ padding: '0', overflow: 'hidden' }}>
-              <div 
-                onClick={() => setOpenFolder(isOpen ? null : folder.name)}
-                style={{ 
-                  padding: '24px', 
-                  display: 'flex', 
-                  justifyContent: 'space-between', 
-                  alignItems: 'center',
-                  cursor: 'pointer',
-                  background: isOpen ? 'rgba(0,0,0,0.02)' : 'transparent',
-                  borderBottom: isOpen ? '1px solid var(--border)' : 'none'
-                }}
-              >
-                <h2 style={{ 
-                  fontFamily: 'var(--font-heading)', 
-                  fontSize: '1.5rem', 
-                  margin: 0
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px', marginTop: '32px' }}>
+      {data.map((folder, folderIndex) => {
+        // We only use the very first photo as the cover image
+        const coverPhoto = folder.images.length > 0 ? encodeURI(folder.images[0]) : null;
+
+        return (
+          <div 
+            key={folderIndex} 
+            className="section-card section-card--hoverable" 
+            style={{ padding: '0', overflow: 'hidden', cursor: 'pointer', display: 'flex', flexDirection: 'column' }} 
+            onClick={handlePhotoClick}
+          >
+            <div style={{ 
+              aspectRatio: '1 / 1', 
+              position: 'relative', 
+              background: 'var(--background)' 
+            }}>
+              {coverPhoto ? (
+                <>
+                  <Image
+                    src={coverPhoto}
+                    alt={`Cover photo for ${folder.name}`}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    style={{ objectFit: 'cover' }}
+                    className="gallery-image"
+                  />
+                  <div className="gallery-overlay" style={{
+                    position: 'absolute',
+                    top: '0',
+                    left: '0',
+                    width: '100%',
+                    height: '100%',
+                    background: 'rgba(0,0,0,0.5)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    opacity: 0,
+                    transition: 'opacity 0.3s ease'
+                  }}>
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '12px' }}>
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                      <polyline points="15 3 21 3 21 9"></polyline>
+                      <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                    <span style={{ color: 'white', fontWeight: 'bold', fontSize: '1.2rem' }}>
+                      {isMember ? "Open Gallery" : "Members Only"}
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <div style={{
+                  width: '100%', height: '100%',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: 'var(--text-muted)',
+                  fontStyle: 'italic',
+                  padding: '24px',
+                  textAlign: 'center'
                 }}>
-                  {folder.name}
-                  <span style={{ fontSize: '1rem', color: 'var(--text-muted)', marginLeft: '12px', fontWeight: 'normal' }}>
-                    ({folder.images.length} photos)
-                  </span>
-                </h2>
-                <svg 
-                  width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                  style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }}
-                >
-                  <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-              </div>
-              
-              {isOpen && (
-                <div style={{ padding: '24px' }}>
-                  {folder.images.length === 0 ? (
-                    <div style={{
-                      padding: '24px',
-                      border: '1px dashed var(--border)',
-                      borderRadius: '8px',
-                      color: 'var(--text-muted)',
-                      fontStyle: 'italic',
-                      textAlign: 'center'
-                    }}>
-                      No photos have been uploaded for this social yet.
-                    </div>
-                  ) : (
-                    <div style={{
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                      gap: '24px',
-                    }}>
-                      {folder.images.map((imgSrc, imgIndex) => {
-                        const encodedSrc = encodeURI(imgSrc);
-                        return (
-                          <div 
-                            key={imgIndex} 
-                            className="section-card section-card--hoverable"
-                            style={{ 
-                              padding: '0', 
-                              overflow: 'hidden',
-                              aspectRatio: '1 / 1',
-                              position: 'relative',
-                              cursor: 'pointer'
-                            }}
-                            onClick={() => setSelectedImage(encodedSrc)}
-                          >
-                            <Image
-                              src={encodedSrc}
-                              alt={`BRAS Social Photo from ${folder.name} - ${imgIndex + 1}`}
-                              fill
-                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                              style={{ objectFit: 'cover' }}
-                              className="gallery-image"
-                            />
-                            <div className="gallery-overlay" style={{
-                              position: 'absolute',
-                              bottom: '12px',
-                              right: '12px',
-                              background: 'rgba(0,0,0,0.6)',
-                              borderRadius: '50%',
-                              padding: '8px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              opacity: 0.8
-                            }}>
-                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="7 10 12 15 17 10"></polyline>
-                                <line x1="12" y1="15" x2="12" y2="3"></line>
-                              </svg>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
+                  No cover photo yet.
                 </div>
               )}
             </div>
-          );
-        })}
-      </div>
-
-      {/* Lightbox */}
-      {selectedImage && (
-        <div 
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.9)',
-            zIndex: 9999,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '24px'
-          }}
-          onClick={() => setSelectedImage(null)}
-        >
-          <div style={{ position: 'relative', width: '100%', maxWidth: '1200px', height: '80vh' }}>
-            <Image
-              src={selectedImage}
-              alt="Fullscreen view"
-              fill
-              style={{ objectFit: 'contain' }}
-            />
-          </div>
-          
-          <div style={{ display: 'flex', gap: '16px', marginTop: '24px' }}>
-            <a 
-              href={selectedImage}
-              download
-              onClick={(e) => e.stopPropagation()} // Prevent lightbox from closing when clicking download
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '12px 24px',
-                backgroundColor: 'var(--primary)',
-                color: 'white',
-                borderRadius: '8px',
-                textDecoration: 'none',
-                fontWeight: 'bold'
-              }}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="7 10 12 15 17 10"></polyline>
-                <line x1="12" y1="15" x2="12" y2="3"></line>
-              </svg>
-              Download High-Res
-            </a>
             
-            <button 
-              onClick={() => setSelectedImage(null)}
-              style={{
-                padding: '12px 24px',
-                backgroundColor: 'transparent',
-                color: 'white',
-                border: '1px solid white',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontWeight: 'bold'
-              }}
-            >
-              Close
-            </button>
+            <div style={{ padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h2 style={{ 
+                fontFamily: 'var(--font-heading)', 
+                fontSize: '1.2rem', 
+                margin: 0
+              }}>
+                {folder.name}
+              </h2>
+              {/* Lock icon for non-members */}
+              {!isMember && (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+              )}
+              {/* External link icon for members */}
+              {isMember && (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+              )}
+            </div>
           </div>
-        </div>
-      )}
-    </>
+        );
+      })}
+    </div>
   );
 }

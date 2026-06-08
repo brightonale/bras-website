@@ -28,11 +28,19 @@ function copyRecursiveSync(src, dest, galleryData) {
       galleryData.push(currentFolderData);
     }
 
-    fs.readdirSync(src).forEach(function(childItemName) {
+    let validFiles = fs.readdirSync(src).filter(file => {
+      const ext = path.extname(file).toLowerCase();
+      return ['.jpg', '.jpeg', '.png', '.gif', '.webp'].includes(ext);
+    });
+
+    // ONLY TAKE THE FIRST PHOTO AS A COVER PHOTO
+    if (!isRoot && validFiles.length > 0) {
+      validFiles = validFiles.slice(0, 1);
+    }
+
+    validFiles.forEach(function(childItemName) {
       const childSrc = path.join(src, childItemName);
       const childDest = path.join(dest, childItemName);
-      
-      // Pass the current folder data array down, unless we are in root, then pass the main array
       copyRecursiveSync(childSrc, childDest, currentFolderData ? currentFolderData.images : galleryData);
     });
   } else {
