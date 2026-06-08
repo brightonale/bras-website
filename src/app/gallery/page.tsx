@@ -1,7 +1,7 @@
 import React from 'react';
-import Image from 'next/image';
 import fs from 'fs';
 import path from 'path';
+import GalleryGrid from '@/components/GalleryGrid';
 
 export const metadata = {
   title: 'Gallery - Brighton Real Ale Society',
@@ -44,49 +44,7 @@ export default async function GalleryPage() {
           No photos found. Drop folders into your I:/My Drive/BRAS_Gallery folder and run npm run sync-gallery!
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '48px', marginTop: '32px' }}>
-          {galleryData.map((folder, folderIndex) => (
-            <div key={folderIndex}>
-              <h2 style={{ 
-                fontFamily: 'var(--font-heading)', 
-                fontSize: '1.5rem', 
-                marginBottom: '16px',
-                borderBottom: '2px solid var(--border)',
-                paddingBottom: '8px'
-              }}>
-                {folder.name}
-              </h2>
-              
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                gap: '24px',
-              }}>
-                {folder.images.map((imgSrc, imgIndex) => (
-                  <div 
-                    key={imgIndex} 
-                    className="section-card section-card--hoverable"
-                    style={{ 
-                      padding: '0', 
-                      overflow: 'hidden',
-                      aspectRatio: '1 / 1',
-                      position: 'relative'
-                    }}
-                  >
-                    <Image
-                      src={encodeURI(imgSrc)}
-                      alt={`BRAS Social Photo from ${folder.name} - ${imgIndex + 1}`}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      style={{ objectFit: 'cover' }}
-                      className="gallery-image"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
+        <GalleryGrid data={galleryData} />
       )}
     </div>
   );
