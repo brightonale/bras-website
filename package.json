@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "postinstall": "node scripts/set-provider.js && prisma generate",
-    "sync-gallery": "node scripts/sync-gallery.js"
+    "sync-gallery": "node scripts/sync-gallery.js",
+    "sort-whatsapp": "node scripts/sort-whatsapp.js"
   },
   "dependencies": {
     "@prisma/client": "5.22.0",
