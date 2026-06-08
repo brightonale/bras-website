@@ -1,8 +1,6 @@
 import { getSession } from '@/app/actions';
 import LeaderboardClient from './LeaderboardClient';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 
@@ -62,5 +60,8 @@ export default async function LeaderboardPage() {
     console.error('Failed to load dynamic leaderboard data:', err);
   }
 
-  return <LeaderboardClient initialPubs={initialPubs} isLoggedIn={isLoggedIn} />;
+  // Server-side filtering to prevent exposure of full leaderboard
+  const finalPubs = isLoggedIn ? initialPubs : initialPubs.slice(0, 10);
+
+  return <LeaderboardClient initialPubs={finalPubs} isLoggedIn={isLoggedIn} />;
 }

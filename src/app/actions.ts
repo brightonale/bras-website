@@ -3,6 +3,7 @@
 import { prisma } from '@/lib/db';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import bcrypt from 'bcrypt';
 
 export async function login(username: string, passwordAttempt: string) {
   const cleanUsername = username.toLowerCase().replace(/\s+/g, '');
@@ -16,7 +17,7 @@ export async function login(username: string, passwordAttempt: string) {
     return { error: 'Database connection failed.' };
   }
 
-  if (!user || user.password !== passwordAttempt) {
+  if (!user || !(await bcrypt.compare(passwordAttempt, user.password))) {
     return { error: 'Invalid credentials.' };
   }
 
@@ -58,8 +59,8 @@ export async function createAccount(username: string, passwordAttempt: string) {
     user = await prisma.user.create({
       data: {
         name: cleanUsername,
-        password: passwordAttempt,
-        role: 'committee', // Everyone is committee now as per preferences
+        password: await bcrypt.hash(passwordAttempt, 10),
+        role: 'member', // Default to member to prevent privilege escalation
       }
     });
   } catch (err) {
@@ -107,7 +108,7 @@ export async function changePassword(username: string, newPasswordAttempt: strin
     
     await prisma.user.update({
       where: { name: cleanUsername },
-      data: { password: newPasswordAttempt, mustChange: false }
+      data: { password: await bcrypt.hash(newPasswordAttempt, 10), mustChange: false }
     });
 
     return { success: true, error: undefined };

@@ -1,7 +1,8 @@
 import React from 'react';
-import fs from 'fs';
+import fs from 'fs/promises';
 import path from 'path';
 import Link from 'next/link';
+import Image from 'next/image';
 import { 
   History as HistoryIcon, 
   Users, 
@@ -19,12 +20,10 @@ interface CaptionPost {
   content: string;
 }
 
-function parseCaptions(): CaptionPost[] {
+async function parseCaptions(): Promise<CaptionPost[]> {
   const filePath = path.join(process.cwd(), 'src/data/captions.md');
-  if (!fs.existsSync(filePath)) {
-    return [];
-  }
-  const fileContent = fs.readFileSync(filePath, 'utf8');
+  try {
+    const fileContent = await fs.readFile(filePath, 'utf8');
   
   const sections = fileContent.split('\n---\n');
   const posts: CaptionPost[] = [];
@@ -42,6 +41,8 @@ function parseCaptions(): CaptionPost[] {
     const content = lines.slice(1).join('\n').trim();
 
     posts.push({ date: dateStr, url, content });
+  } catch (e) {
+    return [];
   }
 
   // Sort posts chronologically (oldest first)
@@ -49,7 +50,7 @@ function parseCaptions(): CaptionPost[] {
 }
 
 export default async function HistoryPage() {
-  const posts = parseCaptions();
+  const posts = await parseCaptions();
 
   // Helper to format date in formal British format
   const formatDate = (dateStr: string) => {
@@ -316,11 +317,9 @@ export default async function HistoryPage() {
                     flexShrink: 0
                   }}>
                     {post.url.includes('instagram.com') ? (
-                      <img 
-                        src={`/api/proxy-image?url=${encodeURIComponent(post.url + 'media/?size=l')}`} 
-                        alt="Instagram Image Placeholder" 
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
+                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#e1e1e1', color: '#555', fontSize: '0.8rem', padding: '20px', textAlign: 'center' }}>
+                        Instagram posts cannot be embedded directly. Please click 'Source Entry' to view.
+                      </div>
                     ) : null}
                     <div style={{ 
                       display: post.url.includes('instagram.com') ? 'none' : 'flex',

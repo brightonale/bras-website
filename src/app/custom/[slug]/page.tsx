@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import DOMPurify from 'isomorphic-dompurify';
 
 export default function CustomPage() {
   const params = useParams();
@@ -67,11 +68,11 @@ export default function CustomPage() {
       </div>
 
       {/* Custom HTML Injected */}
-      {/* WARNING: XSS vulnerability if HTML is not trusted. Committee-only publishing mitigates risk. */}
+      {/* Sanitized to prevent stored XSS */}
       <div 
         className="section-card" 
         style={{ padding: '40px', minHeight: '300px' }}
-        dangerouslySetInnerHTML={{ __html: page.htmlContent }}
+        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(page.htmlContent) }}
       />
 
     </div>

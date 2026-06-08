@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { prisma } from '@/lib/db';
 import { Beer, Trophy, Gamepad2, Medal } from 'lucide-react';
+import Image from 'next/image';
 
 export const dynamic = 'force-dynamic';
 
@@ -63,10 +64,13 @@ export default async function HomePage() {
         textAlign: 'center', 
         padding: '48px 20px 40px',
       }}>
-        <img 
+        <Image 
           src="/assets/bras-logo.png" 
           alt="BRAS Logo" 
-          style={{ width: '320px', height: '320px', objectFit: 'contain', marginBottom: '24px' }}
+          width={320}
+          height={320}
+          style={{ objectFit: 'contain', marginBottom: '24px' }}
+          priority
         />
         <div style={{ 
           color: 'var(--accent)', 
