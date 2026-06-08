@@ -33,7 +33,7 @@ galleryFolders.forEach(folder => {
 
 // Helper to get the Thursday date from a given JS Date object
 function getTargetThursday(date) {
-  const dayOfWeek = date.getDay(); // Sunday - Saturday : 0 - 6
+  const dayOfWeek = date.getUTCDay(); // Sunday - Saturday : 0 - 6
   // We only care if the photo was taken Thursday (4) or Friday (5)
   if (dayOfWeek === 4) {
     // It's Thursday. Return today's date formatted.
@@ -41,7 +41,7 @@ function getTargetThursday(date) {
   } else if (dayOfWeek === 5) {
     // It's Friday. Return yesterday's date (Thursday).
     const thursdayDate = new Date(date);
-    thursdayDate.setDate(thursdayDate.getDate() - 1);
+    thursdayDate.setUTCDate(thursdayDate.getUTCDate() - 1);
     return thursdayDate.toISOString().split('T')[0];
   }
   return null;
