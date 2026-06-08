@@ -28,17 +28,20 @@ function copyRecursiveSync(src, dest, galleryData) {
       galleryData.push(currentFolderData);
     }
 
-    let validFiles = fs.readdirSync(src).filter(file => {
-      const ext = path.extname(file).toLowerCase();
-      return ['.jpg', '.jpeg', '.png', '.gif', '.webp'].includes(ext);
-    });
+    let children = fs.readdirSync(src);
 
-    // ONLY TAKE THE FIRST PHOTO AS A COVER PHOTO
-    if (!isRoot && validFiles.length > 0) {
-      validFiles = validFiles.slice(0, 1);
+    // If we are in a subfolder, we only want the FIRST valid image.
+    if (!isRoot) {
+      children = children.filter(file => {
+        const ext = path.extname(file).toLowerCase();
+        return ['.jpg', '.jpeg', '.png', '.gif', '.webp'].includes(ext);
+      });
+      if (children.length > 0) {
+        children = children.slice(0, 1);
+      }
     }
 
-    validFiles.forEach(function(childItemName) {
+    children.forEach(function(childItemName) {
       const childSrc = path.join(src, childItemName);
       const childDest = path.join(dest, childItemName);
       copyRecursiveSync(childSrc, childDest, currentFolderData ? currentFolderData.images : galleryData);
