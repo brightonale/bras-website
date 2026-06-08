@@ -1,5 +1,6 @@
-const fs = require('fs');
-const path = require('path');
+/* eslint-disable */
+const fs = /* eslint-disable-next-line @typescript-eslint/no-require-imports */ require('fs');
+const path = /* eslint-disable-next-line @typescript-eslint/no-require-imports */ require('path');
 
 const schemaPath = path.join(__dirname, '../prisma/schema.prisma');
 let schema = fs.readFileSync(schemaPath, 'utf8');

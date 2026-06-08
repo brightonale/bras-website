@@ -17,7 +17,7 @@ export async function GET() {
     const mappedPages = pages.map(p => ({ slug: p.id, title: p.title }));
     
     return NextResponse.json({ pages: mappedPages });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true, page: { slug: safeSlug } });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

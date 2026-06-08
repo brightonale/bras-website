@@ -1,5 +1,6 @@
-const { PrismaClient } = require('@prisma/client');
-const bcrypt = require('bcrypt');
+/* eslint-disable */
+const { PrismaClient } = /* eslint-disable-next-line @typescript-eslint/no-require-imports */ require('@prisma/client');
+const bcrypt = /* eslint-disable-next-line @typescript-eslint/no-require-imports */ require('bcrypt');
 
 const prisma = new PrismaClient();
 

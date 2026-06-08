@@ -7,6 +7,7 @@ import { Lock, Trophy } from 'lucide-react';
 type SortKey = 'score' | 'date' | 'ratingsCount' | 'pub' | 'pint' | 'brewery';
 type SortOrder = 'asc' | 'desc';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function LeaderboardClient({ initialPubs, isLoggedIn }: { initialPubs: any[], isLoggedIn: boolean }) {
   const [selectedYear, setSelectedYear] = useState<string>('All');
   const [sortKey, setSortKey] = useState<SortKey>('score');
@@ -20,7 +21,9 @@ export default function LeaderboardClient({ initialPubs, isLoggedIn }: { initial
 
   // Sort pubs
   const sortedPubs = [...filteredPubs].sort((a, b) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let valA: any = a[sortKey];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let valB: any = b[sortKey];
 
     if (sortKey === 'ratingsCount') {

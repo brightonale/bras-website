@@ -56,12 +56,12 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: { name: 
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsCommittee(false);
     } else {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+       
       setIsCommittee(true);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+       
       setMemberName(name);
 
-      // Pre-fill today's date for forms
+      // Pre-fill today&apos;s date for forms
       const today = new Date();
       const todayStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
       setEventDate(todayStr);
@@ -453,7 +453,7 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: { name: 
                 list="committee-active-pubs"
                 value={activePubName} 
                 onChange={e => setActivePubName(e.target.value)} 
-                placeholder="e.g. Fiddler's Elbow" 
+                placeholder="e.g. Fiddler&apos;s Elbow" 
                 required 
               />
               <datalist id="committee-active-pubs">
@@ -512,7 +512,7 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: { name: 
                 list="committee-manual-pubs"
                 value={pubName} 
                 onChange={e => setPubName(e.target.value)} 
-                placeholder="e.g. Fiddler's Elbow" 
+                placeholder="e.g. Fiddler&apos;s Elbow" 
                 required 
               />
               <datalist id="committee-manual-pubs">

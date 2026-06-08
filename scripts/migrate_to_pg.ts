@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Database from 'better-sqlite3';
 import { PrismaClient } from '@prisma/client';
 

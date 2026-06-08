@@ -2,7 +2,6 @@ import React from 'react';
 import fs from 'fs/promises';
 import path from 'path';
 import Link from 'next/link';
-import Image from 'next/image';
 import { 
   History as HistoryIcon, 
   Users, 
@@ -41,12 +40,13 @@ async function parseCaptions(): Promise<CaptionPost[]> {
     const content = lines.slice(1).join('\n').trim();
 
     posts.push({ date: dateStr, url, content });
-  } catch (e) {
-    return [];
   }
 
   // Sort posts chronologically (oldest first)
   return posts.sort((a, b) => a.date.localeCompare(b.date));
+  } catch (e) {
+    return [];
+  }
 }
 
 export default async function HistoryPage() {
@@ -70,7 +70,7 @@ export default async function HistoryPage() {
         <span className="page-header__eyebrow">Archives &amp; Directory</span>
         <h1 className="page-header__title">Society History &amp; Directory</h1>
         <p className="page-header__subtitle">
-          The people behind the pints. A chronological record of the society's activities, key figures, and industry partners since our foundation.
+          The people behind the pints. A chronological record of the society&apos;s activities, key figures, and industry partners since our foundation.
         </p>
       </div>
 
@@ -139,7 +139,7 @@ export default async function HistoryPage() {
               <h3 style={{ fontSize: '1.35rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '4px' }}>Max</h3>
               <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Socials &amp; Media Officer (2024–2026)</div>
               <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '16px' }}>
-                Max served as the creative lead, transforming the society's visual outreach. He was responsible for designing promotional materials, managing weekly social announcements, and coordinating venue outreach across Brighton. His artistic and logistical efforts kept the local community informed and actively growing.
+                Max served as the creative lead, transforming the society&apos;s visual outreach. He was responsible for designing promotional materials, managing weekly social announcements, and coordinating venue outreach across Brighton. His artistic and logistical efforts kept the local community informed and actively growing.
               </p>
             </div>
           </div>
@@ -152,7 +152,7 @@ export default async function HistoryPage() {
               <h3 style={{ fontSize: '1.35rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '4px' }}>Harry</h3>
               <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Vice President &amp; IT Officer (2025–2026)</div>
               <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '16px' }}>
-                Harry was a core figure in establishing the society's digital presence and scaling operations. He handled the society's tech infrastructure alongside taking charge of the BRAS wordle and custom web solutions.
+                Harry was a core figure in establishing the society&apos;s digital presence and scaling operations. He handled the society&apos;s tech infrastructure alongside taking charge of the BRAS wordle and custom web solutions.
               </p>
             </div>
           </div>
@@ -165,7 +165,7 @@ export default async function HistoryPage() {
               <h3 style={{ fontSize: '1.35rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '4px' }}>Sidney</h3>
               <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Finance Officer (2024–2025)</div>
               <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '16px' }}>
-                Sidney handled the society's finances for the 2024/25 academic year, overlooking all payments made by the society. An architecture student with an affinity for pale ales and skating, Sidney ensured the books stayed balanced as BRAS expanded its socials and events.
+                Sidney handled the society&apos;s finances for the 2024/25 academic year, overlooking all payments made by the society. An architecture student with an affinity for pale ales and skating, Sidney ensured the books stayed balanced as BRAS expanded its socials and events.
               </p>
             </div>
           </div>
@@ -178,7 +178,7 @@ export default async function HistoryPage() {
               <h3 style={{ fontSize: '1.35rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '4px' }}>Albie Gullis</h3>
               <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Society President (2025–2026)</div>
               <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '16px' }}>
-                Albie assumed executive management of the BRAS in June 2025 following the transition of the founding committee. Tasked with scaling the society's presence, Albie has driven a massive expansion into multi-society collaborative events and targeted regional pub crawls.
+                Albie assumed executive management of the BRAS in June 2025 following the transition of the founding committee. Tasked with scaling the society&apos;s presence, Albie has driven a massive expansion into multi-society collaborative events and targeted regional pub crawls.
               </p>
             </div>
           </div>
@@ -204,7 +204,7 @@ export default async function HistoryPage() {
               <h3 style={{ fontSize: '1.35rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '4px' }}>Harrison</h3>
               <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Finance Director (2026–Present)</div>
               <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '16px' }}>
-                Harrison took over the financial architecture in 2026, regulating ticket sales, balancing the books, and ensuring the society's commercial operations run smoothly.
+                Harrison took over the financial architecture in 2026, regulating ticket sales, balancing the books, and ensuring the society&apos;s commercial operations run smoothly.
               </p>
             </div>
           </div>
@@ -236,7 +236,7 @@ export default async function HistoryPage() {
             <h3 style={{ fontSize: '1.35rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '4px' }}>Richard</h3>
             <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Master Brewer, Pepperpot Brewery</div>
             <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', lineHeight: '1.6' }}>
-              Operating from Bevendean Farm, Richard opened his doors to the BRAS for intensive brewing masterclasses and comprehensive tasting panels. He explicitly co-developed and commercialised the society's celebratory one-year milestone beer, "BRAS Best Bitter".
+              Operating from Bevendean Farm, Richard opened his doors to the BRAS for intensive brewing masterclasses and comprehensive tasting panels. He explicitly co-developed and commercialised the society&apos;s celebratory one-year milestone beer, &quot;BRAS Best Bitter&quot;.
             </p>
           </div>
 
@@ -244,7 +244,7 @@ export default async function HistoryPage() {
             <h3 style={{ fontSize: '1.35rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '4px' }}>360° Brewing Co</h3>
             <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Brewing Collaborator, Sheffield Park</div>
             <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', lineHeight: '1.6' }}>
-              Based in East Sussex, the 360° team hosted BRAS for a hands-on brewery experience, collaborating on recipe formulation and dry-hopping. This partnership produced the festival cask ale, "Full Circle Pale Ale".
+              Based in East Sussex, the 360° team hosted BRAS for a hands-on brewery experience, collaborating on recipe formulation and dry-hopping. This partnership produced the festival cask ale, &quot;Full Circle Pale Ale&quot;.
             </p>
           </div>
 
@@ -266,7 +266,7 @@ export default async function HistoryPage() {
             <HistoryIcon size={24} className="accent-text" /> Historical Timeline
           </h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', marginTop: '16px' }}>
-            A chronological account of the society's milestones, from inception to the present day.
+            A chronological account of the society&apos;s milestones, from inception to the present day.
           </p>
         </div>
 
@@ -318,7 +318,7 @@ export default async function HistoryPage() {
                   }}>
                     {post.url.includes('instagram.com') ? (
                       <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#e1e1e1', color: '#555', fontSize: '0.8rem', padding: '20px', textAlign: 'center' }}>
-                        Instagram posts cannot be embedded directly. Please click 'Source Entry' to view.
+                        Instagram posts cannot be embedded directly. Please click &apos;Source Entry&apos; to view.
                       </div>
                     ) : null}
                     <div style={{ 

@@ -101,7 +101,7 @@ export default async function HomePage() {
           maxWidth: '520px',
           margin: '0 auto 28px',
         }}>
-          University of Brighton's student society for the Campaign for Real Ale. We rate independent pubs across Brighton &amp; Hove as members.
+          University of Brighton&apos;s student society for the Campaign for Real Ale. We rate independent pubs across Brighton &amp; Hove as members.
         </p>
         
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>

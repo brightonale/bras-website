@@ -26,11 +26,11 @@ describe('Leaderboard Data Filtering', () => {
       pubName: s.pubName, score: 5, userId: '1', socialId: '1', createdAt: new Date()
     }));
 
-    vi.mocked(prisma.social.findMany).mockResolvedValue(mockSocials as any);
-    vi.mocked(prisma.rating.findMany).mockResolvedValue(mockRatings as any);
+    vi.mocked(prisma.social.findMany).mockResolvedValue(mockSocials as never);
+    vi.mocked(prisma.rating.findMany).mockResolvedValue(mockRatings as never);
 
     const jsx = await LeaderboardPage();
-    const props = (jsx as any).props;
+    const props = (jsx as never).props;
     expect(props.initialPubs.length).toBeLessThanOrEqual(10);
   });
 });

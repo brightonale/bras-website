@@ -8,7 +8,7 @@ export async function GET() {
       return NextResponse.json({ word: Buffer.from("STOUT").toString('base64'), hint: "A dark beer" });
     }
     return NextResponse.json({ word: settings.wordleWord, hint: settings.wordleHint });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
@@ -70,7 +70,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ success: true });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

@@ -36,7 +36,7 @@ export default function LoginClient({ initialMembers }: { initialMembers: { name
       if (searchParams.get('committee') === 'true') {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setIsCommitteeMode(true);
-        // eslint-disable-next-line react-hooks/set-state-in-effect
+         
         setTab('login');
       }
     }
@@ -77,7 +77,7 @@ export default function LoginClient({ initialMembers }: { initialMembers: { name
       }
       
       loginSuccess(res.user.votingName, res.user.role);
-    } catch (err) {
+    } catch {
       setIsLoading(false);
       setErrorMsg("Error communicating with database.");
     }
@@ -103,7 +103,7 @@ export default function LoginClient({ initialMembers }: { initialMembers: { name
       }
       
       setStep('claim_name');
-    } catch (err) {
+    } catch {
       setIsLoading(false);
       setErrorMsg("Error creating account in database.");
     }
@@ -129,7 +129,7 @@ export default function LoginClient({ initialMembers }: { initialMembers: { name
       }
       
       setStep('claim_name');
-    } catch (err) {
+    } catch {
       setIsLoading(false);
       setErrorMsg("Error changing password in database.");
     }
@@ -150,7 +150,7 @@ export default function LoginClient({ initialMembers }: { initialMembers: { name
       setIsLoading(false);
       
       loginSuccess(selectedVotingName, 'committee');
-    } catch (err) {
+    } catch {
       setIsLoading(false);
       setErrorMsg("Error claiming voting name in database.");
     }

@@ -97,8 +97,8 @@ export async function claimVotingName(username: string, votingName: string) {
     cookieStore.set('bras_voting_name', user.votingName || user.name, { httpOnly: true, path: '/' });
 
     return { success: true, error: undefined };
-  } catch (err: any) {
-    return { success: false, error: err.message || 'Failed to claim voting name.' };
+  } catch (err: unknown) {
+    return { success: false, error: (err as Error).message || 'Failed to claim voting name.' };
   }
 }
 
@@ -112,8 +112,8 @@ export async function changePassword(username: string, newPasswordAttempt: strin
     });
 
     return { success: true, error: undefined };
-  } catch (err: any) {
-    return { success: false, error: err.message || 'Failed to update password.' };
+  } catch (err: unknown) {
+    return { success: false, error: (err as Error).message || 'Failed to update password.' };
   }
 }
 

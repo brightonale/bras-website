@@ -8,6 +8,7 @@ export default async function LeaderboardPage() {
   const session = await getSession();
   const isLoggedIn = session.isLoggedIn;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let initialPubs: any[] = [];
   try {
     // 1. Fetch all socials

@@ -130,7 +130,7 @@ export default function AwardsPage() {
         const res = await fetch(`${SCRIPT_URL}?action=getVotes&t=${Date.now()}`);
         const data = await res.json();
         if (data && data.votes) setAllVotes(data.votes);
-      } catch (err) {
+      } catch {
         console.warn("Could not reach backend to sync votes");
       } finally {
         setIsLoading(false);

@@ -1,7 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { login, createAccount } from '../src/app/actions';
 import { prisma } from '../src/lib/db';
-import bcrypt from 'bcrypt';
 
 vi.mock('../src/lib/db', () => ({
   prisma: {

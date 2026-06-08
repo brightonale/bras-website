@@ -33,7 +33,7 @@ const [activePint, setActivePint] = useState<ActivePint | null>(null);
     
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoggedIn(true);
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+     
     setMemberName(user);
 
     // Fetch active pint from committee

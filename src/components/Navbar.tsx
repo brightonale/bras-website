@@ -19,6 +19,7 @@ const ALL_LINKS = [
 
 // NAV_LINKS is calculated dynamically inside the component body based on role
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function Navbar({ settings }: { settings: any }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -39,12 +40,12 @@ export default function Navbar({ settings }: { settings: any }) {
     if (name) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setUserName(name);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+       
       setIsCommittee(role === 'committee');
     } else {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+       
       setUserName(null);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+       
       setIsCommittee(false);
     }
   }, [pathname]);

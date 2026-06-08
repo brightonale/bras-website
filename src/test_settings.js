@@ -1,3 +1,4 @@
+/* eslint-disable */
 const features = {
   leaderboard: true,
   checklist: true,
@@ -10,7 +11,7 @@ const features = {
 
 async function run() {
   try {
-    const { PrismaClient } = require('@prisma/client');
+    const { PrismaClient } = /* eslint-disable-next-line @typescript-eslint/no-require-imports */ /* eslint-disable-next-line @typescript-eslint/no-require-imports */ require('@prisma/client');
     const prisma = new PrismaClient();
     const res = await prisma.settings.upsert({
       where: { id: 'global' },
