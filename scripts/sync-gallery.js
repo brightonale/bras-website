@@ -35,6 +35,12 @@ function copyRecursiveSync(src, dest, galleryData) {
       // Pass the current folder data array down, unless we are in root, then pass the main array
       copyRecursiveSync(childSrc, childDest, currentFolderData ? currentFolderData.images : galleryData);
     });
+
+    // If folder has no images, remove it from galleryData and remove the empty directory
+    if (!isRoot && currentFolderData && currentFolderData.images.length === 0) {
+      galleryData.pop();
+      fs.rmdirSync(dest);
+    }
   } else {
     // It's a file. Copy it, and add to the array.
     const ext = path.extname(src).toLowerCase();
