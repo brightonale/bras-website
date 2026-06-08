@@ -35,57 +35,69 @@ export default function GalleryGrid({ data }: { data: GalleryFolder[] }) {
               {folder.name}
             </h2>
             
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: '24px',
-            }}>
-              {folder.images.map((imgSrc, imgIndex) => {
-                const encodedSrc = encodeURI(imgSrc);
-                return (
-                  <div 
-                    key={imgIndex} 
-                    className="section-card section-card--hoverable"
-                    style={{ 
-                      padding: '0', 
-                      overflow: 'hidden',
-                      aspectRatio: '1 / 1',
-                      position: 'relative',
-                      cursor: 'pointer'
-                    }}
-                    onClick={() => setSelectedImage(encodedSrc)}
-                  >
-                    <Image
-                      src={encodedSrc}
-                      alt={`BRAS Social Photo from ${folder.name} - ${imgIndex + 1}`}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      style={{ objectFit: 'cover' }}
-                      className="gallery-image"
-                    />
-                    {/* Hover overlay with download icon hint */}
-                    <div className="gallery-overlay" style={{
-                      position: 'absolute',
-                      bottom: '12px',
-                      right: '12px',
-                      background: 'rgba(0,0,0,0.6)',
-                      borderRadius: '50%',
-                      padding: '8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      opacity: 0.8
-                    }}>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                      </svg>
+            {folder.images.length === 0 ? (
+              <div style={{
+                padding: '24px',
+                border: '1px dashed var(--border)',
+                borderRadius: '8px',
+                color: 'var(--text-muted)',
+                fontStyle: 'italic'
+              }}>
+                No photos have been uploaded for this social yet.
+              </div>
+            ) : (
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                gap: '24px',
+              }}>
+                {folder.images.map((imgSrc, imgIndex) => {
+                  const encodedSrc = encodeURI(imgSrc);
+                  return (
+                    <div 
+                      key={imgIndex} 
+                      className="section-card section-card--hoverable"
+                      style={{ 
+                        padding: '0', 
+                        overflow: 'hidden',
+                        aspectRatio: '1 / 1',
+                        position: 'relative',
+                        cursor: 'pointer'
+                      }}
+                      onClick={() => setSelectedImage(encodedSrc)}
+                    >
+                      <Image
+                        src={encodedSrc}
+                        alt={`BRAS Social Photo from ${folder.name} - ${imgIndex + 1}`}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        style={{ objectFit: 'cover' }}
+                        className="gallery-image"
+                      />
+                      {/* Hover overlay with download icon hint */}
+                      <div className="gallery-overlay" style={{
+                        position: 'absolute',
+                        bottom: '12px',
+                        right: '12px',
+                        background: 'rgba(0,0,0,0.6)',
+                        borderRadius: '50%',
+                        padding: '8px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        opacity: 0.8
+                      }}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                          <polyline points="7 10 12 15 17 10"></polyline>
+                          <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         ))}
       </div>
