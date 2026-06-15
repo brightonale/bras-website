@@ -136,14 +136,14 @@ export default function LeaderboardClient({ initialPubs, isLoggedIn }: { initial
             <thead>
               <tr>
                 <th style={{ width: '80px', textAlign: 'center' }}>Rank</th>
-                <th style={{ cursor: 'pointer' }} onClick={() => toggleSort('pub')}>
-                  Pub {getSortIndicator('pub')}
-                </th>
                 <th style={{ cursor: 'pointer' }} onClick={() => toggleSort('pint')}>
                   Pint Evaluated {getSortIndicator('pint')}
                 </th>
                 <th style={{ cursor: 'pointer' }} onClick={() => toggleSort('brewery')}>
                   Brewed By {getSortIndicator('brewery')}
+                </th>
+                <th style={{ cursor: 'pointer' }} onClick={() => toggleSort('pub')}>
+                  Pub {getSortIndicator('pub')}
                 </th>
                 <th style={{ cursor: 'pointer' }} onClick={() => toggleSort('date')}>
                   Date {getSortIndicator('date')}
@@ -179,11 +179,13 @@ export default function LeaderboardClient({ initialPubs, isLoggedIn }: { initial
                           </div>
                         ) : rankNum}
                       </td>
-                      <td style={{ fontWeight: 'bold', fontFamily: 'var(--font-heading)', fontSize: '1.05rem' }}>
+                      <td style={{ fontWeight: 'bold', fontSize: '1.05rem' }}>
+                        {pub.pint}
+                      </td>
+                      <td style={{ fontStyle: 'italic', color: 'var(--text-muted)' }}>{pub.brewery}</td>
+                      <td style={{ fontFamily: 'var(--font-heading)', fontSize: '1.05rem' }}>
                         {pub.pub}
                       </td>
-                      <td>{pub.pint}</td>
-                      <td style={{ fontStyle: 'italic', color: 'var(--text-muted)' }}>{pub.brewery}</td>
                       <td>{pub.date}</td>
                       <td style={{ 
                         textAlign: 'center', 
