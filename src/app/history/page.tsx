@@ -2,6 +2,7 @@ import React from 'react';
 import fs from 'fs/promises';
 import path from 'path';
 import Link from 'next/link';
+import CommitteeGrid from '@/components/CommitteeGrid';
 import { 
   History as HistoryIcon, 
   Users, 
@@ -115,113 +116,8 @@ export default async function HistoryPage() {
           <Users size={24} className="accent-text" /> Key Figures &amp; Committee
         </h2>
         
-        {/* We use a formal list-based layout rather than heavy image cards */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          
-          <div className="section-card" style={{ display: 'flex', gap: '24px', alignItems: 'flex-start', borderRadius: '2px' }}>
-            <div style={{ flexShrink: 0, width: '120px', height: '120px', backgroundColor: 'var(--surface-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)', borderRadius: '2px' }}>
-              <ImageIcon size={32} color="var(--text-light)" />
-            </div>
-            <div>
-              <h3 style={{ fontSize: '1.35rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '4px' }}>James Graham</h3>
-              <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Founding President (2023–2025)</div>
-              <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '16px' }}>
-                James was the driving force behind the initial 20 months of the BRAS. He established the standard operating protocol of weekly pub reviews, systematically assigning ratings to local cask ales. Under his leadership, the club transitioned from a small circle of friends into an accredited society featured in local media and regional CAMRA press. He formally signed off as executive head in June 2025.
-              </p>
-            </div>
-          </div>
-
-          <div className="section-card" style={{ display: 'flex', gap: '24px', alignItems: 'flex-start', borderRadius: '2px' }}>
-            <div style={{ flexShrink: 0, width: '120px', height: '120px', backgroundColor: 'var(--surface-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)', borderRadius: '2px' }}>
-              <ImageIcon size={32} color="var(--text-light)" />
-            </div>
-            <div>
-              <h3 style={{ fontSize: '1.35rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '4px' }}>Max</h3>
-              <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Socials &amp; Media Officer (2024–2026)</div>
-              <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '16px' }}>
-                Max served as the creative lead, transforming the society&apos;s visual outreach. He was responsible for designing promotional materials, managing weekly social announcements, and coordinating venue outreach across Brighton. His artistic and logistical efforts kept the local community informed and actively growing.
-              </p>
-            </div>
-          </div>
-
-          <div className="section-card" style={{ display: 'flex', gap: '24px', alignItems: 'flex-start', borderRadius: '2px' }}>
-            <div style={{ flexShrink: 0, width: '120px', height: '120px', backgroundColor: 'var(--surface-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)', borderRadius: '2px' }}>
-              <ImageIcon size={32} color="var(--text-light)" />
-            </div>
-            <div>
-              <h3 style={{ fontSize: '1.35rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '4px' }}>Harry</h3>
-              <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Vice President &amp; IT Officer (2025–2026)</div>
-              <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '16px' }}>
-                Harry was a core figure in establishing the society&apos;s digital presence and scaling operations. He handled the society&apos;s tech infrastructure alongside taking charge of the BRAS wordle and custom web solutions.
-              </p>
-            </div>
-          </div>
-
-          <div className="section-card" style={{ display: 'flex', gap: '24px', alignItems: 'flex-start', borderRadius: '2px' }}>
-            <div style={{ flexShrink: 0, width: '120px', height: '120px', backgroundColor: 'var(--surface-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)', borderRadius: '2px' }}>
-              <ImageIcon size={32} color="var(--text-light)" />
-            </div>
-            <div>
-              <h3 style={{ fontSize: '1.35rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '4px' }}>Sidney</h3>
-              <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Finance Officer (2024–2025)</div>
-              <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '16px' }}>
-                Sidney handled the society&apos;s finances for the 2024/25 academic year, overlooking all payments made by the society. An architecture student with an affinity for pale ales and skating, Sidney ensured the books stayed balanced as BRAS expanded its socials and events.
-              </p>
-            </div>
-          </div>
-
-          <div className="section-card" style={{ display: 'flex', gap: '24px', alignItems: 'flex-start', borderRadius: '2px' }}>
-            <div style={{ flexShrink: 0, width: '120px', height: '120px', backgroundColor: 'var(--surface-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)', borderRadius: '2px' }}>
-              <ImageIcon size={32} color="var(--text-light)" />
-            </div>
-            <div>
-              <h3 style={{ fontSize: '1.35rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '4px' }}>Albie Gullis</h3>
-              <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Society President (2025–2026)</div>
-              <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '16px' }}>
-                Albie assumed executive management of the BRAS in June 2025 following the transition of the founding committee. Tasked with scaling the society&apos;s presence, Albie has driven a massive expansion into multi-society collaborative events and targeted regional pub crawls.
-              </p>
-            </div>
-          </div>
-
-          <div className="section-card" style={{ display: 'flex', gap: '24px', alignItems: 'flex-start', borderRadius: '2px' }}>
-            <div style={{ flexShrink: 0, width: '120px', height: '120px', backgroundColor: 'var(--surface-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)', borderRadius: '2px' }}>
-              <ImageIcon size={32} color="var(--text-light)" />
-            </div>
-            <div>
-              <h3 style={{ fontSize: '1.35rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '4px' }}>Takara</h3>
-              <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Society President (2026–Present)</div>
-              <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '16px' }}>
-                Takara stepped up as President in 2026, leading the next generation of real ale enthusiasts and continuing the BRAS legacy of celebrating quality cask conditioned beer across Brighton and Sussex.
-              </p>
-            </div>
-          </div>
-
-          <div className="section-card" style={{ display: 'flex', gap: '24px', alignItems: 'flex-start', borderRadius: '2px' }}>
-            <div style={{ flexShrink: 0, width: '120px', height: '120px', backgroundColor: 'var(--surface-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)', borderRadius: '2px' }}>
-              <ImageIcon size={32} color="var(--text-light)" />
-            </div>
-            <div>
-              <h3 style={{ fontSize: '1.35rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '4px' }}>Harrison</h3>
-              <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Finance Director (2026–Present)</div>
-              <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '16px' }}>
-                Harrison took over the financial architecture in 2026, regulating ticket sales, balancing the books, and ensuring the society&apos;s commercial operations run smoothly.
-              </p>
-            </div>
-          </div>
-
-          <div className="section-card" style={{ display: 'flex', gap: '24px', alignItems: 'flex-start', borderRadius: '2px' }}>
-            <div style={{ flexShrink: 0, width: '120px', height: '120px', backgroundColor: 'var(--surface-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)', borderRadius: '2px' }}>
-              <ImageIcon size={32} color="var(--text-light)" />
-            </div>
-            <div>
-              <h3 style={{ fontSize: '1.35rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '4px' }}>Luke</h3>
-              <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>Socials Design (2023–2024)</div>
-              <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '16px' }}>
-                Luke was an integral part of the foundational 2023/24 executive committee. He handled initial graphic layouts and coordinated weekly meetups. Luke secured a permanent place in society legend in June 2024 when he was officially presented with a custom, personalised pint glass to mark his dedicated service.
-              </p>
-            </div>
-          </div>
-
+          <CommitteeGrid />
         </div>
       </section>
 
