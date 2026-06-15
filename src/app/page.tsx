@@ -3,6 +3,9 @@ import Link from 'next/link';
 import { prisma } from '@/lib/db';
 import { Beer, Trophy, Gamepad2, Medal } from 'lucide-react';
 import Image from 'next/image';
+import InfiniteMarquee from '@/components/ui/InfiniteMarquee';
+import ScrollReveal from '@/components/ui/ScrollReveal';
+import MagneticButton from '@/components/ui/MagneticButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -107,14 +110,20 @@ export default async function HomePage() {
         </p>
         
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
-          <Link href="/rate" className="btn btn--primary btn--lg" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Beer size={18} /> Score a Pint
-          </Link>
-          <Link href="/leaderboard" className="btn btn--outline btn--lg" style={{ display: 'flex', alignItems: 'center' }}>
-            View Rankings
-          </Link>
+          <MagneticButton>
+            <Link href="/rate" className="btn btn--primary btn--lg" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Beer size={18} /> Score a Pint
+            </Link>
+          </MagneticButton>
+          <MagneticButton>
+            <Link href="/leaderboard" className="btn btn--outline btn--lg" style={{ display: 'flex', alignItems: 'center' }}>
+              View Rankings
+            </Link>
+          </MagneticButton>
         </div>
       </div>
+
+      <InfiniteMarquee text="BRIGHTON REAL ALE SOCIETY • CASK CONDITIONED • EST 2023 • " />
 
       {/* Active Social callout */}
       {latestTimelineEvent && latestTimelineEvent.avgScore > 0 && (
@@ -144,6 +153,7 @@ export default async function HomePage() {
       )}
 
       {/* Quick Links */}
+      <ScrollReveal delay={0.2}>
       <div className="grid-auto">
         {settings?.leaderboard !== false && (
           <div className="section-card section-card--hoverable" style={{ textAlign: 'center', padding: '24px' }}>
@@ -178,29 +188,37 @@ export default async function HomePage() {
           </div>
         )}
       </div>
+      </ScrollReveal>
 
       {/* Stats */}
+      <ScrollReveal delay={0.4}>
       <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-around', 
-        flexWrap: 'wrap', 
-        gap: '16px', 
-        padding: '32px 20px',
-        borderTop: '1px solid var(--border)',
+        marginTop: 'var(--section-gap)',
+        background: 'var(--surface)',
+        padding: 'var(--card-padding)',
+        borderRadius: 'var(--card-radius)',
+        border: '1px solid var(--border)',
+        boxShadow: 'var(--shadow-sm)'
       }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontFamily: 'var(--font-heading)', fontSize: '2rem', fontWeight: 700, color: 'var(--primary)' }}>{totalPubs}</div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Pubs Conquered</div>
-        </div>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontFamily: 'var(--font-heading)', fontSize: '2rem', fontWeight: 700, color: 'var(--primary)' }}>{totalRatings}</div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Member Ratings Cast</div>
-        </div>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontFamily: 'var(--font-heading)', fontSize: '2rem', fontWeight: 700, color: 'var(--primary)' }}>{totalMembers}</div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Active Members</div>
+        <h2 style={{ fontFamily: 'var(--font-heading)', textAlign: 'center', marginBottom: '32px' }}>
+          Society Impact
+        </h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '32px', textAlign: 'center' }}>
+          <div>
+            <div style={{ fontSize: '3rem', fontWeight: 'bold', color: 'var(--primary)', lineHeight: 1 }}>{totalPubs}</div>
+            <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Pubs Surveyed</div>
+          </div>
+          <div>
+            <div style={{ fontSize: '3rem', fontWeight: 'bold', color: 'var(--primary)', lineHeight: 1 }}>{totalMembers}</div>
+            <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Inspectors</div>
+          </div>
+          <div>
+            <div style={{ fontSize: '3rem', fontWeight: 'bold', color: 'var(--primary)', lineHeight: 1 }}>{totalRatings}</div>
+            <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Pints Scored</div>
+          </div>
         </div>
       </div>
+      </ScrollReveal>
 
     </div>
   );

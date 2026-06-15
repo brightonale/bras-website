@@ -3,6 +3,7 @@ import { Lora, Inter } from 'next/font/google';
 import Link from 'next/link';
 import './globals.css';
 import Navbar from '../components/Navbar';
+import CustomCursor from '@/components/ui/CustomCursor';
 import { prisma } from '@/lib/db';
 const lora = Lora({ subsets: ['latin'], variable: '--font-serif', weight: ['400', '500', '600', '700'] });
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', weight: ['400', '500', '600', '700'] });
@@ -32,7 +33,8 @@ export default async function RootLayout({
   
   return (
     <html lang="en" className={`${lora.variable} ${inter.variable}`}>
-      <body style={{ fontFamily: 'var(--font-body)', display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <body style={{ fontFamily: 'var(--font-body)', display: 'flex', flexDirection: 'column', minHeight: '100vh', cursor: 'none' }}>
+        <CustomCursor />
         <Navbar settings={settings} />
         <main style={{
           flex: 1,

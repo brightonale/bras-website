@@ -7,6 +7,9 @@ import { getSession } from '@/app/actions';
 export const dynamic = 'force-dynamic';
 
 export default async function ProfilePage({ params }: { params: Promise<{ name: string }> }) {
+  // Artificial delay to showcase the beautiful pint-pouring loading animation
+  await new Promise(resolve => setTimeout(resolve, 1500));
+
   const session = await getSession();
   
   if (!session.isLoggedIn) {
