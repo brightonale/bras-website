@@ -7,10 +7,10 @@ import { Lock, Trophy } from 'lucide-react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { createClient } from '@supabase/supabase-js';
 
-// Initialize Supabase client
+// Initialize Supabase client safely
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
 
 type SortKey = 'score' | 'date' | 'ratingsCount' | 'pub' | 'pint' | 'brewery';
 type SortOrder = 'asc' | 'desc';
@@ -24,7 +24,7 @@ export default function LeaderboardClient({ initialPubs, isLoggedIn }: { initial
 
   // Subscribe to Realtime changes
   useEffect(() => {
-    if (!supabaseUrl || !supabaseKey) return;
+    if (!supabase) return;
 
     const channel = supabase
       .channel('realtime:ratings')
