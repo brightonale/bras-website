@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   title: 'Brighton Real Ale Society | BRAS',
   description: 'The official digital home for the Brighton Real Ale Society (BRAS). Rate pubs, play Wordle, vote in annual awards, and browse our leaderboards.',
   keywords: 'Brighton, Real Ale, Beer, Pub Socials, University, Society, BRAS',
+  manifest: '/manifest.json',
   icons: {
     icon: '/favicon.ico',
     apple: '/apple-icon.png',

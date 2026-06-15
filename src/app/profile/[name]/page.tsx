@@ -6,7 +6,7 @@ import { getSession } from '@/app/actions';
 
 export const dynamic = 'force-dynamic';
 
-export default async function ProfilePage({ params }: { params: { name: string } }) {
+export default async function ProfilePage({ params }: { params: Promise<{ name: string }> }) {
   const session = await getSession();
   
   if (!session.isLoggedIn) {
@@ -20,7 +20,8 @@ export default async function ProfilePage({ params }: { params: { name: string }
     );
   }
 
-  const memberName = decodeURIComponent(params.name);
+  const resolvedParams = await params;
+  const memberName = decodeURIComponent(resolvedParams.name);
   
   // Find member in database
   let user = null;

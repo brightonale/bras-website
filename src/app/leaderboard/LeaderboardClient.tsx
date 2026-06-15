@@ -1,8 +1,16 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Lock, Trophy } from 'lucide-react';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
+import { createClient } from '@supabase/supabase-js';
+
+// Initialize Supabase client
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 type SortKey = 'score' | 'date' | 'ratingsCount' | 'pub' | 'pint' | 'brewery';
 type SortOrder = 'asc' | 'desc';
@@ -12,6 +20,29 @@ export default function LeaderboardClient({ initialPubs, isLoggedIn }: { initial
   const [selectedYear, setSelectedYear] = useState<string>('All');
   const [sortKey, setSortKey] = useState<SortKey>('score');
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
+  const router = useRouter();
+
+  // Subscribe to Realtime changes
+  useEffect(() => {
+    if (!supabaseUrl || !supabaseKey) return;
+
+    const channel = supabase
+      .channel('realtime:ratings')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'Rating' },
+        (payload) => {
+          console.log('Realtime change received!', payload);
+          // Refresh the current route to fetch new server props
+          router.refresh();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [router]);
 
   // Filter pubs by academic year
   const filteredPubs = initialPubs.filter(pub => {
@@ -68,8 +99,26 @@ export default function LeaderboardClient({ initialPubs, isLoggedIn }: { initial
     return sortOrder === 'desc' ? ' ↓' : ' ↑';
   };
 
+  const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.05 }
+    }
+  };
+
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
+  };
+
   return (
-    <div className="page-container animate-fade-in">
+    <motion.div 
+      className="page-container"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+    >
       
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
         <div className="page-header" style={{ marginBottom: 0 }}>
@@ -156,22 +205,30 @@ export default function LeaderboardClient({ initialPubs, isLoggedIn }: { initial
                 </th>
               </tr>
             </thead>
-            <tbody>
+            <motion.tbody
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
+            >
               {sortedPubs.length === 0 ? (
-                <tr>
+                <motion.tr variants={itemVariants}>
                   <td colSpan={7} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '40px' }}>
                     No ratings logged for academic year {selectedYear}.
                   </td>
-                </tr>
+                </motion.tr>
               ) : (
                 displayedPubs.map((pub, idx) => {
                   const rankNum = idx + 1;
                   const isTopThree = rankNum <= 3;
 
                   return (
-                    <tr key={pub.pub + pub.date} style={{
-                      background: isTopThree ? 'var(--surface-warm)' : undefined
-                    }}>
+                    <motion.tr 
+                      variants={itemVariants}
+                      key={pub.pub + pub.date} 
+                      style={{
+                        background: isTopThree ? 'var(--surface-warm)' : undefined
+                      }}
+                    >
                       <td style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '1.1rem' }}>
                         {isTopThree ? (
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
@@ -196,17 +253,17 @@ export default function LeaderboardClient({ initialPubs, isLoggedIn }: { initial
                         {pub.score !== null && pub.score !== undefined ? `${pub.score.toFixed(2)}★` : 'N/A'}
                       </td>
                       <td style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-                        {pub.ratingsCount === 1 ? 'Consensus' : pub.ratingsCount}
+                        {pub.ratingsCount <= 3 ? 'Consensus' : pub.ratingsCount}
                       </td>
-                    </tr>
+                    </motion.tr>
                   );
                 })
               )}
-            </tbody>
+            </motion.tbody>
           </table>
         </div>
       </div>
 
-    </div>
+    </motion.div>
   );
 }

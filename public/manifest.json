@@ -1,0 +1,23 @@
+{
+  "name": "Brighton Real Ale Society",
+  "short_name": "BRAS",
+  "description": "The official app for the Brighton Real Ale Society.",
+  "theme_color": "#7A1717",
+  "background_color": "#F8F5F0",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
