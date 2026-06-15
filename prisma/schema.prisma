@@ -26,6 +26,7 @@ model Social {
   beerName     String?
   breweryName  String?
   academicYear String
+  coverPhotoUrl String?
   active       Boolean  @default(false)
   ratings      Rating[]
 }
@@ -65,6 +66,7 @@ model Settings {
   matrix      Boolean @default(true)
   wordle      Boolean @default(true)
   awards      Boolean @default(true)
+  gallery     Boolean @default(true)
   about       Boolean @default(true)
   contact     Boolean @default(true)
   rate        Boolean @default(true)

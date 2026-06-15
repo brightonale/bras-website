@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-import { Beer, Gamepad2, Newspaper, Compass, Ban, CheckCircle, AlertTriangle, Users, Play, Square } from 'lucide-react';
+import { Beer, Gamepad2, Newspaper, Compass, Ban, CheckCircle, AlertTriangle, Users, Play, Square, Camera } from 'lucide-react';
 
 export default function CommitteeClient({ initialPubs }: { initialPubs: { name: string; status: string; comment?: string | null }[] }) {
   const router = useRouter();
@@ -40,6 +40,11 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: { name: 
   // User Management
   const [localUsers, setLocalUsers] = useState<Record<string, { votingName?: string; role: string }>>({});
 
+  // Gallery Photo Manager
+  const [gallerySocials, setGallerySocials] = useState<{ id: string; pubName: string; date: string; beerName: string | null; coverPhotoUrl: string | null }[]>([]);
+  const [selectedGallerySocialId, setSelectedGallerySocialId] = useState('');
+  const [galleryCoverUrl, setGalleryCoverUrl] = useState('');
+
   const [isLoading, setIsLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -74,6 +79,7 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: { name: 
       fetchSettings();
 
       fetchUsers();
+      fetchGallerySocials();
     }
   }, []);
 
@@ -361,6 +367,52 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: { name: 
       }
     } catch (e) {
       console.warn("Could not fetch settings", e);
+    }
+  };
+
+  async function fetchGallerySocials() {
+    try {
+      const res = await fetch('/api/committee/gallery?all=true');
+      const data = await res.json();
+      if (data.socials) {
+        setGallerySocials(data.socials);
+      }
+    } catch (e) {
+      console.warn('Could not fetch gallery socials', e);
+    }
+  }
+
+  const handleSetCoverPhoto = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedGallerySocialId) {
+      setErrorMsg('Please select a social event.');
+      return;
+    }
+
+    setIsLoading(true);
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
+    try {
+      const res = await fetch('/api/committee/gallery', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          socialId: selectedGallerySocialId,
+          coverPhotoUrl: galleryCoverUrl.trim() || null
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to update cover photo');
+
+      setSuccessMsg(`Cover photo ${galleryCoverUrl.trim() ? 'set' : 'removed'} successfully!`);
+      setGalleryCoverUrl('');
+      setSelectedGallerySocialId('');
+      fetchGallerySocials();
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Something went wrong.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -661,6 +713,74 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: { name: 
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Panel 8: Gallery Photo Manager */}
+        <div className="section-card">
+          <h2 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Camera size={20} /> Gallery Photo Manager</h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '16px', marginTop: '-8px' }}>
+            Assign a cover photo URL (Google Drive link) to a social event. This photo will appear in the Gallery.
+          </p>
+          <form onSubmit={handleSetCoverPhoto} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div>
+              <label className="form-label">Social Event</label>
+              <select
+                value={selectedGallerySocialId}
+                onChange={e => {
+                  setSelectedGallerySocialId(e.target.value);
+                  // Pre-fill existing URL if the social already has one
+                  const social = gallerySocials.find(s => s.id === e.target.value);
+                  if (social?.coverPhotoUrl) {
+                    setGalleryCoverUrl(social.coverPhotoUrl);
+                  } else {
+                    setGalleryCoverUrl('');
+                  }
+                }}
+                className="form-input"
+                required
+              >
+                <option value="">— Select a social —</option>
+                {gallerySocials.map(s => (
+                  <option key={s.id} value={s.id}>
+                    {s.pubName} — {s.date} {s.coverPhotoUrl ? '✓ (has photo)' : ''}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="form-label">Cover Photo URL</label>
+              <input
+                type="url"
+                value={galleryCoverUrl}
+                onChange={e => setGalleryCoverUrl(e.target.value)}
+                placeholder="https://drive.google.com/..."
+              />
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-light)', marginTop: '4px' }}>
+                Paste a direct image link or Google Drive shareable URL. Leave empty to remove the cover photo.
+              </p>
+            </div>
+
+            <button type="submit" className="btn btn--accent" disabled={isLoading} style={{ marginTop: '8px' }}>
+              {isLoading ? 'Saving...' : 'Set Cover Photo'}
+            </button>
+          </form>
+
+          {/* Show socials that already have cover photos */}
+          {gallerySocials.filter(s => s.coverPhotoUrl).length > 0 && (
+            <div style={{ marginTop: '24px' }}>
+              <h4 style={{ fontSize: '0.9rem', fontWeight: 600, margin: '0 0 12px 0' }}>Gallery Entries:</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.85rem' }}>
+                {gallerySocials.filter(s => s.coverPhotoUrl).map(s => (
+                  <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', background: 'var(--surface-muted)', borderRadius: '6px', border: '1px solid var(--border)' }}>
+                    <span className="badge badge--muted">{s.date}</span>
+                    <span style={{ fontWeight: 600 }}>{s.pubName}</span>
+                    {s.beerName && <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>— {s.beerName}</span>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Panel 6: User Management */}

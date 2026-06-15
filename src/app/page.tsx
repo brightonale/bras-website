@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { prisma } from '@/lib/db';
-import { Beer, Trophy, Gamepad2, Medal } from 'lucide-react';
+import { Beer, Trophy, Gamepad2, Medal, Star } from 'lucide-react';
 import Image from 'next/image';
 
 export const dynamic = 'force-dynamic';
@@ -12,6 +12,7 @@ export default async function HomePage() {
   let settings = null;
   let latestSocial = null;
   let latestTimelineEvent = null;
+  let hallOfFamePint: { pub: string; beer: string | null; brewery: string | null; score: number; date: string; ratingCount: number } | null = null;
 
   try {
     totalPubs = await prisma.pub.count();
@@ -51,6 +52,34 @@ export default async function HomePage() {
         date: latestSocial.date,
         avgScore
       };
+    }
+
+    // ── Hall of Fame: find the highest-rated social of all time ──
+    // Group ratings by socialId to find the social with the best average score
+    const socialRatings = await prisma.rating.groupBy({
+      by: ['socialId'],
+      _avg: { score: true },
+      _count: { score: true },
+      where: { socialId: { not: null } },
+      having: { score: { _count: { gte: 2 } } }, // Require at least 2 ratings for legitimacy
+      orderBy: { _avg: { score: 'desc' } },
+      take: 1,
+    });
+
+    if (socialRatings.length > 0 && socialRatings[0].socialId) {
+      const topSocial = await prisma.social.findUnique({
+        where: { id: socialRatings[0].socialId }
+      });
+      if (topSocial && socialRatings[0]._avg.score !== null) {
+        hallOfFamePint = {
+          pub: topSocial.pubName,
+          beer: topSocial.beerName,
+          brewery: topSocial.breweryName,
+          score: socialRatings[0]._avg.score,
+          date: topSocial.date,
+          ratingCount: socialRatings[0]._count.score,
+        };
+      }
     }
   } catch (e) {
     console.warn('Failed to load database content on home page', e);
@@ -115,6 +144,36 @@ export default async function HomePage() {
           </Link>
         </div>
       </div>
+
+      {/* ── Pint Hall of Fame ── */}
+      {hallOfFamePint && (
+        <div className="hall-of-fame animate-fade-in animate-delay-1">
+          <span className="hall-of-fame__eyebrow">Hall of Fame</span>
+          <div className="hall-of-fame__trophy">
+            <Trophy size={44} strokeWidth={1.5} />
+          </div>
+          <div className="hall-of-fame__title">{hallOfFamePint.pub}</div>
+          <div className="hall-of-fame__beer">
+            {hallOfFamePint.beer || 'Cask Ale'}
+            {hallOfFamePint.brewery && ` · ${hallOfFamePint.brewery}`}
+          </div>
+          <div className="hall-of-fame__score">{hallOfFamePint.score.toFixed(2)}★</div>
+          <div className="hall-of-fame__stars">
+            {[...Array(5)].map((_, i) => (
+              <Star
+                key={i}
+                size={20}
+                className="hall-of-fame__star"
+                fill={i < Math.round(hallOfFamePint.score / 2) ? '#D4AF37' : 'none'}
+                stroke="#D4AF37"
+              />
+            ))}
+          </div>
+          <div className="hall-of-fame__meta">
+            Highest rated pint of all time · <strong>{hallOfFamePint.date}</strong> · {hallOfFamePint.ratingCount} ratings
+          </div>
+        </div>
+      )}
 
       {/* Active Social callout */}
       {latestTimelineEvent && latestTimelineEvent.avgScore > 0 && (

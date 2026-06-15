@@ -1,18 +1,13 @@
 import React from 'react';
-import fs from 'fs';
-import path from 'path';
 import GalleryGrid from '@/components/GalleryGrid';
+import { prisma } from '@/lib/db';
+import { cookies } from 'next/headers';
+
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: 'Gallery - Brighton Real Ale Society',
-  description: 'A collection of photos from Brighton Real Ale Society socials.',
-};
-
-import { cookies } from 'next/headers';
-
-type GalleryFolder = {
-  name: string;
-  images: string[];
+  description: 'A collection of cover photos from Brighton Real Ale Society socials.',
 };
 
 export default async function GalleryPage() {
@@ -20,20 +15,29 @@ export default async function GalleryPage() {
   const role = cookieStore.get('bras_user_role')?.value;
   const isMember = role === 'member' || role === 'committee';
 
-  let galleryData: GalleryFolder[] = [];
-  
+  // Fetch socials with cover photos from the database
+  let galleryItems: { id: string; pubName: string; date: string; coverPhotoUrl: string; beerName: string | null; breweryName: string | null }[] = [];
+
   try {
-    const dataPath = path.join(process.cwd(), 'public', 'assets', 'gallery', 'data.json');
-    if (fs.existsSync(dataPath)) {
-      const fileContents = fs.readFileSync(dataPath, 'utf8');
-      galleryData = JSON.parse(fileContents);
-    }
+    const socials = await prisma.social.findMany({
+      where: { coverPhotoUrl: { not: null } },
+      select: {
+        id: true,
+        pubName: true,
+        date: true,
+        coverPhotoUrl: true,
+        beerName: true,
+        breweryName: true
+      }
+    });
+
+    // Sort reverse-chronologically by date string
+    galleryItems = socials
+      .filter((s): s is typeof s & { coverPhotoUrl: string } => s.coverPhotoUrl !== null)
+      .sort((a, b) => b.date.localeCompare(a.date));
   } catch (e) {
     console.error('Failed to load gallery data', e);
   }
-
-  // Sort folders in reverse chronological order (assuming week 2 comes after week 1, etc. or sort alphabetically descending)
-  galleryData.sort((a, b) => b.name.localeCompare(a.name));
 
   return (
     <div className="page-container animate-fade-in" style={{ padding: '40px 20px' }}>
@@ -45,12 +49,12 @@ export default async function GalleryPage() {
         </p>
       </div>
 
-      {galleryData.length === 0 ? (
+      {galleryItems.length === 0 ? (
         <div className="notice" style={{ marginTop: '32px' }}>
-          No photos found. Drop folders into your I:/My Drive/BRAS_Gallery folder and run npm run sync-gallery!
+          No gallery photos have been uploaded yet. Committee members can add cover photos from the dashboard.
         </div>
       ) : (
-        <GalleryGrid data={galleryData} isMember={isMember} />
+        <GalleryGrid data={galleryItems} isMember={isMember} />
       )}
     </div>
   );

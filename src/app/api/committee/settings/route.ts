@@ -17,6 +17,7 @@ export async function GET() {
       matrix: settings.matrix,
       wordle: settings.wordle,
       awards: settings.awards,
+      gallery: settings.gallery,
       about: settings.about,
       contact: settings.contact,
       rate: settings.rate
