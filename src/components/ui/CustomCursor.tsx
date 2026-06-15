@@ -46,13 +46,12 @@ export default function CustomCursor() {
       mixBlendMode: 'difference' as any,
     },
     hover: {
-      x: mousePosition.x - 32,
-      y: mousePosition.y - 32,
-      width: 64,
-      height: 64,
-      backgroundColor: 'rgba(230, 149, 0, 0.2)', // Expanded blurred circle
-      backdropFilter: 'blur(4px)',
-      border: '1px solid rgba(230, 149, 0, 0.5)',
+      x: mousePosition.x - 24,
+      y: mousePosition.y - 24,
+      width: 48,
+      height: 48,
+      backgroundColor: 'transparent', // Hollow ring so you can see text
+      border: '2px solid rgba(230, 149, 0, 0.8)',
       mixBlendMode: 'normal' as any,
     }
   };
