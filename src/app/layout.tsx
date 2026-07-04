@@ -4,6 +4,8 @@ import Link from 'next/link';
 import './globals.css';
 import Navbar from '../components/Navbar';
 import { prisma } from '@/lib/db';
+import ScrollProgressPint from '@/components/ui/ScrollProgressPint';
+import ParallaxBubbles from '@/components/ui/ParallaxBubbles';
 const lora = Lora({ subsets: ['latin'], variable: '--font-serif', weight: ['400', '500', '600', '700'] });
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', weight: ['400', '500', '600', '700'] });
 
@@ -23,17 +25,34 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  let settings = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let settings: any = null;
   try {
     settings = await prisma.settings.findUnique({ where: { id: 'global' } });
   } catch (e) {
     console.warn('Failed to load settings', e);
+  }
+
+  if (!settings) {
+    settings = {
+      about: true,
+      contact: true,
+      leaderboard: true,
+      checklist: true,
+      awards: true,
+      matrix: true,
+      wordle: true,
+      rate: true,
+      gallery: true,
+    };
   }
   
   return (
     <html lang="en" className={`${lora.variable} ${inter.variable}`}>
       <body style={{ fontFamily: 'var(--font-body)', display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <Navbar settings={settings} />
+        <ScrollProgressPint />
+        <ParallaxBubbles />
         <main style={{
           flex: 1,
           padding: 'var(--section-gap) var(--page-px)',
@@ -55,11 +74,12 @@ export default async function RootLayout({
               </p>
             </div>
             <div className="site-footer__links">
-              {settings?.about && <Link href="/about" className="site-footer__link">About</Link>}
-              {settings?.contact && <Link href="/contact" className="site-footer__link">Contact</Link>}
-              {settings?.leaderboard && <Link href="/leaderboard" className="site-footer__link">Pint Leaderboard</Link>}
-              {settings?.checklist && <Link href="/checklist" className="site-footer__link">Pubs</Link>}
-              {settings?.awards && <Link href="/awards" className="site-footer__link">Awards</Link>}
+              <Link href="/" className="site-footer__link">Home</Link>
+              <Link href="/about" className="site-footer__link">About</Link>
+              <Link href="/contact" className="site-footer__link">Contact</Link>
+              {settings?.leaderboard !== false && <Link href="/leaderboard" className="site-footer__link">Pint Leaderboard</Link>}
+              {settings?.checklist !== false && <Link href="/checklist" className="site-footer__link">Pubs</Link>}
+              {settings?.awards !== false && <Link href="/awards" className="site-footer__link">Awards</Link>}
               <Link href="/login" className="site-footer__link">Login</Link>
             </div>
           </div>

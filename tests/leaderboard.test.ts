@@ -16,7 +16,7 @@ vi.mock('../src/lib/db', () => ({
 
 describe('Leaderboard Data Filtering', () => {
   it('truncates to top 10 if unauthenticated', async () => {
-    vi.mocked(actions.getSession).mockResolvedValue({ role: 'member', isLoggedIn: false, name: null, votingName: null });
+    vi.mocked(actions.getSession).mockResolvedValue({ role: 'member', isLoggedIn: false, name: undefined, votingName: undefined });
     
     // Mock 15 pubs
     const mockSocials = Array.from({ length: 15 }).map((_, i) => ({
@@ -30,7 +30,7 @@ describe('Leaderboard Data Filtering', () => {
     vi.mocked(prisma.rating.findMany).mockResolvedValue(mockRatings as never);
 
     const jsx = await LeaderboardPage();
-    const props = (jsx as never).props;
+    const props = (jsx as any).props;
     expect(props.initialPubs.length).toBeLessThanOrEqual(10);
   });
 });

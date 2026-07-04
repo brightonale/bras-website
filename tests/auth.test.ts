@@ -28,11 +28,11 @@ describe('Auth Actions', () => {
   it('createAccount assigns member role by default', async () => {
     vi.mocked(prisma.user.findUnique).mockResolvedValue(null);
     vi.mocked(prisma.user.create).mockResolvedValue({
-      id: '1', name: 'newuser', role: 'member', password: 'hashedpassword', mustChange: false, votingName: null
+      id: '1', name: 'newuser', role: 'member', password: 'hashedpassword', mustChange: false, votingName: null, email: null, isLegacy: false
     });
 
     const result = await createAccount('newuser', 'pass');
     expect(result.success).toBe(true);
-    expect(result.user.role).toBe('member');
+    expect(result.user?.role).toBe('member');
   });
 });

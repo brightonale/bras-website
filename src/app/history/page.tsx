@@ -198,35 +198,39 @@ export default async function HistoryPage() {
                 </div>
                 
                 <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-                  {/* Instagram Image Embed */}
+                  {/* Image / Instagram Placeholder */}
                   <div style={{ 
                     width: '280px', 
                     height: '280px', 
                     backgroundColor: 'var(--surface-muted)', 
                     border: '1px solid var(--border)',
-                    borderRadius: '2px',
+                    borderRadius: '8px',
                     overflow: 'hidden',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    flexShrink: 0
+                    flexShrink: 0,
+                    gap: '12px'
                   }}>
-                    {post.url.includes('instagram.com') ? (
-                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#e1e1e1', color: '#555', fontSize: '0.8rem', padding: '20px', textAlign: 'center' }}>
-                        Instagram posts cannot be embedded directly. Please click &apos;Source Entry&apos; to view.
-                      </div>
-                    ) : null}
-                    <div style={{ 
-                      display: post.url.includes('instagram.com') ? 'none' : 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      color: 'var(--text-light)',
-                      gap: '8px'
-                    }}>
-                      <ImageIcon size={32} />
-                      <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Image Placeholder</span>
-                    </div>
+                    <ImageIcon size={40} color="var(--border-strong)" />
+                    <Link 
+                      href={post.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      style={{ 
+                        fontSize: '0.8rem', 
+                        color: 'var(--accent)', 
+                        fontWeight: 600, 
+                        textTransform: 'uppercase', 
+                        letterSpacing: '0.05em',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}
+                    >
+                      <ExternalLink size={14} /> View on Instagram
+                    </Link>
                   </div>
 
                   {/* Caption Content */}

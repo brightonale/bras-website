@@ -29,8 +29,15 @@ export default async function MatrixPage() {
     );
   }
 
-  // Fetch all ratings
-  let ratings: any[] = [];
+  interface RatingWithUser {
+    pubName: string;
+    score: number | null;
+    user: {
+      name: string;
+      votingName: string | null;
+    };
+  }
+  let ratings: RatingWithUser[] = [];
   try {
     ratings = await prisma.rating.findMany({
       include: { user: true }
@@ -61,10 +68,10 @@ export default async function MatrixPage() {
   })).sort((a, b) => a.member.localeCompare(b.member));
 
   const getCellBg = (val: number | null) => {
-    if (val === null) return '#ffffff';
+    if (val === null) return 'transparent';
     if (val >= 8.0) return 'var(--success-bg)';
     if (val >= 6.0) return 'var(--warning-bg)';
-    if (val >= 4.0) return '#FFF7ED'; // orange tint
+    if (val >= 4.0) return 'var(--average-bg)';
     return 'var(--error-bg)';
   };
 
@@ -91,7 +98,7 @@ export default async function MatrixPage() {
           <span>Good (6.0 - 7.9)</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <span style={{ width: '12px', height: '12px', background: '#FFF7ED', border: '1px solid #FFEDD5', borderRadius: '3px' }}></span>
+          <span style={{ width: '12px', height: '12px', background: 'var(--average-bg)', border: '1px solid var(--average-border)', borderRadius: '3px' }}></span>
           <span>Average (4.0 - 5.9)</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -154,7 +161,7 @@ export default async function MatrixPage() {
                     borderRight: '2px solid var(--border-strong)',
                     boxShadow: '2px 0 5px rgba(0,0,0,0.05)'
                   }}>
-                    <Link href={`/profile/${encodeURIComponent(row.member)}`} style={{ textDecoration: 'underline', color: 'var(--primary)' }}>
+                    <Link href={`/profile/${encodeURIComponent(row.member)}`} style={{ textDecoration: 'underline', color: 'var(--accent)' }}>
                       {row.member}
                     </Link>
                   </td>

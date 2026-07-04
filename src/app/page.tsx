@@ -4,24 +4,26 @@ import { prisma } from '@/lib/db';
 import { Beer, Trophy, Gamepad2, Medal } from 'lucide-react';
 import Image from 'next/image';
 import InfiniteMarquee from '@/components/ui/InfiniteMarquee';
-import ScrollReveal from '@/components/ui/ScrollReveal';
 import MagneticButton from '@/components/ui/MagneticButton';
+import ParallaxScrollReveal from '@/components/ui/ParallaxScrollReveal';
+import BubbleEmitter from '@/components/ui/BubbleEmitter';
+import LiquidDistortion from '@/components/ui/LiquidDistortion';
+import LiquidText from '@/components/ui/LiquidText';
 
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
   // Fetch stats from database
-  let totalPubs = 0, totalMembers = 0, totalRatings = 0;
   let settings = null;
   let latestSocial = null;
   let latestTimelineEvent = null;
+  let totalPubs = 0, totalMembers = 0, totalRatings = 0;
 
   try {
+    settings = await prisma.settings.findUnique({ where: { id: 'global' } });
     totalPubs = await prisma.pub.count();
     totalMembers = await prisma.user.count();
     totalRatings = await prisma.rating.count();
-
-    settings = await prisma.settings.findUnique({ where: { id: 'global' } });
     
     // Find the latest active social, or the most recent one
     latestSocial = await prisma.social.findFirst({
@@ -67,16 +69,18 @@ export default async function HomePage() {
         textAlign: 'center', 
         padding: '48px 20px 40px',
       }}>
-        <Image 
-          src="/assets/bras-logo.png" 
-          alt="BRAS Logo" 
-          width={320}
-          height={320}
-          style={{ objectFit: 'contain', marginBottom: '24px' }}
-          quality={100}
-          unoptimized={true}
-          priority
-        />
+        <LiquidDistortion className="inline-block">
+          <Image 
+            src="/assets/bras-logo.png" 
+            alt="BRAS Logo" 
+            width={320}
+            height={320}
+            style={{ objectFit: 'contain', marginBottom: '24px' }}
+            quality={100}
+            unoptimized={true}
+            priority
+          />
+        </LiquidDistortion>
         <div style={{ 
           color: 'var(--accent)', 
           fontWeight: 700, 
@@ -96,7 +100,7 @@ export default async function HomePage() {
           maxWidth: '600px',
           margin: '0 auto 16px',
         }}>
-          Championing Real Ale &amp; Cask Heritage
+          <LiquidText text="Championing Real Ale & Cask Heritage" />
         </h1>
         <p style={{ 
           fontSize: '1rem', 
@@ -111,14 +115,18 @@ export default async function HomePage() {
         
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
           <MagneticButton>
-            <Link href="/rate" className="btn btn--primary btn--lg" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Beer size={18} /> Score a Pint
-            </Link>
+            <BubbleEmitter>
+              <Link href="/rate" className="btn btn--primary btn--lg" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Beer size={18} /> Score a Pint
+              </Link>
+            </BubbleEmitter>
           </MagneticButton>
           <MagneticButton>
-            <Link href="/leaderboard" className="btn btn--outline btn--lg" style={{ display: 'flex', alignItems: 'center' }}>
-              View Rankings
-            </Link>
+            <BubbleEmitter>
+              <Link href="/leaderboard" className="btn btn--outline btn--lg" style={{ display: 'flex', alignItems: 'center' }}>
+                View Rankings
+              </Link>
+            </BubbleEmitter>
           </MagneticButton>
         </div>
       </div>
@@ -153,45 +161,51 @@ export default async function HomePage() {
       )}
 
       {/* Quick Links */}
-      <ScrollReveal delay={0.2}>
+      <ParallaxScrollReveal>
       <div className="grid-auto">
         {settings?.leaderboard !== false && (
-          <div className="section-card section-card--hoverable" style={{ textAlign: 'center', padding: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px', color: 'var(--primary)' }}><Trophy size={32} strokeWidth={1.5} /></div>
-            <h3 style={{ fontSize: '1.1rem', fontFamily: 'var(--font-heading)', marginBottom: '6px' }}>Pint Leaderboard</h3>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '16px' }}>
-              Which Brighton pubs serve the finest cask.
-            </p>
-            <Link href="/leaderboard" className="btn btn--outline btn--sm">View List</Link>
-          </div>
+          <BubbleEmitter style={{ width: '100%', height: '100%' }}>
+            <div className="section-card section-card--hoverable" style={{ textAlign: 'center', padding: '24px', height: '100%' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px', color: 'var(--accent)' }}><Trophy size={32} strokeWidth={1.5} /></div>
+              <h3 style={{ fontSize: '1.1rem', fontFamily: 'var(--font-heading)', marginBottom: '6px' }}>Pint Leaderboard</h3>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '16px' }}>
+                Which Brighton pubs serve the finest cask.
+              </p>
+              <Link href="/leaderboard" className="btn btn--outline btn--sm">View List</Link>
+            </div>
+          </BubbleEmitter>
         )}
 
         {settings?.wordle !== false && (
-          <div className="section-card section-card--hoverable" style={{ textAlign: 'center', padding: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px', color: 'var(--primary)' }}><Gamepad2 size={32} strokeWidth={1.5} /></div>
-            <h3 style={{ fontSize: '1.1rem', fontFamily: 'var(--font-heading)', marginBottom: '6px' }}>Pub Wordle</h3>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '16px' }}>
-              Test your real ale vocabulary daily.
-            </p>
-            <Link href="/wordle" className="btn btn--outline btn--sm">Play Now</Link>
-          </div>
+          <BubbleEmitter style={{ width: '100%', height: '100%' }}>
+            <div className="section-card section-card--hoverable" style={{ textAlign: 'center', padding: '24px', height: '100%' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px', color: 'var(--accent)' }}><Gamepad2 size={32} strokeWidth={1.5} /></div>
+              <h3 style={{ fontSize: '1.1rem', fontFamily: 'var(--font-heading)', marginBottom: '6px' }}>Pub Wordle</h3>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '16px' }}>
+                Test your real ale vocabulary daily.
+              </p>
+              <Link href="/wordle" className="btn btn--outline btn--sm">Play Now</Link>
+            </div>
+          </BubbleEmitter>
         )}
 
         {settings?.awards !== false && (
-          <div className="section-card section-card--hoverable" style={{ textAlign: 'center', padding: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px', color: 'var(--primary)' }}><Medal size={32} strokeWidth={1.5} /></div>
-            <h3 style={{ fontSize: '1.1rem', fontFamily: 'var(--font-heading)', marginBottom: '6px' }}>Annual Awards</h3>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '16px' }}>
-              Nominate for end-of-year superlatives.
-            </p>
-            <Link href="/awards" className="btn btn--outline btn--sm">Vote</Link>
-          </div>
+          <BubbleEmitter style={{ width: '100%', height: '100%' }}>
+            <div className="section-card section-card--hoverable" style={{ textAlign: 'center', padding: '24px', height: '100%' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px', color: 'var(--accent)' }}><Medal size={32} strokeWidth={1.5} /></div>
+              <h3 style={{ fontSize: '1.1rem', fontFamily: 'var(--font-heading)', marginBottom: '6px' }}>Annual Awards</h3>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '16px' }}>
+                Nominate for end-of-year superlatives.
+              </p>
+              <Link href="/awards" className="btn btn--outline btn--sm">Vote</Link>
+            </div>
+          </BubbleEmitter>
         )}
       </div>
-      </ScrollReveal>
+      </ParallaxScrollReveal>
 
       {/* Stats */}
-      <ScrollReveal delay={0.4}>
+      <ParallaxScrollReveal>
       <div style={{ 
         marginTop: 'var(--section-gap)',
         background: 'var(--surface)',
@@ -205,20 +219,20 @@ export default async function HomePage() {
         </h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '32px', textAlign: 'center' }}>
           <div>
-            <div style={{ fontSize: '3rem', fontWeight: 'bold', color: 'var(--primary)', lineHeight: 1 }}>&lt; 50</div>
+            <div style={{ fontSize: '3rem', fontWeight: 'bold', color: 'var(--accent)', lineHeight: 1 }}>{totalPubs}</div>
             <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Pubs Surveyed</div>
           </div>
           <div>
-            <div style={{ fontSize: '3rem', fontWeight: 'bold', color: 'var(--primary)', lineHeight: 1 }}>50+</div>
+            <div style={{ fontSize: '3rem', fontWeight: 'bold', color: 'var(--accent)', lineHeight: 1 }}>{totalMembers}</div>
             <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Ale Analysers</div>
           </div>
           <div>
-            <div style={{ fontSize: '3rem', fontWeight: 'bold', color: 'var(--primary)', lineHeight: 1 }}>200+</div>
+            <div style={{ fontSize: '3rem', fontWeight: 'bold', color: 'var(--accent)', lineHeight: 1 }}>{totalRatings}</div>
             <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Pints Scored</div>
           </div>
         </div>
       </div>
-      </ScrollReveal>
+      </ParallaxScrollReveal>
 
     </div>
   );

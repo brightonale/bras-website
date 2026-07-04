@@ -57,6 +57,18 @@ export default function Navbar({ settings }: { settings: any }) {
     setMenuOpen(false);
   }, [pathname]);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [menuOpen]);
+
   const handleLogout = () => {
     localStorage.removeItem('bras_user_name');
     localStorage.removeItem('bras_user_role');
@@ -69,26 +81,88 @@ export default function Navbar({ settings }: { settings: any }) {
   const isActive = (href: string) => pathname === href;
 
   return (
-    <nav className="site-nav">
-      <div className="site-nav__inner">
-        {/* Brand */}
-        <Link href="/" className="site-nav__brand">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/assets/bras-logo.png"
-            alt="BRAS Logo"
-            className="site-nav__logo"
-            style={{ borderRadius: '50%' }}
-            onError={(e) => { e.currentTarget.style.display = 'none'; }}
-          />
-          <div>
-            <div className="site-nav__title">Brighton Real Ale Society</div>
-            <div className="site-nav__subtitle">Est. 2023 · BRAS</div>
-          </div>
-        </Link>
+    <>
+      <div
+        className={`site-nav__backdrop ${menuOpen ? 'is-open' : ''}`}
+        onClick={() => setMenuOpen(false)}
+      />
+      <nav className="site-nav">
+        <div className="site-nav__inner">
+          {/* Brand */}
+          <Link href="/" className="site-nav__brand">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/assets/bras-logo.png"
+              alt="BRAS Logo"
+              className="site-nav__logo"
+              style={{ borderRadius: '50%' }}
+              onError={(e) => { e.currentTarget.style.display = 'none'; }}
+            />
+            <div>
+              <div className="site-nav__title">Brighton Real Ale Society</div>
+              <div className="site-nav__subtitle">Est. 2023 · BRAS</div>
+            </div>
+          </Link>
 
-        {/* Desktop links */}
-        <div className="site-nav__links">
+          {/* Desktop links */}
+          <div className="site-nav__links">
+            {navLinks.map(link => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`site-nav__link ${isActive(link.href) ? 'site-nav__link--active' : ''}`}
+              >
+                {link.label}
+              </Link>
+            ))}
+            {isCommittee && (
+              <Link
+                href="/committee"
+                className={`site-nav__link site-nav__link--accent ${isActive('/committee') ? 'site-nav__link--active' : ''}`}
+              >
+                Committee
+              </Link>
+            )}
+          </div>
+
+          {/* Desktop auth */}
+          <div className="site-nav__auth" style={{ gap: '8px', alignItems: 'center' }}>
+            {userName ? (
+              <>
+                <span className="site-nav__user">
+                  <Link href={`/profile/${encodeURIComponent(userName)}`}>{userName}</Link>
+                </span>
+                <button onClick={handleLogout} className="btn btn--outline btn--sm">
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/login?committee=true" className="btn btn--outline btn--sm" style={{ borderColor: 'var(--accent)', color: 'var(--accent)' }}>
+                  Committee Sign In
+                </Link>
+                <Link href="/login" className="btn btn--primary btn--sm">
+                  Login
+                </Link>
+              </>
+            )}
+          </div>
+
+          {/* Mobile toggle */}
+          <button
+            className={`site-nav__toggle ${menuOpen ? 'is-open' : ''}`}
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle menu"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+
+        {/* Mobile drawer */}
+        <div className={`site-nav__mobile ${menuOpen ? 'is-open' : ''}`}>
           {navLinks.map(link => (
             <Link
               key={link.href}
@@ -106,81 +180,28 @@ export default function Navbar({ settings }: { settings: any }) {
               Committee
             </Link>
           )}
+
+          <div style={{ borderTop: '1px solid var(--border)', paddingTop: '12px', marginTop: '8px' }}>
+            {userName ? (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span className="site-nav__user">
+                  <Link href={`/profile/${encodeURIComponent(userName)}`}>{userName}</Link>
+                </span>
+                <button onClick={handleLogout} className="btn btn--outline btn--sm">Logout</button>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <Link href="/login?committee=true" className="btn btn--outline btn--full" style={{ borderColor: 'var(--accent)', color: 'var(--accent)', textAlign: 'center' }}>
+                  Committee Sign In
+                </Link>
+                <Link href="/login" className="btn btn--primary btn--full" style={{ textAlign: 'center' }}>
+                  Login
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
-
-        {/* Desktop auth */}
-        <div className="site-nav__auth" style={{ gap: '8px', alignItems: 'center' }}>
-          {userName ? (
-            <>
-              <span className="site-nav__user">
-                <Link href={`/profile/${encodeURIComponent(userName)}`}>{userName}</Link>
-              </span>
-              <button onClick={handleLogout} className="btn btn--outline btn--sm">
-                Logout
-              </button>
-            </>
-          ) : (
-            <>
-              <Link href="/login?committee=true" className="btn btn--outline btn--sm" style={{ borderColor: 'var(--accent)', color: 'var(--accent)' }}>
-                Committee Sign In
-              </Link>
-              <Link href="/login" className="btn btn--primary btn--sm">
-                Login
-              </Link>
-            </>
-          )}
-        </div>
-
-        {/* Mobile toggle */}
-        <button
-          className="site-nav__toggle"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle menu"
-        >
-          {menuOpen ? '✕' : '☰'}
-        </button>
-      </div>
-
-      {/* Mobile drawer */}
-      <div className={`site-nav__mobile ${menuOpen ? 'is-open' : ''}`}>
-        {navLinks.map(link => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className={`site-nav__link ${isActive(link.href) ? 'site-nav__link--active' : ''}`}
-          >
-            {link.label}
-          </Link>
-        ))}
-        {isCommittee && (
-          <Link
-            href="/committee"
-            className={`site-nav__link site-nav__link--accent ${isActive('/committee') ? 'site-nav__link--active' : ''}`}
-          >
-            Committee
-          </Link>
-        )}
-
-        <div style={{ borderTop: '1px solid var(--border)', paddingTop: '12px', marginTop: '8px' }}>
-          {userName ? (
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span className="site-nav__user">
-                <Link href={`/profile/${encodeURIComponent(userName)}`}>{userName}</Link>
-              </span>
-              <button onClick={handleLogout} className="btn btn--outline btn--sm">Logout</button>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <Link href="/login?committee=true" className="btn btn--outline btn--full" style={{ borderColor: 'var(--accent)', color: 'var(--accent)', textAlign: 'center' }}>
-                Committee Sign In
-              </Link>
-              <Link href="/login" className="btn btn--primary btn--full" style={{ textAlign: 'center' }}>
-                Login
-              </Link>
-            </div>
-          )}
-        </div>
-      </div>
-    </nav>
+      </nav>
+    </>
   );
 }

@@ -66,10 +66,10 @@ export default function AboutClient() {
               color: 'var(--text-muted)',
               fontSize: '1.2rem'
             }}>
-              "Beer brewed from traditional ingredients, matured by secondary fermentation in the container from which it is dispensed, and served without the use of extraneous carbon dioxide."
+              &quot;Beer brewed from traditional ingredients, matured by secondary fermentation in the container from which it is dispensed, and served without the use of extraneous carbon dioxide.&quot;
             </blockquote>
             <p>
-              Unlike mass-produced, kegged lagers that are filtered, pasteurized, and artificially carbonated, real ale is a living, breathing product. It continues to develop flavor and character inside the cellar, requiring genuine skill from the pub's cellar manager to serve it in peak condition.
+              Unlike mass-produced, kegged lagers that are filtered, pasteurized, and artificially carbonated, real ale is a living, breathing product. It continues to develop flavor and character inside the cellar, requiring genuine skill from the pub&apos;s cellar manager to serve it in peak condition.
             </p>
           </div>
         </motion.div>
@@ -113,7 +113,7 @@ export default function AboutClient() {
               <Wind size={40} color="var(--accent)" style={{ margin: '0 auto 16px' }} />
               <h4 style={{ fontSize: '1.2rem', marginBottom: '12px' }}>Natural Carbonation</h4>
               <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
-                Served without extraneous CO2. The soft, gentle carbonation comes entirely from the yeast's natural activity, resulting in a smoother mouthfeel.
+                Served without extraneous CO2. The soft, gentle carbonation comes entirely from the yeast&apos;s natural activity, resulting in a smoother mouthfeel.
               </p>
             </motion.div>
 
@@ -126,12 +126,12 @@ export default function AboutClient() {
             <BookOpen size={24} color="var(--accent)" /> Further Reading &amp; Resources
           </h3>
           <p style={{ color: 'var(--text-muted)', marginBottom: '24px', lineHeight: 1.6 }}>
-            To truly appreciate the craft behind every pint, we highly encourage exploring CAMRA's official resources. They have been fighting to save traditional British beer since 1971.
+            To truly appreciate the craft behind every pint, we highly encourage exploring CAMRA&apos;s official resources. They have been fighting to save traditional British beer since 1971.
           </p>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <a 
-              href="https://camra.org.uk/about/about-us/what-is-real-ale/" 
+              href="https://members.camra.org.uk/learn-discover/the-basics/what-is-live-beer/" 
               target="_blank" 
               rel="noreferrer"
               className="btn btn--outline"
@@ -144,7 +144,7 @@ export default function AboutClient() {
             </a>
 
             <a 
-              href="https://camra.org.uk/beer-and-cider/beer/tasting-beer/" 
+              href="https://camra.org.uk/beer-scoring" 
               target="_blank" 
               rel="noreferrer"
               className="btn btn--outline"
@@ -157,7 +157,7 @@ export default function AboutClient() {
             </a>
 
             <a 
-              href="https://camra.org.uk/join/" 
+              href="https://camra.org.uk/membership#membership-options" 
               target="_blank" 
               rel="noreferrer"
               className="btn btn--primary"

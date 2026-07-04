@@ -3,52 +3,56 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id           String   @id @default(uuid())
-  name         String   @unique
-  votingName   String?
-  role         String   @default("committee")
-  password     String
-  mustChange   Boolean  @default(false)
-  ratings      Rating[]
-  wordleScores WordleScore[]
+  id                  String        @id @default(uuid())
+  name                String        @unique
+  votingName          String?
+  role                String        @default("committee")
+  password            String
+  mustChange          Boolean       @default(false)
+  email               String?
+  isLegacy            Boolean       @default(false)
+  ratings             Rating[]
+  wordleScores        WordleScore[]
+  newAccountClaims    AccountClaim[] @relation("NewUserClaims")
+  legacyAccountClaims AccountClaim[] @relation("LegacyUserClaims")
 }
 
 model Social {
-  id           String   @id @default(uuid())
-  date         String
-  pubName      String
-  beerName     String?
-  breweryName  String?
-  academicYear String
+  id            String   @id @default(uuid())
+  date          String
+  pubName       String
+  beerName      String?
+  breweryName   String?
+  academicYear  String
+  active        Boolean  @default(false)
   coverPhotoUrl String?
-  active       Boolean  @default(false)
-  ratings      Rating[]
+  ratings       Rating[]
 }
 
 model Rating {
   id        String   @id @default(uuid())
   score     Float
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
   pubName   String
   socialId  String?
-  social    Social?  @relation(fields: [socialId], references: [id])
   createdAt DateTime @default(now())
+  social    Social?  @relation(fields: [socialId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model WordleScore {
   id        String   @id @default(uuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
   score     Int
   date      String
   timestamp DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model CustomPage {
@@ -66,16 +70,32 @@ model Settings {
   matrix      Boolean @default(true)
   wordle      Boolean @default(true)
   awards      Boolean @default(true)
-  gallery     Boolean @default(true)
   about       Boolean @default(true)
   contact     Boolean @default(true)
-  rate        Boolean @default(true)
   wordleWord  String  @default("MALTY")
   wordleHint  String  @default("...")
+  rate        Boolean @default(true)
+  gallery     Boolean @default(true)
 }
 
 model Pub {
-  name        String  @id
-  status      String  @default("Not Visited")
-  comment     String?
+  name    String  @id
+  status  String  @default("Not Visited")
+  comment String?
+}
+
+enum ClaimStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model AccountClaim {
+  id           String      @id @default(uuid())
+  newUserId    String
+  newUser      User        @relation("NewUserClaims", fields: [newUserId], references: [id])
+  legacyUserId String
+  legacyUser   User        @relation("LegacyUserClaims", fields: [legacyUserId], references: [id])
+  status       ClaimStatus @default(PENDING)
+  createdAt    DateTime    @default(now())
 }
