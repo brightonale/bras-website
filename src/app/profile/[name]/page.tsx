@@ -79,22 +79,6 @@ export default async function ProfilePage({ params }: { params: Promise<{ name: 
     lowestGiven = 0;
   }
 
-  // Calculate rank (this is a simplified rank based on total ratings)
-  let allUsersCount = 0;
-  try {
-    allUsersCount = await prisma.user.count({
-      where: {
-        ratings: {
-          some: {}
-        }
-      }
-    });
-  } catch (err) {
-    console.error("Failed to count users", err);
-  }
-  
-  const rank = "?"; // We'll just leave rank as ? or calculate it if needed, but it's simpler to just omit or put a placeholder.
-
   const displayName = user.votingName || user.name;
   const initials = displayName.substring(0, 2).toUpperCase();
 
@@ -114,38 +98,40 @@ export default async function ProfilePage({ params }: { params: Promise<{ name: 
       </div>
 
       {/* Profile Card Header */}
-      <div className="section-card" style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '30px',
-        flexWrap: 'wrap'
-      }}>
+      <div className="section-card profile-header-card">
         {/* Avatar */}
         <div style={{
           width: '100px',
           height: '100px',
           borderRadius: '50%',
-          backgroundColor: 'var(--primary)',
+          background: 'linear-gradient(135deg, #B91C1C 0%, #5A1010 100%)',
           color: '#ffffff',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           fontSize: '2.5rem',
           fontWeight: 'bold',
-          boxShadow: '0 4px 10px rgba(153, 27, 27, 0.2)',
+          boxShadow: '0 4px 12px rgba(185, 28, 28, 0.3)',
           fontFamily: 'var(--font-heading)',
           flexShrink: 0,
+          border: '2px solid rgba(230, 149, 0, 0.3)',
         }}>
           {initials}
         </div>
 
         {/* Name & Badges */}
-        <div style={{ flex: 1 }}>
+        <div style={{ flex: '1 1 auto' }}>
           <span className="page-header__eyebrow">Official Member</span>
-          <h2 style={{ fontSize: '2.2rem', fontFamily: 'var(--font-heading)', margin: '4px 0 10px 0' }}>
+          <h2 style={{ 
+            fontSize: 'clamp(1.5rem, 6vw, 2.2rem)', 
+            fontFamily: 'var(--font-heading)', 
+            margin: '4px 0 10px 0',
+            wordBreak: 'break-word',
+            overflowWrap: 'break-word'
+          }}>
             {displayName}
           </h2>
-          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          <div className="profile-badges-container">
             <span className="badge badge--muted">
               Active Inspector
             </span>
@@ -157,7 +143,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ name: 
       </div>
 
       {/* Stats Dashboard Grid */}
-      <div className="grid-auto">
+      <div className="profile-stats-grid">
         <div className="stat-box">
           <div className="stat-value">{pubsVisited}</div>
           <div className="stat-label">Pubs Visited</div>
@@ -183,9 +169,13 @@ export default async function ProfilePage({ params }: { params: Promise<{ name: 
         </h3>
 
         {visitedPubs.length === 0 ? (
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', fontStyle: 'italic' }}>
-            No visit logs recorded for this member.
-          </p>
+          <div className="empty-state" style={{ border: 'none', background: 'transparent', padding: '24px 12px', margin: '0' }}>
+            <ClipboardList className="empty-state__icon" size={40} style={{ marginBottom: '12px' }} />
+            <h4 className="empty-state__title" style={{ fontSize: '1.15rem' }}>No Ratings Yet</h4>
+            <p className="empty-state__description" style={{ fontSize: '0.85rem', marginBottom: '0', maxWidth: '300px' }}>
+              This member hasn&apos;t logged any pub visits or rated any pints yet.
+            </p>
+          </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {visitedPubs.map((entry) => (

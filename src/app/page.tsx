@@ -75,7 +75,7 @@ export default async function HomePage() {
             alt="BRAS Logo" 
             width={320}
             height={320}
-            style={{ objectFit: 'contain', marginBottom: '24px' }}
+            style={{ objectFit: 'contain', marginBottom: '24px', maxWidth: '100%', height: 'auto' }}
             quality={100}
             unoptimized={true}
             priority
@@ -217,7 +217,7 @@ export default async function HomePage() {
         <h2 style={{ fontFamily: 'var(--font-heading)', textAlign: 'center', marginBottom: '32px' }}>
           Society Impact
         </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '32px', textAlign: 'center' }}>
+        <div className="society-impact-grid">
           <div>
             <div style={{ fontSize: '3rem', fontWeight: 'bold', color: 'var(--accent)', lineHeight: 1 }}>{totalPubs}</div>
             <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Pubs Surveyed</div>

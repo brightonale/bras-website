@@ -88,7 +88,7 @@ export default async function MatrixPage() {
       </div>
 
       {/* Grid Guide */}
-      <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '-16px' }}>
+      <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
           <span style={{ width: '12px', height: '12px', background: 'var(--success-bg)', border: '1px solid var(--success-border)', borderRadius: '3px' }}></span>
           <span>Excellent (8.0+)</span>
@@ -113,14 +113,14 @@ export default async function MatrixPage() {
 
       {/* Scrollable Matrix Table */}
       <div className="section-card" style={{ padding: '0', overflow: 'hidden' }}>
-        <div style={{ overflowX: 'auto', padding: '20px' }}>
+        <div style={{ overflowX: 'auto', padding: '20px', WebkitOverflowScrolling: 'touch' }}>
           <table style={{ borderCollapse: 'collapse', width: 'max-content', fontSize: '0.85rem' }}>
             <thead>
               <tr style={{ borderBottom: '2px solid var(--border-strong)' }}>
                 <th style={{ 
                   position: 'sticky', 
                   left: 0, 
-                  backgroundColor: 'var(--surface-muted)', 
+                  backgroundColor: '#201414', 
                   padding: '12px 16px',
                   textAlign: 'left',
                   zIndex: 10,
@@ -154,7 +154,7 @@ export default async function MatrixPage() {
                   <td style={{ 
                     position: 'sticky', 
                     left: 0, 
-                    backgroundColor: rIdx % 2 === 0 ? 'var(--surface)' : 'var(--surface-warm)', 
+                    backgroundColor: rIdx % 2 === 0 ? '#1b1111' : '#231616', 
                     padding: '12px 16px',
                     fontWeight: 'bold',
                     zIndex: 5,

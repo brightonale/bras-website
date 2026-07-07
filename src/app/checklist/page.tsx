@@ -39,7 +39,7 @@ export default async function ChecklistPage() {
           <h3 className="section-card__title" style={{ borderBottom: 'none', marginBottom: 0, paddingBottom: 0 }}>
             Brighton Social Progress
           </h3>
-          <span style={{ fontWeight: 'bold', color: 'var(--primary)', fontSize: '1.1rem', fontFamily: 'var(--font-heading)' }}>
+          <span style={{ fontWeight: 'bold', color: 'var(--accent)', fontSize: '1.1rem', fontFamily: 'var(--font-heading)' }}>
             {visitedPubs.length} / {totalResearchPubs} Pubs Conquered ({progressPercent}%)
           </span>
         </div>
@@ -59,33 +59,43 @@ export default async function ChecklistPage() {
           <CheckSquare size={20} className="primary-text" /> Visited Venues ({visitedPubs.length})
         </h3>
 
-        <div className="grid-auto">
-          {visitedPubs.map((pub) => (
-            <div
-              key={pub.name}
-              className="section-card section-card--hoverable"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '14px 18px',
-                background: 'var(--surface-warm)',
-              }}
-            >
-              <CheckCircle size={18} style={{ color: 'var(--primary)', flexShrink: 0 }} />
-              <div>
-                <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-color)' }}>
-                  {pub.name}
-                </h4>
-                {pub.status.includes('Not on original') && (
-                  <span className="badge badge--warning" style={{ marginTop: '4px' }}>
-                    Bonus Pub
-                  </span>
-                )}
+        {visitedPubs.length === 0 ? (
+          <div className="empty-state" style={{ margin: '16px auto' }}>
+            <Map className="empty-state__icon" size={44} />
+            <h3 className="empty-state__title">No Visited Venues</h3>
+            <p className="empty-state__description">
+              No pubs have been marked as visited yet. Check back once socials start to populate the checklist!
+            </p>
+          </div>
+        ) : (
+          <div className="grid-auto">
+            {visitedPubs.map((pub) => (
+              <div
+                key={pub.name}
+                className="section-card section-card--hoverable"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '14px 18px',
+                  background: 'var(--surface-warm)',
+                }}
+              >
+                <CheckCircle size={18} style={{ color: 'var(--success-text)', flexShrink: 0 }} />
+                <div>
+                  <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-color)' }}>
+                    {pub.name}
+                  </h4>
+                  {pub.status.includes('Not on original') && (
+                    <span className="badge badge--warning" style={{ marginTop: '4px' }}>
+                      Bonus Pub
+                    </span>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
     </div>

@@ -29,7 +29,7 @@ export default function GalleryGrid({ data, isMember }: GalleryGridProps) {
   };
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px', marginTop: '32px' }}>
+    <div className="gallery-grid">
       {data.map((item) => (
         <div
           key={item.id}
@@ -38,12 +38,7 @@ export default function GalleryGrid({ data, isMember }: GalleryGridProps) {
           onClick={handlePhotoClick}
         >
           {/* Cover Photo */}
-          <div style={{
-            aspectRatio: '1 / 1',
-            position: 'relative',
-            background: 'var(--background)',
-            overflow: 'hidden'
-          }}>
+          <div className="gallery-image-wrapper">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={item.coverPhotoUrl}

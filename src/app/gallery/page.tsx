@@ -2,6 +2,8 @@ import React from 'react';
 import GalleryGrid from '@/components/GalleryGrid';
 import { prisma } from '@/lib/db';
 import { cookies } from 'next/headers';
+import { Camera } from 'lucide-react';
+import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
@@ -50,8 +52,17 @@ export default async function GalleryPage() {
       </div>
 
       {galleryItems.length === 0 ? (
-        <div className="notice" style={{ marginTop: '32px' }}>
-          No gallery photos have been uploaded yet. Committee members can add cover photos from the dashboard.
+        <div className="empty-state" style={{ marginTop: '32px' }}>
+          <Camera className="empty-state__icon" size={48} />
+          <h3 className="empty-state__title">No Photos Uploaded</h3>
+          <p className="empty-state__description">
+            No cover photos have been uploaded for our socials yet. Check back later once the committee posts them!
+          </p>
+          {isMember && (
+            <Link href="/committee">
+              <button className="btn btn--accent btn--sm">Go to Dashboard</button>
+            </Link>
+          )}
         </div>
       ) : (
         <GalleryGrid data={galleryItems} isMember={isMember} />

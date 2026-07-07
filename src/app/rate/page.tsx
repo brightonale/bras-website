@@ -104,8 +104,16 @@ const [activePint, setActivePint] = useState<ActivePint | null>(null);
 
   if (!isLoggedIn) {
     return (
-      <div className="page-container animate-fade-in" style={{ alignItems: 'center', paddingTop: '40px' }}>
-        <p style={{ color: 'var(--text-muted)' }}>Redirecting to login...</p>
+      <div className="page-container animate-fade-in" style={{ alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
+        <div className="beer-loader-container">
+          <div className="beer-loader">
+            <div className="beer-loader__glass">
+              <div className="beer-loader__liquid" />
+            </div>
+            <div className="beer-loader__handle" />
+          </div>
+          <div className="beer-loader__text">Redirecting to login...</div>
+        </div>
       </div>
     );
   }
@@ -127,8 +135,14 @@ const [activePint, setActivePint] = useState<ActivePint | null>(null);
       <div className="section-card" style={{ width: '100%', maxWidth: '500px' }}>
 
         {!activeLoaded ? (
-          <div style={{ textAlign: 'center', padding: '20px' }}>
-            <p style={{ color: 'var(--text-muted)' }}>Loading active Social pint details...</p>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 20px', gap: '16px' }}>
+            <div className="beer-loader" style={{ scale: 0.8 }}>
+              <div className="beer-loader__glass">
+                <div className="beer-loader__liquid" />
+              </div>
+              <div className="beer-loader__handle" />
+            </div>
+            <div className="beer-loader__text" style={{ fontSize: '0.9rem' }}>Loading active Social pint details...</div>
           </div>
         ) : successMsg ? (
           <div style={{ textAlign: 'center' }}>
@@ -142,14 +156,10 @@ const [activePint, setActivePint] = useState<ActivePint | null>(null);
             </div>
           </div>
         ) : !activePint ? (
-          <div style={{ textAlign: 'center', padding: '10px 0' }}>
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px', color: 'var(--warning-text)' }}>
-              <AlertTriangle size={48} />
-            </div>
-            <h2 className="section-card__title" style={{ textAlign: 'center', borderBottom: 'none', marginBottom: '12px', padding: 0 }}>
-              No Active Pint Set
-            </h2>
-            <p style={{ color: 'var(--text-muted)', textAlign: 'center', lineHeight: 1.5, marginBottom: '24px', fontSize: '0.95rem' }}>
+          <div className="empty-state" style={{ border: 'none', background: 'transparent', padding: '12px 0', margin: '0' }}>
+            <AlertTriangle className="empty-state__icon" size={48} style={{ color: 'var(--warning-text)', filter: 'drop-shadow(0 0 8px rgba(245, 158, 11, 0.2))' }} />
+            <h3 className="empty-state__title">No Active Pint Set</h3>
+            <p className="empty-state__description">
               The committee has not activated a pint for scoring yet. Please check back during the Social when the committee starts a round!
             </p>
             <button className="btn btn--outline btn--sm" onClick={() => router.push('/')}>
@@ -224,9 +234,16 @@ const [activePint, setActivePint] = useState<ActivePint | null>(null);
               type="submit"
               className="btn btn--primary btn--lg btn--full"
               disabled={isLoading}
-              style={{ cursor: isLoading ? 'not-allowed' : 'pointer' }}
+              style={{ cursor: isLoading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
             >
-              {isLoading ? "Submitting Log..." : "Submit Rating"}
+              {isLoading ? (
+                <>
+                  <span className="spinner" />
+                  <span>Submitting Log...</span>
+                </>
+              ) : (
+                "Submit Rating"
+              )}
             </button>
 
           </form>
