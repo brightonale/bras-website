@@ -13,7 +13,7 @@ model User {
   name                String        @unique
   votingName          String?
   role                String        @default("committee")
-  password            String
+  password            String?
   mustChange          Boolean       @default(false)
   email               String?
   isLegacy            Boolean       @default(false)

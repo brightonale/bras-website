@@ -4,7 +4,29 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-import { Beer, Gamepad2, Newspaper, Compass, Ban, CheckCircle, AlertTriangle, Users, Play, Square, Camera } from 'lucide-react';
+import { Beer, Gamepad2, Newspaper, Compass, Ban, CheckCircle, AlertTriangle, Users, Play, Square, Camera, RotateCw, Trash2, Star } from 'lucide-react';
+
+interface ActiveVoteItem {
+  id: string;
+  voterName: string;
+  userId: string;
+  score: number;
+  pubName: string;
+  createdAt: string;
+}
+
+interface ActiveVotesState {
+  activePint: {
+    id: string;
+    pubName: string;
+    beerName: string;
+    breweryName: string;
+    dateString: string;
+  } | null;
+  totalVotes: number;
+  averageScore: number | null;
+  votes: ActiveVoteItem[];
+}
 
 export default function CommitteeClient({ initialPubs }: { initialPubs: { name: string; status: string; comment?: string | null }[] }) {
   const router = useRouter();
@@ -17,6 +39,11 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: { name: 
   const [activeBreweryName, setActiveBreweryName] = useState('');
   const [activeDateString, setActiveDateString] = useState('');
   const [currentActivePint, setCurrentActivePint] = useState<{ pubName: string; beerName: string; breweryName: string; dateString: string } | null>(null);
+
+  // Active Pint Live Votes
+  const [activeVotes, setActiveVotes] = useState<ActiveVotesState | null>(null);
+  const [isLoadingVotes, setIsLoadingVotes] = useState(false);
+  const [deletingVoteId, setDeletingVoteId] = useState<string | null>(null);
 
   // Feature Flags Form
   const [featureFlags, setFeatureFlags] = useState<Record<string, boolean>>({});
@@ -66,7 +93,7 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: { name: 
        
       setMemberName(name);
 
-      // Pre-fill today&apos;s date for forms
+      // Pre-fill today's date for forms
       const today = new Date();
       const todayStr = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
       setEventDate(todayStr);
@@ -80,8 +107,57 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: { name: 
 
       fetchUsers();
       fetchGallerySocials();
+      fetchActiveVotes();
     }
   }, []);
+
+  // Live polling for active votes while committee panel is open and pint is active
+  useEffect(() => {
+    if (!isCommittee || !currentActivePint) return;
+    const interval = setInterval(() => {
+      fetchActiveVotes();
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [isCommittee, currentActivePint]);
+
+  async function fetchActiveVotes() {
+    setIsLoadingVotes(true);
+    try {
+      const res = await fetch('/api/committee/active-votes');
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setActiveVotes(data);
+      }
+    } catch (e) {
+      console.warn("Could not fetch active votes", e);
+    } finally {
+      setIsLoadingVotes(false);
+    }
+  };
+
+  async function handleDeleteVote(voteId: string, voterName: string) {
+    if (!confirm(`Are you sure you want to remove the vote from "${voterName}"?`)) {
+      return;
+    }
+    setDeletingVoteId(voteId);
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
+    try {
+      const res = await fetch(`/api/committee/active-votes?id=${encodeURIComponent(voteId)}`, {
+        method: 'DELETE'
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to remove vote");
+
+      setSuccessMsg(`Successfully removed vote from ${voterName}!`);
+      await fetchActiveVotes();
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : "Failed to remove vote.");
+    } finally {
+      setDeletingVoteId(null);
+    }
+  };
 
   async function fetchUsers() {
     try {
@@ -209,6 +285,7 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: { name: 
 
       setCurrentActivePint(data.activePint);
       setSuccessMsg(`Social Pint active: ${data.activePint.beerName} at ${data.activePint.pubName}! Members can now log scores.`);
+      fetchActiveVotes();
     } catch (err: any) {
       setErrorMsg(err.message || "Something went wrong.");
     } finally {
@@ -241,6 +318,7 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: { name: 
       const today = new Date();
       setActiveDateString(today.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }));
       setSuccessMsg("Active scoring pint cleared!");
+      fetchActiveVotes();
     } catch (err: any) {
       setErrorMsg(err.message || "Something went wrong.");
     } finally {
@@ -514,12 +592,12 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: { name: 
               </datalist>
             </div>
             
-            <div style={{ display: 'flex', gap: '16px' }}>
-              <div style={{ flex: 1 }}>
+            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+              <div style={{ flex: '1 1 180px', minWidth: '0' }}>
                 <label className="form-label">Cask Pint / Drink Name</label>
                 <input type="text" value={activeBeerName} onChange={e => setActiveBeerName(e.target.value)} placeholder="e.g. Sussex Best" />
               </div>
-              <div style={{ flex: 1 }}>
+              <div style={{ flex: '1 1 180px', minWidth: '0' }}>
                 <label className="form-label">Brewery</label>
                 <input type="text" value={activeBreweryName} onChange={e => setActiveBreweryName(e.target.value)} placeholder="e.g. Harvey's" />
               </div>
@@ -530,12 +608,12 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: { name: 
               <input type="text" value={activeDateString} onChange={e => setActiveDateString(e.target.value)} placeholder="e.g. 18 Dec 2025" />
             </div>
 
-            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
-              <button type="submit" className="btn btn--primary" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }} disabled={isLoading}>
+            <div style={{ display: 'flex', gap: '12px', marginTop: '8px', flexWrap: 'wrap' }}>
+              <button type="submit" className="btn btn--primary" style={{ flex: '1 1 180px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }} disabled={isLoading}>
                 <Play size={16} /> {currentActivePint ? "Update Active Pint" : "Start Scoring Pint"}
               </button>
               {currentActivePint && (
-                <button type="button" onClick={handleClearActivePint} className="btn btn--outline" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }} disabled={isLoading}>
+                <button type="button" onClick={handleClearActivePint} className="btn btn--outline" style={{ flex: '1 1 140px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }} disabled={isLoading}>
                   <Square size={16} /> Stop Scoring
                 </button>
               )}
@@ -573,12 +651,12 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: { name: 
               </datalist>
             </div>
             
-            <div style={{ display: 'flex', gap: '16px' }}>
-              <div style={{ flex: 1 }}>
+            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+              <div style={{ flex: '1 1 180px', minWidth: '0' }}>
                 <label className="form-label">Cask Pint / Drink Name</label>
                 <input type="text" value={pintName} onChange={e => setPintName(e.target.value)} placeholder="e.g. Sussex Best" />
               </div>
-              <div style={{ flex: 1 }}>
+              <div style={{ flex: '1 1 180px', minWidth: '0' }}>
                 <label className="form-label">Brewery</label>
                 <input type="text" value={breweryName} onChange={e => setBreweryName(e.target.value)} placeholder="e.g. Harvey's" />
               </div>
@@ -593,6 +671,184 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: { name: 
               {isLoading ? "Logging..." : "Log Manual Visit"}
             </button>
           </form>
+        </div>
+
+        {/* Panel: Active Pint Live Votes */}
+        <div className="section-card" style={{ gridColumn: '1 / -1' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', borderBottom: '1px solid var(--border)', paddingBottom: '12px', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+              <Beer size={22} className="accent-text" />
+              <h2 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-heading)', margin: 0 }}>
+                Active Pint Live Votes
+              </h2>
+              {currentActivePint && (
+                <span className="badge badge--success" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#34D399', display: 'inline-block' }} />
+                  Live Scoring Open
+                </span>
+              )}
+            </div>
+            
+            <button
+              type="button"
+              onClick={fetchActiveVotes}
+              disabled={isLoadingVotes}
+              className="btn btn--outline btn--sm"
+              style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+            >
+              <RotateCw size={14} />
+              {isLoadingVotes ? 'Refreshing...' : 'Refresh Votes'}
+            </button>
+          </div>
+
+          {!currentActivePint ? (
+            <div style={{ textAlign: 'center', padding: '32px 16px', color: 'var(--text-muted)' }}>
+              <Beer size={40} style={{ opacity: 0.4, margin: '0 auto 12px' }} />
+              <p style={{ fontWeight: 600, fontSize: '1.05rem', margin: '0 0 6px 0', color: 'var(--text-color)' }}>
+                No Pint Currently Live
+              </p>
+              <p style={{ fontSize: '0.88rem', margin: 0, maxWidth: '420px', marginInline: 'auto' }}>
+                Set an active pint in the &quot;Social Control&quot; panel above to allow members and attendees to submit live scores at <code>/rate</code>.
+              </p>
+            </div>
+          ) : (
+            <div>
+              {/* Summary Stats Header */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))',
+                gap: '16px',
+                marginBottom: '24px'
+              }}>
+                <div className="stat-box" style={{ padding: '16px' }}>
+                  <div className="stat-label">Active Round</div>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 'bold', fontFamily: 'var(--font-heading)', marginTop: '4px', color: 'var(--text-color)', wordBreak: 'break-word' }}>
+                    {currentActivePint.beerName || 'Cask Ale'}
+                  </div>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+                    @{currentActivePint.pubName}
+                  </div>
+                </div>
+
+                <div className="stat-box" style={{ padding: '16px' }}>
+                  <div className="stat-label">Total Votes</div>
+                  <div className="stat-value">
+                    {activeVotes?.totalVotes ?? 0}
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    {activeVotes?.totalVotes === 1 ? '1 vote logged' : `${activeVotes?.totalVotes ?? 0} votes logged`}
+                  </div>
+                </div>
+
+                <div className="stat-box" style={{ padding: '16px' }}>
+                  <div className="stat-label">Live Average Score</div>
+                  <div className="stat-value" style={{ color: 'var(--accent)' }}>
+                    {activeVotes?.averageScore !== null && activeVotes?.averageScore !== undefined
+                      ? `${activeVotes.averageScore.toFixed(2)}★`
+                      : '—'}
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    Scale: 1.00 – 10.00
+                  </div>
+                </div>
+              </div>
+
+              {/* Votes List */}
+              <h3 style={{ fontSize: '0.98rem', fontWeight: 600, marginBottom: '12px' }}>
+                Votes Breakdown ({activeVotes?.votes?.length ?? 0})
+              </h3>
+
+              {(!activeVotes?.votes || activeVotes.votes.length === 0) ? (
+                <div style={{ padding: '24px', background: 'var(--surface-muted)', borderRadius: '8px', border: '1px dashed var(--border)', textAlign: 'center' }}>
+                  <p style={{ margin: '0 0 6px 0', fontWeight: 600, color: 'var(--text-color)' }}>No votes recorded yet for this active pint.</p>
+                  <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                    Attendees can visit <strong>/rate</strong> on any phone to submit their score without needing a password.
+                  </p>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {activeVotes.votes.map((vote) => {
+                    const dateObj = new Date(vote.createdAt);
+                    const formattedDate = !isNaN(dateObj.getTime())
+                      ? dateObj.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
+                      : '';
+                    const isDeleting = deletingVoteId === vote.id;
+
+                    return (
+                      <div
+                        key={vote.id}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          flexWrap: 'wrap',
+                          gap: '12px',
+                          padding: '12px 14px',
+                          background: 'var(--surface-muted)',
+                          border: '1px solid var(--border)',
+                          borderRadius: '8px'
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: '140px', flex: '1 1 auto' }}>
+                          <div style={{
+                            width: '36px',
+                            height: '36px',
+                            borderRadius: '50%',
+                            background: 'var(--primary-light)',
+                            color: 'var(--accent)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontWeight: 'bold',
+                            fontSize: '0.9rem',
+                            flexShrink: 0
+                          }}>
+                            {vote.voterName.charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--text-color)' }}>
+                              {vote.voterName}
+                            </div>
+                            {formattedDate && (
+                              <div style={{ fontSize: '0.75rem', color: 'var(--text-light)' }}>
+                                Logged at {formattedDate}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                          <span className="badge badge--accent" style={{ fontSize: '0.95rem', padding: '4px 12px', fontWeight: 'bold' }}>
+                            {vote.score.toFixed(2)} ★
+                          </span>
+
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteVote(vote.id, vote.voterName)}
+                            disabled={isDeleting}
+                            title={`Remove vote from ${vote.voterName}`}
+                            className="btn btn--outline btn--sm"
+                            style={{
+                              borderColor: 'rgba(239, 68, 68, 0.4)',
+                              color: 'var(--error-text)',
+                              padding: '6px 10px',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              fontSize: '0.78rem',
+                              opacity: isDeleting ? 0.6 : 1
+                            }}
+                          >
+                            <Trash2 size={14} /> {isDeleting ? 'Removing...' : 'Remove'}
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Panel 3: Configure Wordle */}
@@ -679,10 +935,10 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: { name: 
 
         {/* Panel 5: Unvisited Pub Research List */}
         <div className="section-card" style={{ display: 'flex', flexDirection: 'column', maxHeight: '580px', padding: 0 }}>
-          <h2 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '24px 32px 16px', margin: 0, position: 'sticky', top: 0, background: 'var(--surface)', zIndex: 5, borderRadius: 'var(--card-radius) var(--card-radius) 0 0' }}>
+          <h2 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: 'var(--card-padding) var(--card-padding) 16px', margin: 0, position: 'sticky', top: 0, background: 'var(--surface)', zIndex: 5, borderRadius: 'var(--card-radius) var(--card-radius) 0 0' }}>
             <Compass size={20} /> Unvisited Pubs ({unvisitedPubs.length})
           </h2>
-          <div style={{ padding: '0 32px 32px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{ padding: '0 var(--card-padding) var(--card-padding)', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: '0 0 8px 0' }}>
               Pubs from our target list we have not visited yet. James' notes included.
             </p>
@@ -695,9 +951,11 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: { name: 
                 borderRadius: '8px',
                 display: 'flex',
                 justifyContent: 'space-between',
-                alignItems: 'center'
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: '12px'
               }}>
-                <div>
+                <div style={{ flex: '1 1 200px', minWidth: '150px' }}>
                   <h4 style={{ margin: '0 0 4px 0', fontSize: '1rem', fontFamily: 'var(--font-heading)' }}>{pub.name}</h4>
                   <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--warning-text)', fontStyle: 'italic', fontWeight: 500 }}>
                     {pub.comment ? `James' Notes: "${pub.comment}"` : "No notes logged."}
@@ -785,15 +1043,15 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: { name: 
 
         {/* Panel 6: User Management */}
         <div className="section-card" style={{ display: 'flex', flexDirection: 'column', maxHeight: '580px', padding: 0, gridColumn: '1 / -1' }}>
-          <h2 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '24px 32px 16px', margin: 0, position: 'sticky', top: 0, background: 'var(--surface)', zIndex: 5, borderRadius: 'var(--card-radius) var(--card-radius) 0 0' }}>
+          <h2 className="section-card__title" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: 'var(--card-padding) var(--card-padding) 16px', margin: 0, position: 'sticky', top: 0, background: 'var(--surface)', zIndex: 5, borderRadius: 'var(--card-radius) var(--card-radius) 0 0' }}>
             <Users size={20} /> User Allocations & Roles
           </h2>
-          <div style={{ padding: '0 32px 32px', overflowY: 'auto' }}>
+          <div style={{ padding: '0 var(--card-padding) var(--card-padding)', overflowY: 'auto' }}>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: '0 0 24px 0' }}>
               Assign roles to registered accounts. <strong>Users</strong> are non-members with restricted access. <strong>Members</strong> have full gallery access. <strong>Committee</strong> have admin privileges.
             </p>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '24px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 250px), 1fr))', gap: '24px' }}>
               
               {/* Column 1: Committee */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>

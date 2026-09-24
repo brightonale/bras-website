@@ -6,25 +6,14 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    let activeSocial = await prisma.social.findFirst({
+    const activeSocial = await prisma.social.findFirst({
       where: { active: true }
     });
-
-    if (!activeSocial) {
-      const allSocials = await prisma.social.findMany();
-      if (allSocials.length > 0) {
-        allSocials.sort((a, b) => {
-          const timeA = new Date(a.date).getTime() || 0;
-          const timeB = new Date(b.date).getTime() || 0;
-          return timeB - timeA;
-        });
-        activeSocial = allSocials[0];
-      }
-    }
 
     return NextResponse.json({
       success: true,
       activePint: activeSocial ? {
+        id: activeSocial.id,
         pubName: activeSocial.pubName,
         beerName: activeSocial.beerName || "Cask Ale",
         breweryName: activeSocial.breweryName || "Local Brewery",

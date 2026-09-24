@@ -7,6 +7,7 @@ vi.mock('../src/lib/db', () => ({
     user: {
       findUnique: vi.fn(),
       create: vi.fn(),
+      update: vi.fn(),
     }
   }
 }));
@@ -34,5 +35,33 @@ describe('Auth Actions', () => {
     const result = await createAccount('newuser', 'pass');
     expect(result.success).toBe(true);
     expect(result.user?.role).toBe('member');
+  });
+
+  it('createAccount claims passwordless voter account when password is null', async () => {
+    vi.mocked(prisma.user.findUnique).mockResolvedValue({
+      id: 'voter-1',
+      name: 'voterbob',
+      votingName: 'Bob',
+      role: 'user',
+      password: null,
+      mustChange: false,
+      email: null,
+      isLegacy: false
+    });
+    vi.mocked(prisma.user.update).mockResolvedValue({
+      id: 'voter-1',
+      name: 'voterbob',
+      votingName: 'Bob',
+      role: 'user',
+      password: 'hashednewpassword',
+      mustChange: false,
+      email: null,
+      isLegacy: false
+    });
+
+    const result = await createAccount('voterbob', 'newpassword123');
+    expect(result.success).toBe(true);
+    expect(result.user?.name).toBe('voterbob');
+    expect(prisma.user.update).toHaveBeenCalled();
   });
 });

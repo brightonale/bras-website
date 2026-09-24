@@ -32,6 +32,7 @@ export default function ScrollProgressPint() {
 
   return (
     <div 
+      className="scroll-progress-pint"
       style={{
         position: 'fixed',
         top: '20px',
@@ -42,7 +43,7 @@ export default function ScrollProgressPint() {
         borderRadius: '4px 4px 10px 10px',
         borderTop: 'none',
         overflow: 'hidden',
-        zIndex: 9999,
+        zIndex: 90,
         backgroundColor: 'rgba(255, 255, 255, 0.1)',
         backdropFilter: 'blur(4px)',
         boxShadow: '0 4px 6px rgba(0,0,0,0.1), inset 0 0 10px rgba(255,255,255,0.2)'

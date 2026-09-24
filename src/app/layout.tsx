@@ -4,7 +4,6 @@ import Link from 'next/link';
 import './globals.css';
 import Navbar from '../components/Navbar';
 import { prisma } from '@/lib/db';
-import ScrollProgressPint from '@/components/ui/ScrollProgressPint';
 import ParallaxBubbles from '@/components/ui/ParallaxBubbles';
 const lora = Lora({ subsets: ['latin'], variable: '--font-serif', weight: ['400', '500', '600', '700'] });
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', weight: ['400', '500', '600', '700'] });
@@ -51,7 +50,6 @@ export default async function RootLayout({
     <html lang="en" className={`${lora.variable} ${inter.variable}`}>
       <body style={{ fontFamily: 'var(--font-body)', display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <Navbar settings={settings} />
-        <ScrollProgressPint />
         <ParallaxBubbles />
         <main style={{
           flex: 1,
@@ -84,7 +82,7 @@ export default async function RootLayout({
             </div>
           </div>
         </footer>
-        <div style={{ position: 'fixed', bottom: '8px', left: '8px', fontSize: '0.75rem', color: 'var(--text-light)', zIndex: 9999, pointerEvents: 'none' }}>
+        <div className="version-badge" style={{ position: 'fixed', bottom: '8px', left: '8px', fontSize: '0.75rem', color: 'var(--text-light)', zIndex: 20, pointerEvents: 'none' }}>
           v1.0.7
         </div>
       </body>

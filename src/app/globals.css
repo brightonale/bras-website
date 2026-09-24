@@ -434,10 +434,23 @@ button:disabled, .btn:disabled {
   pointer-events: none;
 }
 
-button:not(:disabled):hover,
-.btn:not(:disabled):hover {
+@media (hover: hover) and (pointer: fine) {
+  button:not(:disabled):not(.site-nav__toggle):hover,
+  .btn:not(:disabled):hover {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+  }
+}
+
+button:focus-visible,
+.btn:focus-visible {
   outline: 2px solid var(--accent);
-  outline-offset: 4px;
+  outline-offset: 2px;
+}
+
+.site-nav__toggle:hover,
+.site-nav__toggle:focus {
+  outline: none !important;
 }
 
 /* Mobile backdrop overlay */
@@ -538,6 +551,9 @@ button:not(:disabled):hover,
     top: 64px;
     left: 0;
     right: 0;
+    max-height: calc(100vh - 70px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     background: rgba(26, 16, 16, 0.95);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
@@ -648,6 +664,7 @@ input[type="text"],
 input[type="password"],
 input[type="email"],
 input[type="number"],
+input[type="url"],
 select,
 textarea {
   width: 100%;
@@ -811,13 +828,14 @@ textarea {
 
 .grid-2 {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
-  gap: 28px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
+  gap: 24px;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 768px) {
   .grid-2 {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
 }
 
@@ -861,13 +879,37 @@ textarea {
   background: var(--text-light);
 }
 
-/* ==================== RESPONSIVE PAGE PADDING ==================== */
+/* ==================== RESPONSIVE PAGE PADDING & MOBILE POLISH ==================== */
 
 @media (max-width: 768px) {
   :root {
     --card-padding: 20px;
     --section-gap: 28px;
     --page-px: 16px;
+  }
+  .scroll-progress-pint {
+    display: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --card-padding: 16px;
+    --section-gap: 20px;
+    --page-px: 12px;
+  }
+  .page-header__title {
+    font-size: 1.55rem;
+  }
+  .page-header__subtitle {
+    font-size: 0.9rem;
+  }
+  .section-card {
+    border-radius: 14px;
+  }
+  .btn {
+    padding: 10px 16px;
+    font-size: 0.88rem;
   }
 }
 

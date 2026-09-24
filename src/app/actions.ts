@@ -17,7 +17,7 @@ export async function login(username: string, passwordAttempt: string) {
     return { error: 'Database connection failed.' };
   }
 
-  if (!user || !(await bcrypt.compare(passwordAttempt, user.password))) {
+  if (!user || !user.password || !(await bcrypt.compare(passwordAttempt, user.password))) {
     return { error: 'Invalid credentials.' };
   }
 
@@ -51,6 +51,36 @@ export async function createAccount(username: string, passwordAttempt: string) {
     return { error: 'Database connection failed.' };
   }
   if (existing) {
+    if (!existing.password) {
+      // Existing user was created passwordlessly via pub voting; allow setting password to claim account!
+      try {
+        const hashedPassword = await bcrypt.hash(passwordAttempt, 10);
+        const user = await prisma.user.update({
+          where: { id: existing.id },
+          data: {
+            password: hashedPassword,
+            mustChange: false
+          }
+        });
+        const cookieStore = await cookies();
+        cookieStore.set('bras_user_name', user.name, { httpOnly: true, path: '/' });
+        cookieStore.set('bras_voting_name', user.votingName || user.name, { httpOnly: true, path: '/' });
+        cookieStore.set('bras_user_role', user.role, { httpOnly: true, path: '/' });
+
+        return { 
+          success: true, 
+          user: { 
+            name: user.name, 
+            votingName: user.votingName, 
+            role: user.role, 
+            mustChange: false 
+          } 
+        };
+      } catch (err) {
+        console.error("Claim passwordless account DB error", err);
+        return { error: 'Database connection failed while claiming account.' };
+      }
+    }
     return { error: 'Username is already taken.' };
   }
 
