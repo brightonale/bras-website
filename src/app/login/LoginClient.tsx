@@ -9,7 +9,7 @@ import {
   changePassword as dbChangePassword 
 } from '@/app/actions';
 
-import { Lock, Sparkles, Key, CheckCircle, AlertTriangle, ShieldCheck, Eye, EyeOff, Info } from 'lucide-react';
+import { Lock, Sparkles, Key, CheckCircle, AlertTriangle, ShieldCheck, Eye, EyeOff } from 'lucide-react';
 
 export default function LoginClient({ initialMembers }: { initialMembers: { name: string }[] }) {
   const router = useRouter();
@@ -353,9 +353,9 @@ export default function LoginClient({ initialMembers }: { initialMembers: { name
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.5 }}>
             {isCommitteeMode 
-              ? 'Sign in with your committee credentials. Default password is 2026bras.'
+              ? 'Sign in with your committee credentials.'
               : (tab === 'login' 
-                ? 'Sign in with your member credentials. Default password is bras2026.' 
+                ? 'Sign in with your member credentials.' 
                 : 'Create a username and password to track your ratings across socials.')}
           </p>
         </div>
@@ -428,28 +428,6 @@ export default function LoginClient({ initialMembers }: { initialMembers: { name
               : (tab === 'login' ? "Sign In" : "Create Account")}
           </button>
         </form>
-
-        <div style={{ 
-          marginTop: '20px', 
-          padding: '12px 14px', 
-          background: 'var(--surface-warm)', 
-          borderRadius: '8px', 
-          border: '1px solid var(--border)',
-          display: 'flex', 
-          gap: '10px', 
-          alignItems: 'flex-start',
-          fontSize: '0.82rem',
-          color: 'var(--text-muted)'
-        }}>
-          <Info size={16} style={{ color: 'var(--primary)', flexShrink: 0, marginTop: '2px' }} />
-          <div>
-            <span>Default password: </span>
-            <code style={{ background: 'var(--surface)', padding: '2px 5px', borderRadius: '4px', fontWeight: 600, color: 'var(--text)' }}>bras2026</code>
-            <span> for members, </span>
-            <code style={{ background: 'var(--surface)', padding: '2px 5px', borderRadius: '4px', fontWeight: 600, color: 'var(--text)' }}>2026bras</code>
-            <span> for committee.</span>
-          </div>
-        </div>
       </div>
     </div>
   );

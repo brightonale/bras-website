@@ -59,23 +59,35 @@ export default function LiquidText({
     }
   };
 
+  const words = text.split(' ');
+
   return (
     <motion.span
       className={className}
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      style={{ display: 'inline-block' }}
+      style={{ display: 'inline' }}
     >
-      {text.split('').map((char, index) => (
-        <motion.span
-          key={index}
-          variants={childVariants}
-          style={{ display: 'inline-block', whiteSpace: 'pre' }}
-        >
-          {char}
-        </motion.span>
+      {words.map((word, wordIdx) => (
+        <React.Fragment key={wordIdx}>
+          <span
+            style={{ display: 'inline-block', whiteSpace: 'nowrap' }}
+          >
+            {word.split('').map((char, charIdx) => (
+              <motion.span
+                key={charIdx}
+                variants={childVariants}
+                style={{ display: 'inline-block' }}
+              >
+                {char}
+              </motion.span>
+            ))}
+          </span>
+          {wordIdx < words.length - 1 && ' '}
+        </React.Fragment>
       ))}
     </motion.span>
   );
 }
+

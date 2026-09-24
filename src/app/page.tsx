@@ -92,13 +92,14 @@ export default async function HomePage() {
           Brighton Real Ale Society
         </div>
         <h1 style={{ 
-          fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', 
-          lineHeight: 1.15, 
+          fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', 
+          lineHeight: 1.25, 
           letterSpacing: '-0.01em', 
           marginBottom: '16px',
           fontFamily: 'var(--font-heading)',
-          maxWidth: '600px',
+          maxWidth: '680px',
           margin: '0 auto 16px',
+          textWrap: 'balance'
         }}>
           <LiquidText text="Championing Real Ale & Cask Heritage" />
         </h1>
