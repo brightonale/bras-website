@@ -186,7 +186,7 @@ bras-website/
 
 Established in **October 2023** in Brighton, East Sussex, the **Brighton Real Ale Society** is dedicated to appreciating, recording, and celebrating British cask-conditioned ale across local and regional breweries.
 
-- **Website**: [brightonale.com](https://brightonale.com)
+- **Website**: [brightonale.co.uk](https://www.brightonale.co.uk/)
 - **Repository**: [github.com/brightonale/bras-website](https://github.com/brightonale/bras-website)
 - **License**: Private / Proprietary to Brighton Real Ale Society.
 
