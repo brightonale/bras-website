@@ -9,7 +9,7 @@ import {
   changePassword as dbChangePassword 
 } from '@/app/actions';
 
-import { Lock, Sparkles, Key, CheckCircle, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { Lock, Sparkles, Key, CheckCircle, AlertTriangle, ShieldCheck, Eye, EyeOff, Info } from 'lucide-react';
 
 export default function LoginClient({ initialMembers }: { initialMembers: { name: string }[] }) {
   const router = useRouter();
@@ -19,9 +19,14 @@ export default function LoginClient({ initialMembers }: { initialMembers: { name
   
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [newPassword, setNewPassword] = useState('');
+  const [showNewPassword, setShowNewPassword] = useState(false);
   const [selectedVotingName, setSelectedVotingName] = useState('');
   
+  const [userRole, setUserRole] = useState<string>('user');
+  const [userVotingName, setUserVotingName] = useState<string | null>(null);
+
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -34,9 +39,7 @@ export default function LoginClient({ initialMembers }: { initialMembers: { name
     if (typeof window !== 'undefined') {
       const searchParams = new URLSearchParams(window.location.search);
       if (searchParams.get('committee') === 'true') {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setIsCommitteeMode(true);
-         
         setTab('login');
       }
     }
@@ -47,6 +50,29 @@ export default function LoginClient({ initialMembers }: { initialMembers: { name
       router.push('/');
     }
   }, [step, router]);
+
+  const loginSuccess = (name: string, role: string) => {
+    localStorage.setItem('bras_user_name', name);
+    localStorage.setItem('bras_user_role', role);
+
+    // Check for explicit redirect query param
+    if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search);
+      const redirectParam = searchParams.get('redirect');
+      if (redirectParam && redirectParam.startsWith('/')) {
+        router.push(redirectParam);
+        router.refresh();
+        return;
+      }
+    }
+
+    if (role === 'committee') {
+      router.push('/committee');
+    } else {
+      router.push('/');
+    }
+    router.refresh();
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,18 +91,23 @@ export default function LoginClient({ initialMembers }: { initialMembers: { name
         setErrorMsg(res.error);
         return;
       }
-      
-      if (res.user?.mustChange) {
-        setStep('change_password');
-        return;
-      }
 
-      if (!res.user?.votingName) {
-        setStep('claim_name');
-        return;
+      if (res.user) {
+        setUserRole(res.user.role || 'user');
+        setUserVotingName(res.user.votingName || res.user.name);
+
+        if (res.user.mustChange) {
+          setStep('change_password');
+          return;
+        }
+
+        if (!res.user.votingName) {
+          setStep('claim_name');
+          return;
+        }
+        
+        loginSuccess(res.user.votingName, res.user.role);
       }
-      
-      loginSuccess(res.user.votingName, res.user.role);
     } catch {
       setIsLoading(false);
       setErrorMsg("Error communicating with database.");
@@ -102,6 +133,14 @@ export default function LoginClient({ initialMembers }: { initialMembers: { name
         return;
       }
       
+      if (res.user) {
+        setUserRole(res.user.role || 'user');
+        if (res.user.votingName) {
+          loginSuccess(res.user.votingName, res.user.role);
+          return;
+        }
+      }
+
       setStep('claim_name');
     } catch {
       setIsLoading(false);
@@ -128,7 +167,11 @@ export default function LoginClient({ initialMembers }: { initialMembers: { name
         return;
       }
       
-      setStep('claim_name');
+      if (userVotingName) {
+        loginSuccess(userVotingName, userRole);
+      } else {
+        setStep('claim_name');
+      }
     } catch {
       setIsLoading(false);
       setErrorMsg("Error changing password in database.");
@@ -149,18 +192,16 @@ export default function LoginClient({ initialMembers }: { initialMembers: { name
       const res = await dbClaimVotingName(username, selectedVotingName);
       setIsLoading(false);
       
-      loginSuccess(selectedVotingName, 'committee');
+      if (res.error) {
+        setErrorMsg(res.error);
+        return;
+      }
+
+      loginSuccess(selectedVotingName, userRole);
     } catch {
       setIsLoading(false);
       setErrorMsg("Error claiming voting name in database.");
     }
-  };
-
-  const loginSuccess = (name: string, role: string) => {
-    localStorage.setItem('bras_user_name', name);
-    localStorage.setItem('bras_user_role', role);
-    router.push('/');
-    router.refresh();
   };
 
   if (step === 'change_password') {
@@ -172,17 +213,40 @@ export default function LoginClient({ initialMembers }: { initialMembers: { name
               <Lock size={40} />
             </span>
             <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.8rem', marginBottom: '8px' }}>Update Password</h1>
-            <p style={{ color: 'var(--text-muted)' }}>Welcome Committee Member! Please set a secure password.</p>
+            <p style={{ color: 'var(--text-muted)' }}>Welcome! Please choose a new secure password for your account.</p>
           </div>
           <form onSubmit={handleChangePassword} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
             <div>
               <label className="form-label">New Password</label>
-              <input
-                type="password"
-                value={newPassword}
-                onChange={e => setNewPassword(e.target.value)}
-                placeholder="Enter new password"
-              />
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showNewPassword ? "text" : "password"}
+                  value={newPassword}
+                  onChange={e => setNewPassword(e.target.value)}
+                  placeholder="Enter new password (min. 6 characters)"
+                  style={{ width: '100%', paddingRight: '44px' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                  aria-label={showNewPassword ? "Hide password" : "Show password"}
+                  style={{
+                    position: 'absolute',
+                    right: '12px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: 'var(--text-muted)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    padding: '4px'
+                  }}
+                >
+                  {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
             {errorMsg && (
               <div className="notice notice--error" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -289,8 +353,10 @@ export default function LoginClient({ initialMembers }: { initialMembers: { name
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.5 }}>
             {isCommitteeMode 
-              ? 'Sign in with your allocated committee account. Default seed password is BRAS2026!.'
-              : (tab === 'login' ? 'Sign in to view member-only leaderboards.' : 'Create a username and password to get started.')}
+              ? 'Sign in with your committee credentials. Default password is bras2026.'
+              : (tab === 'login' 
+                ? 'Sign in with your member credentials. Default password is bras2026.' 
+                : 'Create a username and password to track your ratings across socials.')}
           </p>
         </div>
 
@@ -301,18 +367,43 @@ export default function LoginClient({ initialMembers }: { initialMembers: { name
               type="text"
               value={username}
               onChange={e => setUsername(e.target.value)}
-              placeholder="e.g. harry"
+              placeholder="e.g. takara, harrison, harry"
+              autoComplete="username"
             />
           </div>
 
           <div>
             <label className="form-label">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              placeholder="••••••••"
-            />
+            <div style={{ position: 'relative' }}>
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                placeholder="••••••••"
+                autoComplete="current-password"
+                style={{ width: '100%', paddingRight: '44px' }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                style={{
+                  position: 'absolute',
+                  right: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: 'var(--text-muted)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '4px'
+                }}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
 
           {errorMsg && (
@@ -337,6 +428,25 @@ export default function LoginClient({ initialMembers }: { initialMembers: { name
               : (tab === 'login' ? "Sign In" : "Create Account")}
           </button>
         </form>
+
+        <div style={{ 
+          marginTop: '20px', 
+          padding: '12px 14px', 
+          background: 'var(--surface-warm)', 
+          borderRadius: '8px', 
+          border: '1px solid var(--border)',
+          display: 'flex', 
+          gap: '10px', 
+          alignItems: 'flex-start',
+          fontSize: '0.82rem',
+          color: 'var(--text-muted)'
+        }}>
+          <Info size={16} style={{ color: 'var(--primary)', flexShrink: 0, marginTop: '2px' }} />
+          <div>
+            <span>Default password for all active members and committee is </span>
+            <code style={{ background: 'var(--surface)', padding: '2px 5px', borderRadius: '4px', fontWeight: 600, color: 'var(--text)' }}>bras2026</code>.
+          </div>
+        </div>
       </div>
     </div>
   );

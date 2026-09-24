@@ -8,56 +8,65 @@ interface CommitteeMember {
   id: string;
   name: string;
   role: string;
+  era: string;
   bio: string;
 }
 
 const committeeMembers: CommitteeMember[] = [
   {
-    id: "james-graham",
-    name: "James Graham",
-    role: "Founding President (2023–2025)",
-    bio: "James was the driving force behind the initial 20 months of the BRAS. He established the standard operating protocol of weekly pub reviews, systematically assigning ratings to local cask ales. Under his leadership, the club transitioned from a small circle of friends into an accredited society featured in local media and regional CAMRA press. He formally signed off as executive head in June 2025."
-  },
-  {
-    id: "max",
-    name: "Max",
-    role: "Socials & Media Officer (2024–2026)",
-    bio: "Max served as the creative lead, transforming the society's visual outreach. He was responsible for designing promotional materials, managing weekly social announcements, and coordinating venue outreach across Brighton. His artistic and logistical efforts kept the local community informed and actively growing."
-  },
-  {
-    id: "harry",
-    name: "Harry",
-    role: "Vice President & IT Officer (2025–2026)",
-    bio: "Harry was a core figure in establishing the society's digital presence and scaling operations. He handled the society's tech infrastructure alongside taking charge of the BRAS wordle and custom web solutions."
-  },
-  {
-    id: "sidney",
-    name: "Sidney",
-    role: "Finance Officer (2024–2025)",
-    bio: "Sidney handled the society's finances for the 2024/25 academic year, overlooking all payments made by the society. An architecture student with an affinity for pale ales and skating, Sidney ensured the books stayed balanced as BRAS expanded its socials and events."
-  },
-  {
-    id: "albie-gullis",
-    name: "Albie Gullis",
-    role: "Society President (2025–2026)",
-    bio: "Albie assumed executive management of the BRAS in June 2025 following the transition of the founding committee. Tasked with scaling the society's presence, Albie has driven a massive expansion into multi-society collaborative events and targeted regional pub crawls."
-  },
-  {
     id: "takara",
     name: "Takara",
     role: "Society President (2026–Present)",
+    era: "Current Executive (2026–Present)",
     bio: "Takara stepped up as President in 2026, leading the next generation of real ale enthusiasts and continuing the BRAS legacy of celebrating quality cask conditioned beer across Brighton and Sussex."
   },
   {
     id: "harrison",
     name: "Harrison",
     role: "Finance Director (2026–Present)",
+    era: "Current Executive (2026–Present)",
     bio: "Harrison took over the financial architecture in 2026, regulating ticket sales, balancing the books, and ensuring the society's commercial operations run smoothly."
+  },
+  {
+    id: "albie-gullis",
+    name: "Albie Gullis",
+    role: "Society President (2025–2026)",
+    era: "Executive Committee (2025–2026)",
+    bio: "Albie assumed executive management of the BRAS in June 2025 following the transition of the founding committee. Tasked with scaling the society's presence, Albie has driven a massive expansion into multi-society collaborative events and targeted regional pub crawls."
+  },
+  {
+    id: "harry",
+    name: "Harry",
+    role: "Vice President & IT Officer (2025–2026)",
+    era: "Executive Committee (2025–2026)",
+    bio: "Harry was a core figure in establishing the society's digital presence and scaling operations. He handled the society's tech infrastructure alongside taking charge of the BRAS wordle and custom web solutions."
+  },
+  {
+    id: "max",
+    name: "Max",
+    role: "Socials & Media Officer (2024–2026)",
+    era: "Executive Committee (2024–2026)",
+    bio: "Max served as the creative lead, transforming the society's visual outreach. He was responsible for designing promotional materials, managing weekly social announcements, and coordinating venue outreach across Brighton. His artistic and logistical efforts kept the local community informed and actively growing."
+  },
+  {
+    id: "sidney",
+    name: "Sidney",
+    role: "Finance Officer (2024–2025)",
+    era: "Committee (2024–2025)",
+    bio: "Sidney handled the society's finances for the 2024/25 academic year, overlooking all payments made by the society. An architecture student with an affinity for pale ales and skating, Sidney ensured the books stayed balanced as BRAS expanded its socials and events."
+  },
+  {
+    id: "james-graham",
+    name: "James Graham",
+    role: "Founding President (2023–2025)",
+    era: "Founding Executive (2023–2025)",
+    bio: "James was the driving force behind the initial 20 months of the BRAS. He established the standard operating protocol of weekly pub reviews, systematically assigning ratings to local cask ales. Under his leadership, the club transitioned from a small circle of friends into an accredited society featured in local media and regional CAMRA press. He formally signed off as executive head in June 2025."
   },
   {
     id: "luke",
     name: "Luke",
     role: "Socials Design (2023–2024)",
+    era: "Founding Committee (2023–2024)",
     bio: "Luke was an integral part of the foundational 2023/24 executive committee. He handled initial graphic layouts and coordinated weekly meetups. Luke secured a permanent place in society legend in June 2024 when he was officially presented with a custom, personalised pint glass to mark his dedicated service."
   }
 ];
@@ -114,9 +123,15 @@ export default function CommitteeGrid() {
             <h3 style={{ fontSize: '1.1rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '4px' }}>
               {member.name}
             </h3>
-            <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>
               {member.role}
             </div>
+            <span 
+              className={`badge ${member.id === 'takara' || member.id === 'harrison' ? 'badge--accent' : 'badge--muted'}`} 
+              style={{ fontSize: '0.68rem', padding: '2px 8px' }}
+            >
+              {member.era}
+            </span>
           </motion.div>
         ))}
       </div>
@@ -198,8 +213,16 @@ export default function CommitteeGrid() {
                   <h3 style={{ fontSize: '1.8rem', fontFamily: 'var(--font-heading)', fontWeight: 'bold', marginBottom: '8px' }}>
                     {selectedMember.name}
                   </h3>
-                  <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                    {selectedMember.role}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                    <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      {selectedMember.role}
+                    </div>
+                    <span 
+                      className={`badge ${selectedMember.id === 'takara' || selectedMember.id === 'harrison' ? 'badge--accent' : 'badge--muted'}`} 
+                      style={{ fontSize: '0.72rem' }}
+                    >
+                      {selectedMember.era}
+                    </span>
                   </div>
                 </div>
               </div>

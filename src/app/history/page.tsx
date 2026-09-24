@@ -112,9 +112,14 @@ export default async function HistoryPage() {
 
       {/* Committee Directory Section */}
       <section style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-        <h2 style={{ fontSize: '1.75rem', paddingBottom: '12px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '12px', fontFamily: 'var(--font-heading)' }}>
-          <Users size={24} className="accent-text" /> Key Figures &amp; Committee
-        </h2>
+        <div>
+          <h2 style={{ fontSize: '1.75rem', paddingBottom: '12px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '12px', fontFamily: 'var(--font-heading)' }}>
+            <Users size={24} className="accent-text" /> Key Figures &amp; Committee
+          </h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginTop: '8px' }}>
+            Leadership succession from our current executive officers down to the society&apos;s 2023 founders.
+          </p>
+        </div>
         
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <CommitteeGrid />
