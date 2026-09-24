@@ -46,7 +46,9 @@ export async function GET(req: Request) {
         id: existingRating.id,
         score: existingRating.score,
         pubName: existingRating.pubName
-      } : null
+      } : null,
+      alreadyVoted: !!existingRating,
+      voterName: user.votingName || user.name
     });
   } catch (err) {
     console.error("API /rate GET error", err);
@@ -60,7 +62,7 @@ export async function POST(req: Request) {
     const sessionUser = cookieStore.get('bras_user_name')?.value;
 
     const body = await req.json().catch(() => ({}));
-    const { pubName, score, memberName } = body;
+    const { pubName, score, memberName, confirmUpdate } = body;
 
     const rawName = (typeof memberName === 'string' && memberName.trim())
       ? memberName.trim()
@@ -117,6 +119,12 @@ export async function POST(req: Request) {
           socialId: social.id
         }
       });
+    }
+
+    if (existingRating && confirmUpdate === false) {
+      return NextResponse.json({
+        error: `This person (${rawName}) has already voted this week. Please enter a different name (e.g. ${rawName} W.).`
+      }, { status: 409 });
     }
 
     const finalPubName = social?.pubName || trimmedPub;

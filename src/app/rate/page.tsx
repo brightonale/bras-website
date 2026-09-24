@@ -17,6 +17,8 @@ export default function RatePage() {
   const router = useRouter();
   const [memberName, setMemberName] = useState('');
   const [hasExistingName, setHasExistingName] = useState(false);
+  const [alreadyVoted, setAlreadyVoted] = useState(false);
+  const [isSamePersonUpdating, setIsSamePersonUpdating] = useState(false);
 
   // Rating states (loaded from active pint)
   const [pubName, setPubName] = useState('');
@@ -75,6 +77,8 @@ export default function RatePage() {
     const clean = voter.trim();
     if (clean.length < 2) {
       setPreviousScore(null);
+      setAlreadyVoted(false);
+      setIsSamePersonUpdating(false);
       return;
     }
     try {
@@ -82,9 +86,11 @@ export default function RatePage() {
       const data = await res.json();
       if (data.existingRating) {
         setPreviousScore(data.existingRating.score);
-        setScore(prev => prev ? prev : data.existingRating.score.toString());
+        setAlreadyVoted(true);
       } else {
         setPreviousScore(null);
+        setAlreadyVoted(false);
+        setIsSamePersonUpdating(false);
       }
     } catch {
       // Non-critical background lookup
@@ -92,7 +98,11 @@ export default function RatePage() {
   }, []);
 
   useEffect(() => {
-    if (!memberName.trim() || !activePint) return;
+    if (!memberName.trim() || !activePint) {
+      setAlreadyVoted(false);
+      setIsSamePersonUpdating(false);
+      return;
+    }
     const timer = setTimeout(() => {
       checkPreviousScore(memberName);
     }, 350);
@@ -110,6 +120,11 @@ export default function RatePage() {
 
     if (!pubName) {
       setErrorMsg("No active pint selected.");
+      return;
+    }
+
+    if (alreadyVoted && !isSamePersonUpdating) {
+      setErrorMsg(`This person (${cleanName}) has already voted this week. Please enter a different name (e.g. ${cleanName} W. or ${cleanName} 2).`);
       return;
     }
 
@@ -134,7 +149,8 @@ export default function RatePage() {
           pubName: pubName.trim(),
           beerName: beerName.trim(),
           score: finalScore,
-          dateString
+          dateString,
+          confirmUpdate: isSamePersonUpdating
         })
       });
 
@@ -156,6 +172,8 @@ export default function RatePage() {
 
       setHasExistingName(true);
       setPreviousScore(finalScore);
+      setAlreadyVoted(true);
+      setIsSamePersonUpdating(true);
 
       const isUpdate = data.rating?.updated;
       setSuccessMsg(
@@ -288,9 +306,32 @@ export default function RatePage() {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
                 <label className="form-label" style={{ margin: 0, fontWeight: 600 }}>Your Name / Nickname</label>
                 {hasExistingName && (
-                  <span style={{ fontSize: '0.75rem', color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <UserCheck size={14} /> Saved on device
-                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <UserCheck size={14} /> Saved on device
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMemberName('');
+                        setPreviousScore(null);
+                        setAlreadyVoted(false);
+                        setIsSamePersonUpdating(false);
+                        setHasExistingName(false);
+                      }}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: 'var(--text-muted)',
+                        fontSize: '0.75rem',
+                        cursor: 'pointer',
+                        textDecoration: 'underline',
+                        padding: 0
+                      }}
+                    >
+                      Different Name
+                    </button>
+                  </div>
                 )}
               </div>
               <input
@@ -299,36 +340,67 @@ export default function RatePage() {
                 autoCapitalize="words"
                 placeholder="e.g. Harry, Emma, Oliver"
                 value={memberName}
-                onChange={e => setMemberName(e.target.value)}
+                onChange={e => {
+                  setMemberName(e.target.value);
+                  if (alreadyVoted) {
+                    setAlreadyVoted(false);
+                    setIsSamePersonUpdating(false);
+                  }
+                }}
                 required
                 style={{
                   width: '100%',
                   fontSize: '1rem',
                   padding: '12px 14px',
                   borderRadius: '8px',
-                  boxSizing: 'border-box'
+                  boxSizing: 'border-box',
+                  borderColor: (alreadyVoted && !isSamePersonUpdating) ? 'var(--accent)' : undefined
                 }}
               />
               <span style={{ fontSize: '0.75rem', color: 'var(--text-light)', marginTop: '4px', display: 'block' }}>
-                No password required. We will remember this name for future visits.
+                No password required. If someone shares your first name, add an initial (e.g. Harry W.) so your rating is separate.
               </span>
             </div>
 
-            {/* Previous Rating Reminder (Deduplication Info) */}
-            {previousScore !== null && (
+            {/* Duplicate Name / Previous Rating Notice */}
+            {alreadyVoted && (
               <div style={{
-                background: 'rgba(230, 149, 0, 0.1)',
-                border: '1px solid var(--border)',
+                background: 'var(--surface-warm)',
+                border: '1px solid var(--accent)',
                 borderRadius: '8px',
-                padding: '10px 14px',
-                fontSize: '0.85rem',
+                padding: '14px',
                 display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                color: 'var(--text-color)'
+                flexDirection: 'column',
+                gap: '10px'
               }}>
-                <Star size={16} className="accent-text" />
-                <span>You previously rated this pint <strong>{previousScore.toFixed(2)}★</strong>. Submitting will update your score.</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--accent)', fontWeight: 600, fontSize: '0.92rem' }}>
+                  <AlertTriangle size={18} style={{ flexShrink: 0 }} />
+                  <span>This person has already voted this week!</span>
+                </div>
+                <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-color)', lineHeight: 1.45 }}>
+                  A vote of <strong>{previousScore !== null ? `${previousScore.toFixed(2)}★` : ''}</strong> is already recorded for <strong>&ldquo;{memberName.trim()}&rdquo;</strong>.
+                </p>
+                <p style={{ margin: 0, fontSize: '0.82rem', color: 'var(--text-muted)', lineHeight: 1.45 }}>
+                  If there&apos;s more than one {memberName.trim()} at the social, please <strong>enter a different name</strong> (such as <strong>{memberName.trim()} W.</strong> or <strong>{memberName.trim()} 2</strong>) so your vote is counted separately!
+                </p>
+
+                <div style={{ borderTop: '1px solid var(--border)', paddingTop: '10px', marginTop: '2px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', cursor: 'pointer', color: 'var(--text-color)' }}>
+                    <input 
+                      type="checkbox" 
+                      checked={isSamePersonUpdating} 
+                      onChange={e => {
+                        const checked = e.target.checked;
+                        setIsSamePersonUpdating(checked);
+                        if (checked && previousScore !== null && !score) {
+                          setScore(previousScore.toString());
+                        }
+                      }} 
+                      style={{ accentColor: 'var(--accent)', width: '16px', height: '16px', cursor: 'pointer' }}
+                    />
+                    <span>I am the original <strong>{memberName.trim()}</strong> and I want to update my rating</span>
+                  </label>
+                </div>
               </div>
             )}
 
@@ -407,14 +479,15 @@ export default function RatePage() {
             <button
               type="submit"
               className="btn btn--primary btn--lg btn--full"
-              disabled={isLoading}
+              disabled={isLoading || (alreadyVoted && !isSamePersonUpdating)}
               style={{
-                cursor: isLoading ? 'not-allowed' : 'pointer',
+                cursor: (isLoading || (alreadyVoted && !isSamePersonUpdating)) ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
-                marginTop: '4px'
+                marginTop: '4px',
+                opacity: (alreadyVoted && !isSamePersonUpdating) ? 0.65 : 1
               }}
             >
               {isLoading ? (
@@ -422,8 +495,8 @@ export default function RatePage() {
                   <span className="spinner" />
                   <span>Submitting Vote...</span>
                 </>
-              ) : previousScore !== null ? (
-                "Update My Rating"
+              ) : alreadyVoted ? (
+                isSamePersonUpdating ? `Update Rating for ${memberName.trim()}` : "Enter a Different Name to Vote"
               ) : (
                 "Submit Rating"
               )}
