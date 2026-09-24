@@ -353,7 +353,7 @@ export default function LoginClient({ initialMembers }: { initialMembers: { name
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.5 }}>
             {isCommitteeMode 
-              ? 'Sign in with your committee credentials. Default password is bras2026.'
+              ? 'Sign in with your committee credentials. Default password is 2026bras.'
               : (tab === 'login' 
                 ? 'Sign in with your member credentials. Default password is bras2026.' 
                 : 'Create a username and password to track your ratings across socials.')}
@@ -443,8 +443,11 @@ export default function LoginClient({ initialMembers }: { initialMembers: { name
         }}>
           <Info size={16} style={{ color: 'var(--primary)', flexShrink: 0, marginTop: '2px' }} />
           <div>
-            <span>Default password for all active members and committee is </span>
-            <code style={{ background: 'var(--surface)', padding: '2px 5px', borderRadius: '4px', fontWeight: 600, color: 'var(--text)' }}>bras2026</code>.
+            <span>Default password: </span>
+            <code style={{ background: 'var(--surface)', padding: '2px 5px', borderRadius: '4px', fontWeight: 600, color: 'var(--text)' }}>bras2026</code>
+            <span> for members, </span>
+            <code style={{ background: 'var(--surface)', padding: '2px 5px', borderRadius: '4px', fontWeight: 600, color: 'var(--text)' }}>2026bras</code>
+            <span> for committee.</span>
           </div>
         </div>
       </div>

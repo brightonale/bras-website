@@ -290,7 +290,7 @@ export default function LeaderboardClient({ initialPubs, isLoggedIn }: { initial
                   return (
                     <motion.tr 
                       variants={itemVariants}
-                      key={pub.pub + pub.date} 
+                      key={pub.id || `${pub.pub}-${pub.pint}-${pub.date}`} 
                       style={{
                         background: isTopThree ? 'var(--surface-warm)' : undefined
                       }}
@@ -342,7 +342,7 @@ export default function LeaderboardClient({ initialPubs, isLoggedIn }: { initial
               const isTopThree = rankNum <= 3;
               return (
                 <div 
-                  key={pub.pub + pub.date} 
+                  key={pub.id || `${pub.pub}-${pub.pint}-${pub.date}`} 
                   style={{
                     background: isTopThree ? 'var(--surface-warm)' : 'var(--surface)',
                     border: '1px solid var(--border)',
