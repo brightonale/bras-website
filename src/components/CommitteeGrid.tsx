@@ -50,7 +50,7 @@ const committeeMembers: CommitteeMember[] = [
   },
   {
     id: "harry",
-    name: "Harry",
+    name: "Harry Rogers",
     role: "Vice President & IT Officer",
     era: "Committee 2025–2026",
     yearRange: "2025–2026",
@@ -59,7 +59,7 @@ const committeeMembers: CommitteeMember[] = [
   },
   {
     id: "max",
-    name: "Max",
+    name: "Max Emery",
     role: "Socials & Media Officer",
     era: "Committee 2024–2026",
     yearRange: "2024–2026",
