@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Beer, AlertTriangle, CheckCircle, UserCheck, Star } from 'lucide-react';
+import { Beer, AlertTriangle, CheckCircle, UserCheck, Star, HelpCircle, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface ActivePint {
   pubName: string;
@@ -19,6 +19,7 @@ export default function RatePage() {
   const [hasExistingName, setHasExistingName] = useState(false);
   const [alreadyVoted, setAlreadyVoted] = useState(false);
   const [isSamePersonUpdating, setIsSamePersonUpdating] = useState(false);
+  const [showCamraGuide, setShowCamraGuide] = useState(false);
 
   // Rating states (loaded from active pint)
   const [pubName, setPubName] = useState('');
@@ -464,6 +465,81 @@ export default function RatePage() {
                 <span>1.0 = Undrinkable</span>
                 <span>5.0 = Average</span>
                 <span>10.0 = Nectar</span>
+              </div>
+
+              {/* CAMRA Scoring Standard Reference Toggle */}
+              <div style={{ marginTop: '12px' }}>
+                <button
+                  type="button"
+                  onClick={() => setShowCamraGuide(!showCamraGuide)}
+                  style={{
+                    background: 'none',
+                    border: '1px solid var(--border)',
+                    borderRadius: '6px',
+                    padding: '8px 12px',
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    color: 'var(--accent)',
+                    fontSize: '0.8rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    backgroundColor: showCamraGuide ? 'var(--surface-warm)' : 'transparent'
+                  }}
+                >
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                    <HelpCircle size={15} /> How to score: CAMRA Official Guide
+                  </span>
+                  {showCamraGuide ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
+                </button>
+
+                {showCamraGuide && (
+                  <div style={{
+                    marginTop: '10px',
+                    padding: '14px',
+                    background: 'var(--surface-muted)',
+                    border: '1px solid var(--border)',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '12px'
+                  }}>
+                    {/* CAMRA Graphic */}
+                    <div style={{ width: '100%', overflow: 'hidden', borderRadius: '6px', background: '#000' }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src="/images/camra-beer-scoring-guide.png"
+                        alt="CAMRA National Beer Scoring System: How's Your Beer?"
+                        style={{ width: '100%', height: 'auto', display: 'block' }}
+                      />
+                    </div>
+
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+                      We calibrate our society ratings against CAMRA&apos;s National Beer Scoring System (NBSS):
+                      <ul style={{ margin: '4px 0 0 16px', padding: 0 }}>
+                        <li><strong>5.0★ (Excellent):</strong> BRAS 8.5 – 10.0★</li>
+                        <li><strong>4.0★ (Very Good):</strong> BRAS 7.0 – 8.4★</li>
+                        <li><strong>3.0★ (Good):</strong> BRAS 6.0 – 6.9★</li>
+                        <li><strong>2.0★ (Average):</strong> BRAS 4.5 – 5.9★</li>
+                        <li><strong>1.0★ (Poor):</strong> BRAS 3.0 – 4.4★</li>
+                        <li><strong>0.0★ (Undrinkable):</strong> BRAS 1.0 – 2.9★</li>
+                      </ul>
+                    </div>
+
+                    <div style={{ borderTop: '1px solid var(--border)', paddingTop: '8px', fontSize: '0.72rem', color: 'var(--text-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span>Source: Campaign for Real Ale (CAMRA)</span>
+                      <a
+                        href="https://camra.org.uk/beer-and-pubs/beer/beer-scoring/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: 'var(--accent)', textDecoration: 'underline', display: 'inline-flex', alignItems: 'center', gap: '3px' }}
+                      >
+                        camra.org.uk <ExternalLink size={10} />
+                      </a>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
