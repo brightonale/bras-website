@@ -47,3 +47,18 @@ next-env.d.ts
 .agents/
 *.backup
 *.db
+*.docx
+/guide_assets/
+/Instagram Comittee Photos/
+/scripts/extracted_*/
+/scripts/rendered_*/
+/scripts/person_*/
+/scripts/committee_*/
+/scripts/generic_backgrounds/
+/scripts/bg_inspection/
+/scripts/key_member_photos/
+/scripts/takara_extracted/
+/scripts/*.png
+/scripts/*.jpeg
+/scripts/*.jpg
+/scripts/*.txt
