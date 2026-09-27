@@ -7,7 +7,6 @@ import {
   History as HistoryIcon, 
   Users, 
   Building2, 
-  Image as ImageIcon, 
   ExternalLink, 
   Trophy, 
   HeartHandshake, 
@@ -63,6 +62,34 @@ export default async function HistoryPage() {
     }
   };
 
+  // Helper to get month-year for grouping
+  const getMonthYear = (dateStr: string) => {
+    try {
+      const d = new Date(dateStr.split(' ')[0]);
+      return d.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
+    } catch {
+      return '';
+    }
+  };
+
+  // Helper to get a short label for the timeline dot
+  const getTimelineLabel = (dateStr: string) => {
+    try {
+      const d = new Date(dateStr.split(' ')[0]);
+      return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+    } catch {
+      return '';
+    }
+  };
+
+  // Group posts by month-year for the flowing timeline
+  const grouped = new Map<string, CaptionPost[]>();
+  for (const post of posts) {
+    const key = getMonthYear(post.date);
+    if (!grouped.has(key)) grouped.set(key, []);
+    grouped.get(key)!.push(post);
+  }
+
   return (
     <div className="page-container animate-fade-in" style={{ gap: '48px' }}>
       
@@ -117,7 +144,7 @@ export default async function HistoryPage() {
             <Users size={24} className="accent-text" /> Key Figures &amp; Committee
           </h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginTop: '8px' }}>
-            Leadership succession from our current executive officers down to the society&apos;s 2023 founders.
+            Leadership succession from our current officers down to the society&apos;s 2023 founders.
           </p>
         </div>
         
@@ -160,7 +187,7 @@ export default async function HistoryPage() {
         </div>
       </section>
 
-      {/* Chronological Timeline Section */}
+      {/* Chronological Timeline Section — Flowing Infographic */}
       <section style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
         <div>
           <h2 style={{ fontSize: '1.75rem', paddingBottom: '12px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '12px', fontFamily: 'var(--font-heading)' }}>
@@ -171,92 +198,169 @@ export default async function HistoryPage() {
           </p>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '40px', paddingLeft: '16px', borderLeft: '2px solid var(--border)' }}>
-          {posts.map((post, idx) => (
-            <div key={post.date + idx} style={{ position: 'relative', paddingLeft: '24px' }}>
-              {/* Timeline dot */}
-              <div style={{
-                position: 'absolute',
-                left: '-31px', /* 24px padding + 2px border / 2 */
-                top: '6px',
-                width: '12px',
-                height: '12px',
-                borderRadius: '50%',
-                backgroundColor: 'var(--surface-warm)',
-                border: '2px solid var(--primary)',
-                zIndex: 2
-              }} />
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-color)', fontFamily: 'var(--font-heading)' }}>
-                    {formatDate(post.date)}
+        {/* Flowing timeline */}
+        <div style={{ position: 'relative' }}>
+          {/* Central timeline rail */}
+          <div style={{
+            position: 'absolute',
+            left: '20px',
+            top: 0,
+            bottom: 0,
+            width: '2px',
+            background: 'linear-gradient(to bottom, var(--accent), var(--primary), var(--border))',
+            borderRadius: '1px',
+          }} />
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+            {Array.from(grouped.entries()).map(([monthYear, monthPosts], groupIdx) => (
+              <div key={monthYear} style={{ position: 'relative' }}>
+                {/* Month-year marker */}
+                <div style={{
+                  position: 'relative',
+                  paddingLeft: '52px',
+                  paddingTop: groupIdx === 0 ? '0' : '32px',
+                  paddingBottom: '16px',
+                }}>
+                  {/* Month marker dot */}
+                  <div style={{
+                    position: 'absolute',
+                    left: '11px',
+                    top: groupIdx === 0 ? '2px' : '34px',
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '50%',
+                    backgroundColor: 'var(--accent)',
+                    border: '3px solid var(--surface)',
+                    boxShadow: '0 0 0 2px var(--accent)',
+                    zIndex: 3,
+                  }} />
+                  <span style={{
+                    fontSize: '0.82rem',
+                    fontWeight: 700,
+                    color: 'var(--accent)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.1em',
+                    fontFamily: 'var(--font-heading)',
+                  }}>
+                    {monthYear}
                   </span>
-                  <Link 
-                    href={post.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.8rem', color: 'var(--accent)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}
+                </div>
+
+                {/* Posts in this month */}
+                {monthPosts.map((post, idx) => (
+                  <div
+                    key={post.date + idx}
+                    style={{
+                      position: 'relative',
+                      paddingLeft: '52px',
+                      paddingBottom: '24px',
+                    }}
                   >
-                    <ExternalLink size={14} /> Source Entry
-                  </Link>
-                </div>
-                
-                <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-                  {/* Image / Instagram Placeholder */}
-                  <div style={{ 
-                    width: '280px', 
-                    height: '280px', 
-                    backgroundColor: 'var(--surface-muted)', 
-                    border: '1px solid var(--border)',
-                    borderRadius: '8px',
-                    overflow: 'hidden',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                    gap: '12px'
-                  }}>
-                    <ImageIcon size={40} color="var(--border-strong)" />
-                    <Link 
-                      href={post.url} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      style={{ 
-                        fontSize: '0.8rem', 
-                        color: 'var(--accent)', 
-                        fontWeight: 600, 
-                        textTransform: 'uppercase', 
-                        letterSpacing: '0.05em',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '4px'
-                      }}
-                    >
-                      <ExternalLink size={14} /> View on Instagram
-                    </Link>
-                  </div>
+                    {/* Small timeline dot */}
+                    <div style={{
+                      position: 'absolute',
+                      left: '15px',
+                      top: '8px',
+                      width: '12px',
+                      height: '12px',
+                      borderRadius: '50%',
+                      backgroundColor: 'var(--surface)',
+                      border: '2px solid var(--primary)',
+                      zIndex: 2,
+                    }} />
 
-                  {/* Caption Content */}
-                  <div style={{ 
-                    flex: 1,
-                    minWidth: '280px',
-                    fontSize: '1rem', 
-                    color: 'var(--text-muted)', 
-                    lineHeight: '1.7', 
-                    whiteSpace: 'pre-line'
-                  }}>
-                    {post.content}
+                    {/* Connector arm */}
+                    <div style={{
+                      position: 'absolute',
+                      left: '27px',
+                      top: '13px',
+                      width: '16px',
+                      height: '1px',
+                      backgroundColor: 'var(--border)',
+                    }} />
+
+                    {/* Content card */}
+                    <div style={{
+                      marginLeft: '4px',
+                      padding: '16px 20px',
+                      backgroundColor: 'var(--surface)',
+                      border: '1px solid var(--border)',
+                      borderRadius: '6px',
+                      transition: 'border-color 0.2s ease',
+                    }}>
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'baseline',
+                        justifyContent: 'space-between',
+                        gap: '12px',
+                        marginBottom: '10px',
+                        flexWrap: 'wrap',
+                      }}>
+                        <span style={{
+                          fontSize: '0.95rem',
+                          fontWeight: 700,
+                          color: 'var(--text-color)',
+                          fontFamily: 'var(--font-heading)',
+                        }}>
+                          {getTimelineLabel(post.date)}
+                        </span>
+                        <Link
+                          href={post.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            fontSize: '0.72rem',
+                            color: 'var(--text-muted)',
+                            fontWeight: 500,
+                            textDecoration: 'none',
+                            opacity: 0.7,
+                          }}
+                        >
+                          <ExternalLink size={11} /> Source
+                        </Link>
+                      </div>
+
+                      <p style={{
+                        fontSize: '0.92rem',
+                        color: 'var(--text-muted)',
+                        lineHeight: '1.65',
+                        margin: 0,
+                        whiteSpace: 'pre-line',
+                      }}>
+                        {post.content}
+                      </p>
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
-            </div>
-          ))}
+            ))}
 
-          {posts.length === 0 && (
-            <p style={{ color: 'var(--text-muted)', fontStyle: 'italic', paddingLeft: '24px' }}>Historical records are currently being compiled.</p>
-          )}
+            {posts.length === 0 && (
+              <p style={{ color: 'var(--text-muted)', fontStyle: 'italic', paddingLeft: '52px' }}>Historical records are currently being compiled.</p>
+            )}
+
+            {/* Terminal dot */}
+            {posts.length > 0 && (
+              <div style={{ position: 'relative', paddingLeft: '52px', paddingTop: '8px' }}>
+                <div style={{
+                  position: 'absolute',
+                  left: '16px',
+                  top: '10px',
+                  width: '10px',
+                  height: '10px',
+                  borderRadius: '50%',
+                  backgroundColor: 'var(--border)',
+                  zIndex: 2,
+                }} />
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                  Present day
+                </span>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
