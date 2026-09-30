@@ -157,12 +157,23 @@ export async function resetUserPassword(targetUsername: string) {
 
     const cleanUsername = targetUsername.toLowerCase().replace(/\s+/g, '');
     
+    const targetUser = await prisma.user.findUnique({
+      where: { name: cleanUsername },
+      select: { role: true }
+    });
+    
+    if (!targetUser) {
+      return { success: false, error: 'User not found.' };
+    }
+
+    const defaultPw = targetUser.role === 'committee' ? 'BrightonAle26!' : 'CaskAle26!';
+    
     await prisma.user.update({
       where: { name: cleanUsername },
-      data: { password: await bcrypt.hash('BrightonAle26!', 10), mustChange: true }
+      data: { password: await bcrypt.hash(defaultPw, 10), mustChange: true }
     });
 
-    return { success: true, error: undefined };
+    return { success: true, error: undefined, newDefault: defaultPw };
   } catch (err: unknown) {
     return { success: false, error: (err as Error).message || 'Failed to reset password.' };
   }

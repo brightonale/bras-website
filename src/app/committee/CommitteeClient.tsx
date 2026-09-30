@@ -189,14 +189,14 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: { name: 
   };
 
   async function handleResetPassword(username: string) {
-    if (!confirm(`Are you sure you want to reset @${username}'s password to 'BrightonAle26!'? They will be forced to change it on next login.`)) return;
+    if (!confirm(`Are you sure you want to reset @${username}'s password? They will be forced to change it on next login.`)) return;
     setIsLoading(true);
     setErrorMsg(null);
     setSuccessMsg(null);
     try {
       const res = await resetUserPassword(username);
       if (res.success) {
-        setSuccessMsg(`Successfully reset password for @${username}.`);
+        setSuccessMsg(`Successfully reset password for @${username} to '${res.newDefault}'.`);
       } else {
         setErrorMsg(res.error || "Failed to reset password.");
       }
