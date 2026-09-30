@@ -159,7 +159,7 @@ export async function resetUserPassword(targetUsername: string) {
     
     await prisma.user.update({
       where: { name: cleanUsername },
-      data: { password: await bcrypt.hash('bras2026', 10), mustChange: true }
+      data: { password: await bcrypt.hash('BrightonAle26!', 10), mustChange: true }
     });
 
     return { success: true, error: undefined };

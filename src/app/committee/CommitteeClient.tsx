@@ -189,7 +189,7 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: { name: 
   };
 
   async function handleResetPassword(username: string) {
-    if (!confirm(`Are you sure you want to reset @${username}'s password to 'bras2026'? They will be forced to change it on next login.`)) return;
+    if (!confirm(`Are you sure you want to reset @${username}'s password to 'BrightonAle26!'? They will be forced to change it on next login.`)) return;
     setIsLoading(true);
     setErrorMsg(null);
     setSuccessMsg(null);
