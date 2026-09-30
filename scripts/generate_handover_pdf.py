@@ -337,6 +337,54 @@ def build_pdf(filename="BRAS_Executive_Handover_and_Website_Guide.pdf"):
         style_body
     ))
     
+    story.append(Paragraph(
+        "<b>Website Navigation Note:</b> Throughout this guide, specific pages are referred to with a forward slash "
+        "(e.g., /committee, /rate). To access them, simply append the path to the main website address (brightonale.co.uk/committee).",
+        style_body
+    ))
+    story.append(Spacer(1, 6))
+
+    story.append(Paragraph("Initial Login Credentials (WIP)", style_h2))
+    story.append(Paragraph(
+        "All user and committee accounts currently use a default WIP (Work In Progress) password to ease the transition. "
+        "Users can now reset their password upon logging in, and the committee can manually reset any user's password "
+        "to the default from the /committee dashboard if requested.",
+        style_body
+    ))
+    story.append(Paragraph("<b>Committee Default Password:</b> <code>BrightonAle26!</code>", style_bullet))
+    story.append(Paragraph("<b>Standard Member Default Password:</b> <code>CaskAle26!</code>", style_bullet))
+    story.append(Spacer(1, 6))
+    
+    creds_data = [
+        [
+            Paragraph("Committee Member", style_table_header),
+            Paragraph("Login Username", style_table_header),
+            Paragraph("Role", style_table_header)
+        ],
+        [Paragraph("Takara Webster", style_table_cell_bold), Paragraph("takara", style_table_cell), Paragraph("President", style_table_cell)],
+        [Paragraph("Harrison Emrys-Jones", style_table_cell_bold), Paragraph("harrison", style_table_cell), Paragraph("Finance Dir.", style_table_cell)],
+        [Paragraph("Rico Chadwick Gugolz", style_table_cell_bold), Paragraph("rico", style_table_cell), Paragraph("VP Social", style_table_cell)],
+        [Paragraph("Harry Rogers", style_table_cell_bold), Paragraph("harry", style_table_cell), Paragraph("IT / Past VP", style_table_cell)],
+        [Paragraph("Albie Gullis", style_table_cell_bold), Paragraph("albie", style_table_cell), Paragraph("Past Pres.", style_table_cell)],
+        [Paragraph("Max Emery", style_table_cell_bold), Paragraph("max", style_table_cell), Paragraph("Socials", style_table_cell)],
+        [Paragraph("James Graham", style_table_cell_bold), Paragraph("jamesgraham", style_table_cell), Paragraph("Founder", style_table_cell)],
+        [Paragraph("Sidney", style_table_cell_bold), Paragraph("sidney", style_table_cell), Paragraph("Past Finance", style_table_cell)],
+        [Paragraph("Luke", style_table_cell_bold), Paragraph("luke", style_table_cell), Paragraph("Past Design", style_table_cell)],
+    ]
+    
+    creds_table = Table(creds_data, colWidths=[180, 150, 150])
+    creds_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), C_SLATE),
+        ('GRID', (0, 0), (-1, -1), 0.5, C_BORDER),
+        ('TOPPADDING', (0, 0), (-1, -1), 4),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+        ('LEFTPADDING', (0, 0), (-1, -1), 6),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 6),
+        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, C_CARD_BG]),
+    ]))
+    story.append(creds_table)
+    story.append(Spacer(1, 10))
+    
     story.append(Paragraph("Executive Division of Responsibilities", style_h2))
     roles_data = [
         [
