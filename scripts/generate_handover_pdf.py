@@ -542,9 +542,9 @@ def build_pdf(filename="BRAS_Executive_Handover_and_Website_Guide.pdf"):
         story.append(Spacer(1, 10))
     
     # ----------------------------------------------------
-    # SECTION 4: THE COMMITTEE COMMAND CENTER (/committee)
+    # SECTION 4: THE COMMITTEE Command Centre (/committee)
     # ----------------------------------------------------
-    story.append(Paragraph("4. The Committee Command Center (/committee)", style_h1))
+    story.append(Paragraph("4. The Committee Command Centre (/committee)", style_h1))
     story.append(HRFlowable(width="100%", thickness=1.5, color=C_AMBER, spaceAfter=8))
     
     story.append(Paragraph(
@@ -624,7 +624,7 @@ def build_pdf(filename="BRAS_Executive_Handover_and_Website_Guide.pdf"):
     story.append(Paragraph("The Member × Pub Matrix (/matrix)", style_h2))
     story.append(Paragraph(
         "The Matrix tabulates every single pint rating submitted by BRAS inspectors across every pub visited since 2023. "
-        "It features live search by member name or pub, color-coded score cells (green for sublime, yellow for solid, orange/red for poor), "
+        "It features live search by member name or pub, colour-coded score cells (green for sublime, yellow for solid, orange/red for poor), "
         "and individual inspector analytics (most generous taster, harshest critic, attendance counts).",
         style_body
     ))
