@@ -16,6 +16,7 @@ vi.mock('../src/lib/db', () => ({
       findFirst: vi.fn(),
       findUnique: vi.fn(),
       create: vi.fn(),
+      update: vi.fn(),
     },
     social: {
       findFirst: vi.fn(),
@@ -177,6 +178,16 @@ describe('API Authorization & Committee Endpoints', () => {
       active: true,
       coverPhotoUrl: null
     });
+    vi.mocked(prisma.user.update).mockResolvedValue({
+      id: 'voter-1',
+      name: 'harry',
+      votingName: 'Harry',
+      role: 'user',
+      password: null,
+      mustChange: false,
+      email: null,
+      isLegacy: false
+    });
     // Existing rating found -> should update
     vi.mocked(prisma.rating.findFirst).mockResolvedValue({
       id: 'rate-1',
@@ -211,6 +222,107 @@ describe('API Authorization & Committee Endpoints', () => {
     expect(data.rating.score).toBe(9.0);
     expect(data.rating.updated).toBe(true);
     expect(prisma.rating.update).toHaveBeenCalled();
+    expect(prisma.user.update).toHaveBeenCalledWith({
+      where: { id: 'voter-1' },
+      data: { role: 'user', votingName: 'Harry' }
+    });
+  });
+
+  it('rate POST retains committee role when a committee member submits a rating', async () => {
+    vi.mocked(prisma.user.findFirst).mockResolvedValue({
+      id: 'comm-1',
+      name: 'admin',
+      votingName: 'Admin Voter',
+      role: 'committee',
+      password: 'hashedpassword',
+      mustChange: false,
+      email: 'admin@bras.soc',
+      isLegacy: false
+    });
+    vi.mocked(prisma.user.update).mockResolvedValue({
+      id: 'comm-1',
+      name: 'admin',
+      votingName: 'Admin Voter',
+      role: 'committee',
+      password: 'hashedpassword',
+      mustChange: false,
+      email: 'admin@bras.soc',
+      isLegacy: false
+    });
+    vi.mocked(prisma.social.findFirst).mockResolvedValue({
+      id: 'social-1',
+      pubName: 'The Basketmakers',
+      beerName: 'Best Bitter',
+      breweryName: 'Harveys',
+      date: '24 Sep 2026',
+      academicYear: '26/27',
+      active: true,
+      coverPhotoUrl: null
+    });
+    vi.mocked(prisma.rating.findFirst).mockResolvedValue(null);
+    vi.mocked(prisma.rating.create).mockResolvedValue({
+      id: 'rate-comm',
+      score: 8.0,
+      userId: 'comm-1',
+      pubName: 'The Basketmakers',
+      socialId: 'social-1',
+      createdAt: new Date()
+    });
+
+    const req = new Request('http://localhost', {
+      method: 'POST',
+      body: JSON.stringify({
+        memberName: 'Admin Voter',
+        pubName: 'The Basketmakers',
+        score: 8.0
+      })
+    });
+
+    const response = await ratePost(req);
+    expect(response.status).toBe(200);
+    expect(prisma.user.update).toHaveBeenCalledWith({
+      where: { id: 'comm-1' },
+      data: { votingName: 'Admin Voter' } // Note: role: 'user' should NOT be included
+    });
+  });
+
+  it('rate GET returns existing score and alreadyVoted for returning voter', async () => {
+    vi.mocked(prisma.user.findFirst).mockResolvedValue({
+      id: 'voter-1',
+      name: 'harry',
+      votingName: 'Harry',
+      role: 'user',
+      password: null,
+      mustChange: false,
+      email: null,
+      isLegacy: false
+    });
+    vi.mocked(prisma.social.findFirst).mockResolvedValue({
+      id: 'social-1',
+      pubName: 'The Basketmakers',
+      beerName: 'Best Bitter',
+      breweryName: 'Harveys',
+      date: '24 Sep 2026',
+      academicYear: '26/27',
+      active: true,
+      coverPhotoUrl: null
+    });
+    vi.mocked(prisma.rating.findFirst).mockResolvedValue({
+      id: 'rate-1',
+      score: 8.5,
+      userId: 'voter-1',
+      pubName: 'The Basketmakers',
+      socialId: 'social-1',
+      createdAt: new Date()
+    });
+
+    const req = new Request('http://localhost?voterName=Harry', { method: 'GET' });
+    const response = await rateGet(req);
+    expect(response.status).toBe(200);
+    const data = await response.json();
+    expect(data.alreadyVoted).toBe(true);
+    expect(data.existingRating.score).toBe(8.5);
+    expect(data.voterName).toBe('Harry');
   });
 
   it('active-votes GET queries ratings strictly scoped to socialId', async () => {

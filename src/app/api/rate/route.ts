@@ -97,6 +97,17 @@ export async function POST(req: Request) {
           mustChange: false
         }
       });
+    } else {
+      const updateData: { votingName: string; role?: string } = {
+        votingName: rawName
+      };
+      if (dbUser.role !== 'committee') {
+        updateData.role = 'user';
+      }
+      dbUser = await prisma.user.update({
+        where: { id: dbUser.id },
+        data: updateData
+      });
     }
 
     // Check if there is an active social for this pub or active social overall
@@ -119,12 +130,6 @@ export async function POST(req: Request) {
           socialId: social.id
         }
       });
-    }
-
-    if (existingRating && confirmUpdate === false) {
-      return NextResponse.json({
-        error: `This person (${rawName}) has already voted this week. Please enter a different name (e.g. ${rawName} W.).`
-      }, { status: 409 });
     }
 
     const finalPubName = social?.pubName || trimmedPub;

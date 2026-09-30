@@ -87,7 +87,9 @@ export default function RatePage() {
       const data = await res.json();
       if (data.existingRating) {
         setPreviousScore(data.existingRating.score);
+        setScore(data.existingRating.score.toString());
         setAlreadyVoted(true);
+        setIsSamePersonUpdating(true);
       } else {
         setPreviousScore(null);
         setAlreadyVoted(false);
@@ -124,11 +126,6 @@ export default function RatePage() {
       return;
     }
 
-    if (alreadyVoted && !isSamePersonUpdating) {
-      setErrorMsg(`This person (${cleanName}) has already voted this week. Please enter a different name (e.g. ${cleanName} W. or ${cleanName} 2).`);
-      return;
-    }
-
     const parsedScore = parseFloat(score);
     if (isNaN(parsedScore) || parsedScore < 1 || parsedScore > 10) {
       setErrorMsg("Please enter a valid score between 1.00 and 10.00.");
@@ -151,7 +148,7 @@ export default function RatePage() {
           beerName: beerName.trim(),
           score: finalScore,
           dateString,
-          confirmUpdate: isSamePersonUpdating
+          confirmUpdate: true
         })
       });
 
@@ -304,10 +301,10 @@ export default function RatePage() {
 
             {/* Voter Name Input */}
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '4px', marginBottom: '6px' }}>
                 <label className="form-label" style={{ margin: 0, fontWeight: 600 }}>Your Name / Nickname</label>
                 {hasExistingName && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                     <span style={{ fontSize: '0.75rem', color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <UserCheck size={14} /> Saved on device
                     </span>
@@ -315,6 +312,7 @@ export default function RatePage() {
                       type="button"
                       onClick={() => {
                         setMemberName('');
+                        setScore('');
                         setPreviousScore(null);
                         setAlreadyVoted(false);
                         setIsSamePersonUpdating(false);
@@ -354,8 +352,7 @@ export default function RatePage() {
                   fontSize: '1rem',
                   padding: '12px 14px',
                   borderRadius: '8px',
-                  boxSizing: 'border-box',
-                  borderColor: (alreadyVoted && !isSamePersonUpdating) ? 'var(--accent)' : undefined
+                  boxSizing: 'border-box'
                 }}
               />
               <span style={{ fontSize: '0.75rem', color: 'var(--text-light)', marginTop: '4px', display: 'block' }}>
@@ -363,44 +360,20 @@ export default function RatePage() {
               </span>
             </div>
 
-            {/* Duplicate Name / Previous Rating Notice */}
+            {/* Existing Vote Indicator */}
             {alreadyVoted && (
               <div style={{
                 background: 'var(--surface-warm)',
                 border: '1px solid var(--accent)',
                 borderRadius: '8px',
-                padding: '14px',
+                padding: '12px 14px',
                 display: 'flex',
-                flexDirection: 'column',
+                alignItems: 'center',
                 gap: '10px'
               }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--accent)', fontWeight: 600, fontSize: '0.92rem' }}>
-                  <AlertTriangle size={18} style={{ flexShrink: 0 }} />
-                  <span>This person has already voted this week!</span>
-                </div>
-                <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-color)', lineHeight: 1.45 }}>
-                  A vote of <strong>{previousScore !== null ? `${previousScore.toFixed(2)}★` : ''}</strong> is already recorded for <strong>&ldquo;{memberName.trim()}&rdquo;</strong>.
-                </p>
-                <p style={{ margin: 0, fontSize: '0.82rem', color: 'var(--text-muted)', lineHeight: 1.45 }}>
-                  If there&apos;s more than one {memberName.trim()} at the social, please <strong>enter a different name</strong> (such as <strong>{memberName.trim()} W.</strong> or <strong>{memberName.trim()} 2</strong>) so your vote is counted separately!
-                </p>
-
-                <div style={{ borderTop: '1px solid var(--border)', paddingTop: '10px', marginTop: '2px' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', cursor: 'pointer', color: 'var(--text-color)' }}>
-                    <input 
-                      type="checkbox" 
-                      checked={isSamePersonUpdating} 
-                      onChange={e => {
-                        const checked = e.target.checked;
-                        setIsSamePersonUpdating(checked);
-                        if (checked && previousScore !== null && !score) {
-                          setScore(previousScore.toString());
-                        }
-                      }} 
-                      style={{ accentColor: 'var(--accent)', width: '16px', height: '16px', cursor: 'pointer' }}
-                    />
-                    <span>I am the original <strong>{memberName.trim()}</strong> and I want to update my rating</span>
-                  </label>
+                <CheckCircle size={20} style={{ color: 'var(--accent)', flexShrink: 0 }} />
+                <div style={{ fontSize: '0.88rem', color: 'var(--text-color)', lineHeight: 1.4 }}>
+                  Current Vote: <strong>{previousScore !== null ? `${previousScore.toFixed(2)}★` : ''}</strong>. Enter a new score below to update it.
                 </div>
               </div>
             )}
@@ -555,15 +528,14 @@ export default function RatePage() {
             <button
               type="submit"
               className="btn btn--primary btn--lg btn--full"
-              disabled={isLoading || (alreadyVoted && !isSamePersonUpdating)}
+              disabled={isLoading}
               style={{
-                cursor: (isLoading || (alreadyVoted && !isSamePersonUpdating)) ? 'not-allowed' : 'pointer',
+                cursor: isLoading ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
-                marginTop: '4px',
-                opacity: (alreadyVoted && !isSamePersonUpdating) ? 0.65 : 1
+                marginTop: '4px'
               }}
             >
               {isLoading ? (
@@ -572,7 +544,7 @@ export default function RatePage() {
                   <span>Submitting Vote...</span>
                 </>
               ) : alreadyVoted ? (
-                isSamePersonUpdating ? `Update Rating for ${memberName.trim()}` : "Enter a Different Name to Vote"
+                "Update Rating"
               ) : (
                 "Submit Rating"
               )}
