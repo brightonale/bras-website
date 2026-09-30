@@ -605,7 +605,7 @@ def build_pdf(filename="BRAS_Executive_Handover_and_Website_Guide.pdf"):
     story.append(Paragraph("• <b>Add Past Socials:</b> Use the 'Add Past Social / Historical Event' card to log past pub visits, photos, and ratings.", style_bullet))
     story.append(Paragraph("• <b>Feature Toggles:</b> Instantly enable or disable public visibility of Leaderboard, Matrix, Wordle, Awards, or Gallery with one tap.", style_bullet))
     story.append(Paragraph("• <b>Daily Ale Wordle:</b> Set the daily 5-letter brewing or ale word and hint for member entertainment.", style_bullet))
-    story.append(Paragraph("• <b>Photo Gallery:</b> Upload and categorize photos from past pub crawls into dedicated social albums.", style_bullet))
+    story.append(Paragraph("• <b>Photo Gallery:</b> Upload and categorise photos from past pub crawls into dedicated social albums.", style_bullet))
     
     story.append(PageBreak())
     
@@ -681,29 +681,9 @@ def build_pdf(filename="BRAS_Executive_Handover_and_Website_Guide.pdf"):
     story.append(PageBreak())
     
     # ----------------------------------------------------
-    # SECTION 6: EXECUTIVE & FINANCIAL PROTOCOLS
+    # SECTION 6: TECHNICAL & MAINTENANCE QUICK REFERENCE
     # ----------------------------------------------------
-    story.append(Paragraph("6. Executive &amp; Financial Protocols", style_h1))
-    story.append(HRFlowable(width="100%", thickness=1.5, color=C_AMBER, spaceAfter=8))
-    
-    story.append(Paragraph("Special Guidance for Takara Webster (President)", style_h2))
-    story.append(Paragraph("• <b>Host Pub Protocol:</b> Ensure the cellar manager or licensee knows BRAS is visiting. Many independent pubs offer real ale discounts or cellar tours for society members.", style_bullet))
-    story.append(Paragraph("• <b>Opening the Social:</b> At the start of the night, announce the official pint of the round and remind everyone to open <code>brightonale.co.uk/rate</code>.", style_bullet))
-    story.append(Paragraph("• <b>New Member Welcomes:</b> Make sure newcomers pair up with a committee member to learn the CAMRA scoring standard.", style_bullet))
-    story.append(Paragraph("• <b>Constitutional Custody:</b> Coordinate committee election schedules and AGM recaps at the conclusion of the academic year.", style_bullet))
-    
-    story.append(Spacer(1, 6))
-    story.append(Paragraph("Special Guidance for Harrison Emrys-Jones (Finance Director)", style_h2))
-    story.append(Paragraph("• <b>Membership Dues:</b> Cross-reference newly registered voter names on the Matrix with paid society subscriptions.", style_bullet))
-    story.append(Paragraph("• <b>Pub Spend Records:</b> Keep receipts for any subsidized rounds, society tab contributions, or awards purchases.", style_bullet))
-    story.append(Paragraph("• <b>Quarterly Audit:</b> Use the Matrix CSV export to audit turnouts and provide an annual financial statement.", style_bullet))
-    story.append(Paragraph("• <b>Annual Awards Budget:</b> Allocate funds in Term 2 for the official engraved pint glasses and tankards presented at the Annual Awards Social.", style_bullet))
-    
-    story.append(Spacer(1, 8))
-    # ----------------------------------------------------
-    # SECTION 7: TECHNICAL & MAINTENANCE QUICK REFERENCE
-    # ----------------------------------------------------
-    story.append(Paragraph("7. Technical &amp; Maintenance Quick Reference", style_h1))
+    story.append(Paragraph("6. Technical &amp; Maintenance Quick Reference", style_h1))
     story.append(HRFlowable(width="100%", thickness=1.5, color=C_AMBER, spaceAfter=8))
     
     story.append(Paragraph(
