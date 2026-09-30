@@ -147,6 +147,27 @@ export async function changePassword(username: string, newPasswordAttempt: strin
   }
 }
 
+export async function resetUserPassword(targetUsername: string) {
+  try {
+    const cookieStore = await cookies();
+    const callerRole = cookieStore.get('bras_user_role')?.value;
+    if (callerRole !== 'committee') {
+      return { success: false, error: 'Unauthorized.' };
+    }
+
+    const cleanUsername = targetUsername.toLowerCase().replace(/\s+/g, '');
+    
+    await prisma.user.update({
+      where: { name: cleanUsername },
+      data: { password: await bcrypt.hash('bras2026', 10), mustChange: true }
+    });
+
+    return { success: true, error: undefined };
+  } catch (err: unknown) {
+    return { success: false, error: (err as Error).message || 'Failed to reset password.' };
+  }
+}
+
 export async function logout() {
   const cookieStore = await cookies();
   cookieStore.delete('bras_user_name');

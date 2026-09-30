@@ -3,8 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { resetUserPassword } from '@/app/actions';
 
-import { Beer, Gamepad2, Newspaper, Compass, Ban, CheckCircle, AlertTriangle, Users, Play, Square, Camera, RotateCw, Trash2, Star } from 'lucide-react';
+import { Beer, Gamepad2, Newspaper, Compass, Ban, CheckCircle, AlertTriangle, Users, Play, Square, Camera, RotateCw, Trash2, Star, Key } from 'lucide-react';
 
 interface ActiveVoteItem {
   id: string;
@@ -186,6 +187,24 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: { name: 
       console.warn("Could not fetch active pint", e);
     }
   };
+
+  async function handleResetPassword(username: string) {
+    if (!confirm(`Are you sure you want to reset @${username}'s password to 'bras2026'? They will be forced to change it on next login.`)) return;
+    setIsLoading(true);
+    setErrorMsg(null);
+    setSuccessMsg(null);
+    try {
+      const res = await resetUserPassword(username);
+      if (res.success) {
+        setSuccessMsg(`Successfully reset password for @${username}.`);
+      } else {
+        setErrorMsg(res.error || "Failed to reset password.");
+      }
+    } catch (err: any) {
+      setErrorMsg(err.message || "Failed to reset password.");
+    }
+    setIsLoading(false);
+  }
 
   async function updateUserRole(username: string, newRole: string) {
     setIsLoading(true);
@@ -1075,6 +1094,14 @@ export default function CommitteeClient({ initialPubs }: { initialPubs: { name: 
                         <option value="member">Member</option>
                         <option value="user">User (Non-Member)</option>
                       </select>
+                      <button
+                        onClick={() => handleResetPassword(username)}
+                        disabled={isLoading}
+                        style={{ marginLeft: '8px', padding: '4px 8px', fontSize: '0.8rem', background: 'none', border: '1px solid var(--border)', borderRadius: '4px', cursor: 'pointer', color: 'var(--text-light)' }}
+                        title="Reset Password to Default"
+                      >
+                        <Key size={14} />
+                      </button>
                     </div>
                   );
                 })}

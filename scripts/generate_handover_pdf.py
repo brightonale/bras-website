@@ -488,7 +488,8 @@ def build_pdf(filename="BRAS_Executive_Handover_and_Website_Guide.pdf"):
     guide_img = 'public/images/camra-beer-scoring-guide.png'
     if os.path.exists(guide_img):
         story.append(Paragraph("Official CAMRA National Beer Scoring Guide", style_h3))
-        story.append(RLImage(guide_img, width=490, height=135))
+        # 1024x723 original -> 450x317 scaled
+        story.append(RLImage(guide_img, width=450, height=317))
         story.append(Paragraph(
             "<font size='7' color='#64748b'>Official graphic &copy; Campaign for Real Ale (CAMRA). Reproduced for educational and scoring calibration purposes. Visit <code>https://camra.org.uk/beer-and-pubs/beer/beer-scoring/</code>.</font>",
             style_body
@@ -499,7 +500,7 @@ def build_pdf(filename="BRAS_Executive_Handover_and_Website_Guide.pdf"):
     # ----------------------------------------------------
     # SECTION 3: LIVE PUB SOCIAL SCORING (/rate)
     # ----------------------------------------------------
-    story.append(Paragraph("3. Live Social Scoring Workflow (`/rate`)", style_h1))
+    story.append(Paragraph("3. Live Social Scoring Workflow (/rate)", style_h1))
     story.append(HRFlowable(width="100%", thickness=1.5, color=C_AMBER, spaceAfter=8))
     
     story.append(Paragraph(
@@ -536,10 +537,14 @@ def build_pdf(filename="BRAS_Executive_Handover_and_Website_Guide.pdf"):
     story.append(r_table)
     story.append(Spacer(1, 10))
     
+    if os.path.exists('scripts/screenshots/rate_page_clean.png'):
+        story.append(RLImage('scripts/screenshots/rate_page_clean.png', width=450, height=689.0625))
+        story.append(Spacer(1, 10))
+    
     # ----------------------------------------------------
     # SECTION 4: THE COMMITTEE COMMAND CENTER (/committee)
     # ----------------------------------------------------
-    story.append(Paragraph("4. The Committee Command Center (`/committee`)", style_h1))
+    story.append(Paragraph("4. The Committee Command Center (/committee)", style_h1))
     story.append(HRFlowable(width="100%", thickness=1.5, color=C_AMBER, spaceAfter=8))
     
     story.append(Paragraph(
@@ -616,7 +621,7 @@ def build_pdf(filename="BRAS_Executive_Handover_and_Website_Guide.pdf"):
         style_body
     ))
     
-    story.append(Paragraph("The Member × Pub Matrix (`/matrix`)", style_h2))
+    story.append(Paragraph("The Member × Pub Matrix (/matrix)", style_h2))
     story.append(Paragraph(
         "The Matrix tabulates every single pint rating submitted by BRAS inspectors across every pub visited since 2023. "
         "It features live search by member name or pub, color-coded score cells (green for sublime, yellow for solid, orange/red for poor), "
@@ -630,7 +635,7 @@ def build_pdf(filename="BRAS_Executive_Handover_and_Website_Guide.pdf"):
         style_body
     ))
     
-    story.append(Paragraph("Society Leaderboards (`/leaderboard`)", style_h2))
+    story.append(Paragraph("Society Leaderboards (/leaderboard)", style_h2))
     story.append(Paragraph(
         "Displays real-time rankings across three categories: "
         "<b>Top Rated Ales</b> (highest average pint scores), <b>Top Ranked Pubs</b> (best kept cellars), and "
@@ -638,7 +643,7 @@ def build_pdf(filename="BRAS_Executive_Handover_and_Website_Guide.pdf"):
         style_body
     ))
     
-    story.append(Paragraph("Society History &amp; Directory (`/history`)", style_h2))
+    story.append(Paragraph("Society History &amp; Directory (/history)", style_h2))
     story.append(Paragraph(
         "Chronological timeline of every Instagram post and official social recap from our inaugural meeting at The Hole in the Wall "
         "in 2023 to the present day. Includes the official Committee Directory cards on the heritage tavern background.",
