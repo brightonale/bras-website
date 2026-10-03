@@ -693,7 +693,7 @@ def build_pdf(filename="BRAS_Executive_Handover_and_Website_Guide.pdf"):
     
     story.append(Paragraph("Society History &amp; Directory (/history)", style_h2))
     story.append(Paragraph(
-        "Chronological timeline of every Instagram post and official social recap from our inaugural meeting at The Hole in the Wall "
+        "Chronological timeline of every Instagram post and official social recap from our inception at The Mucky Duck "
         "in 2023 to the present day. Includes the official Committee Directory cards on the heritage tavern background.",
         style_body
     ))

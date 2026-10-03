@@ -75,15 +75,35 @@ James Graham returns as President, joined by Max taking over as our new Socials 
 
 ---
 
-### [2023-11-01 12:00:00+00:00](https://www.instagram.com/brightonrealalesocbras/)
+### [2023-11-16 12:00:00+00:00](https://www.instagram.com/brightonrealalesocbras/)
 
-The first ever BRAS social! 🍻
-We kicked off the 23/24 academic year at The Sussex Arms with a lovely pint of Greene King IPA. 
-This marks the official start of our journey to discover the best cask ales in Brighton!
+The very first BRAS Social! 🍻
+Today marks the official BRAS Birthday. Our inaugural pub trip and the start of a fantastic journey to discover the best cask ales in Brighton!
 
 ---
 
-### [2023-10-15 12:00:00+00:00](https://www.instagram.com/brightonrealalesocbras/)
+### [2023-11-13 12:00:00+00:00](https://www.instagram.com/brightonrealalesocbras/)
 
-Meet your founding BRAS Committee! 🍻
-James Graham is leading the charge as Founding President, with Luke handling our social designs. We're ready to explore Brighton's real ale scene!
+Hello Brighton! 🍻
+Our first ever Instagram post goes live. The Brighton Real Ale Society is officially here and ready to start rating!
+
+---
+
+### [2023-11-11 12:00:00+00:00](https://www.instagram.com/brightonrealalesocbras/)
+
+The first full committee meeting! 🦆
+We gathered at The Geese to hash out our plans, establish the CAMRA scoring system, and officially put BRAS into motion.
+
+---
+
+### [2023-11-06 12:00:00+00:00](https://www.instagram.com/brightonrealalesocbras/)
+
+It's official! 📝
+The Brighton Real Ale Society (BRAS) is formally registered with the BSU. We are officially a university society!
+
+---
+
+### [2023-11-05 12:00:00+00:00](https://www.instagram.com/brightonrealalesocbras/)
+
+The Spark that started it all! 🦆
+The original idea for BRAS was conceived today over pints at The Mucky Duck.
