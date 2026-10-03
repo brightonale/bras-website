@@ -155,5 +155,5 @@ An unforgettable day taking the train to Lewes for a private tour of the histori
 ### [2026-05-28 19:00:00+00:00](https://www.instagram.com/brightonrealalesocbras/)
 
 End of Year Awards 2026 🏆
-Our biggest awards night yet at The Hole in the Wall! A bittersweet evening as we bid farewell to Albie as President, but what a year it has been. Cheers to the 25/26 season!
+Our biggest awards night yet! A bittersweet evening as we bid farewell to Albie as President, but what a year it has been. Cheers to the 25/26 season!
 
